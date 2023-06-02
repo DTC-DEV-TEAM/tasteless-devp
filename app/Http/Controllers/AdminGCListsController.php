@@ -18,6 +18,9 @@ use Mail;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
+use App\EmailTesting;
+use App\Jobs\GCListFetchJob;
+use Illuminate\Support\Facades\Http;
 
 
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -252,28 +255,25 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 	    */
 	    public function hook_query_index(&$query) {
 
-			// $query->where('invoice_number', null)->where(function($sub_query) {
-			// 	$sub_query->where('uploaded_img', null)->orWhere('status', null);
-			// })->orderBy('id', 'asc');
+			GCListFetchJob::dispatch();
 
 			$query->where('uploaded_img', null);
 
-
-			$faker = Factory::create();
-
-			// for($i=0; $i<5; $i++){
-			// 	GCList::create([
-			// 		'name' => $faker->name,
-			// 		'phone' => $faker->phoneNumber,
-			// 		'email' => $faker->email,
-			// 		'campaign_id' => 1,
-			// 		'qr_reference_number' => Str::random(10)
-			// 	]);
-			// }
-
 	    }
-
+		
 	    /*
+		// $faker = Factory::create();
+
+		// for($i=0; $i<5; $i++){
+		// 	GCList::create([
+		// 		'name' => $faker->name,
+		// 		'phone' => $faker->phoneNumber,
+		// 		'email' => $faker->email,
+		// 		'campaign_id' => 1,
+		// 		'qr_reference_number' => Str::random(10)
+		// 	]);
+		// }
+
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate row of index table html 
 	    | ---------------------------------------------------------------------- 
@@ -384,7 +384,7 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 			$slug = Request::all()['value'];
 			$user = GCList::find($id);
 
-			if ($user->qr_reference_number == $slug){
+			if ($user->qr_reference_number == $slug || CRUDBooster::isSuperAdmin()){
 			
 				$data = [];
 				$data['page_title'] = 'Redeem QR';
@@ -516,13 +516,16 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 			$email = $data['row']->email;
 
 			try {
+
 				Mail::send(['html' => 'redeem_qr.redeemedemail'], $data, function($message) use ($email) {
 					$message->to($email)->subject('Qr Code Redemption!');
 					$message->from('punzalan2233@gmail.com', 'Patrick Lester Punzalan');
 				});
+
 			} catch (\Exception $e) {
 				dd($e);
 			}
+			
 			CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE # : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
 		}
 

@@ -32,7 +32,7 @@ class QrEmail extends Mailable implements ShouldQueue
     {
 
         return $this->view('redeem_qr.sendemail', $this->data)
-            ->subject('Redeem Your QR Code Now!')
+            ->subject($this->data['email_subject'])
             ->from('punzalan2233@gmail.com', 'Patrick Lester Punzalan');
     }
 

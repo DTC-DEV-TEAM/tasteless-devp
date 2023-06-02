@@ -30,7 +30,8 @@
 </head>
 <body>
     <div class="container">
-        <h3>QR Code Redemption</h3>
+        {!! html_entity_decode($html_email) !!}
+        {{-- <h3>QR Code Redemption</h3>
         
         <p>
             Dear {{ $name }},
@@ -42,14 +43,6 @@
 
         <div id="qr-code-download">
             <div id="download_qr">
-
-                {{-- @php
-                    // $qrCodeUrl = route('edit_redeem_code', ['data' => 'your-data-goes-here']);
-                    $qrCodeUrl = route('edit_redeem_code', ['id' => 13]);
-                    // $qrCodeURL = url()->current();
-                @endphp
-                {!! QrCode::size(200)->generate($qrCodeUrl); !!} --}}
-
                 @php
                 $url = url('admin/g_c_lists/edit/' . $id.'?value='.$qr_reference_number);
                 $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
@@ -69,10 +62,6 @@
             GC Description: {{ $gc_description }}
         </p>
 
-        {{-- <p>
-            Redemption Period: {{ $redemption_period }}
-        </p> --}}
-
         <br>
 
         <p>
@@ -85,12 +74,11 @@
         <br>
         <p>Best regards,</p> 
         <p>BPG Department</p>
-        <p>Digits Trading Corp.</p>
+        <p>Digits Trading Corp.</p> --}}
             
     </div>
 
 
-  {{-- <img id="convertedImg" src="" alt="Converted Image"> --}}
 
   <script>
     $(document).ready(function() {

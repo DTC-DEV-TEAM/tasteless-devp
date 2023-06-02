@@ -8,15 +8,7 @@
     {{-- <script src="https://nominatim.openstreetmap.org/ui/reverse-geocode.js"></script> --}}
 @endpush
 
-{{-- @push('head')
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/crudbooster/assets/summernote/summernote.css')}}">
-@endpush
-@push('bottom')
-    <script type="text/javascript" src="{{asset('vendor/crudbooster/assets/summernote/summernote.min.js')}}"></script>
-@endpush --}}
-
 @section('content')
-  {{-- <textarea id="my-editor" name="content"></textarea> --}}
 
   <!-- Your html goes here -->
   <div class="sk-chase-position" style="display: none;">
@@ -32,7 +24,6 @@
       <p>Please wait, generating QR code and sending to emails...</p>
     </div>
   </div>
-
   <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p>
   <div class='panel panel-default'>
     <div class='panel-heading' >Upload Excel File</div>
@@ -50,19 +41,6 @@
             @endforeach
           </div>
         </div>
-        {{-- @if (session()->has('failures'))
-        <div class="callout callout-danger">
-          <h4>Excel File Validation:</h4>
-          <p style="font-size: 16px;">The errors displayed during the import process indicate that the row was not inserted into our database. To address this issue, please fix the errors mentioned in the error messages and re-upload the row. Once you have made the necessary corrections, try uploading the row again to ensure it is inserted correctly into the database.</p>
-          <div class="csv-instructions">
-            @foreach (session()->get('failures') as $fail)
-              <p style="font-size: 16px;">Row: {{$fail->row()}} - Error: {{$fail->attribute()}}</p>
-              @foreach ($fail->errors() as $error)
-                  <p style="font-size: 14px; text-indent: 50px;">* {{ $error }}</p>
-              @endforeach
-            @endforeach
-          </div>
-        </div> --}}
         @elseif (session()->has('success'))
         <div class="callout callout-success">
           <h4>Your QR Redemption Upload and Email Sending were Successful.</h4>
@@ -74,16 +52,6 @@
           <br>
         </div>
         @else
-        {{-- <div class="callout callout-info">
-          <h4>Before uploading the file, please follow these instructions:</h4>
-          <div class="csv-instructions">
-            <p style="font-size: 16px;">1. Ensure that the file you are uploading is either in CSV format or in Microsoft Excel format (XLS or XLSX).</p>
-            <p style="font-size: 16px;">2. Please make sure the file contains the data you intend to upload</p>
-            <p style="font-size: 16px;">3. The uploaded file should start with the second row, as the first row is typically used for column headers or label</p>
-          </div>
-          <br>
-          <h4>If you have any questions or face any issues during the upload process, please feel free to ask for assistance.</h4>
-        </div> --}}
         <div class="box box-solid box-primary">
           <div class="box-header">
             <h3 class="box-title">Before uploading the file, please follow these instructions:</h3>
@@ -120,6 +88,15 @@
         </div>
         <br>
         <div class="export-import-section">
+          <div class="email-template-section">
+            <label for="">Email Template</label>
+            <select name="email_template_id" id="" required>
+              <option value="" selected disabled>Choose an email template</option>
+              @foreach($email_templates as $mail)
+              <option value="{{ $mail->id }}">{{ $mail->title_of_the_email }}</option>
+              @endforeach
+            </select>
+          </div>
           <div class="download-template">
             <label for="">Export Template File:</label>
             <div class="export-template-section">
@@ -144,13 +121,10 @@
   </div>
 
   <script>
+    
     $('#import_excel').submit(function(){
       $('.sk-chase-position').show();
     })
-    // $(document).ready(function() {
-    //   $('#my-editor').summernote();
-    // });
-
   </script>
 
 @endsection

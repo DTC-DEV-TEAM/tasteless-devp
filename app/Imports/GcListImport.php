@@ -37,12 +37,12 @@ class GcListImport implements
 
     use Importable;
 
-    private $user_id;
+    private $gc_information;
 
 
-    public function __construct($user_id)
+    public function __construct($gc_information)
     {
-        $this->user_id = $user_id;
+        $this->gc_information = $gc_information;
     }
     
     /**
@@ -52,6 +52,7 @@ class GcListImport implements
     */
     public function model(array $row)
     {
+        
         do {
             $generated_qr_code = Str::random(10);
         } while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
@@ -61,12 +62,12 @@ class GcListImport implements
             'phone' => $row['phone'],
             'email' => $row['email'],
             'customer_reference_number' => $row['customer_reference_number'],
-            'campaign_id' => $this->user_id,
+            'campaign_id' => $this->gc_information['campaign_id'],
+            'email_template_id' => $this->gc_information['email_template_id'],
             'qr_reference_number' => $generated_qr_code
         ]);
 
         $gcList->save();
-
     }
 
     public function rules(): array{

@@ -16,6 +16,7 @@ class CreateGCListsTable extends Migration
         Schema::create('g_c_lists', function (Blueprint $table) {
             $table->id();
             $table->integer('campaign_id')->nullable();
+            $table->integer('email_template_id')->nullable();
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();

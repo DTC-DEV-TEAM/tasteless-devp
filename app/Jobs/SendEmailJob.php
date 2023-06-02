@@ -40,8 +40,7 @@ class SendEmailJob
         
         Mail::to($this->details['email'])->send($email);
 
-        GCList::find($this->details['id'])->update(['email_is_sent'=>1]);
-        
+        GCList::find($this->details['id'])->update(['email_is_sent'=>1]);      
     }
     
 }

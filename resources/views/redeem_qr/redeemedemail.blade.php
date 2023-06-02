@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="container">
+        {{-- {!! html_entity_decode($htmlEmail) !!} --}}
         <h3>QR Code Redemption Successful</h3>
 
         <p>Dear {{ $row->name }},</p>
@@ -25,7 +26,10 @@
         <br>
         <p>Best regards,</p> 
         <p>BPG Department</p>
-        <p>Digits Trading Corp.</p>
+        <p>Digits Trading Corp.</p>        
     </div>
+    <script>
+        console.log('yes');
+    </script>
 </body>
 </html>

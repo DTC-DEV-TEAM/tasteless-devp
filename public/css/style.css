@@ -14,6 +14,19 @@ input[type=number] {
     appearance: textfield;
     -moz-appearance: textfield;/* Firefox */
 }
+
+@media only screen and (max-width: 766px) {
+    .qr_code_content{
+        margin: auto;
+    }
+    .qr_code_box{
+        background-color: #0964b0;
+    }
+    .qr_code_img {
+        display: none;
+    }
+}
+
 /* End of Reuse-code */
 
 
@@ -54,9 +67,10 @@ input[type=number] {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: 0 60px;
+    text-align: center;
     height: 250px;
+    min-width: 350px;
+    padding: 42px 60px 0px 60px;
     background-color: #ffffff;
     border-radius: 10%;
     border: 1px solid #ddd;
@@ -148,17 +162,18 @@ input[type=number] {
 }
 
 .camera_card{
+    background: #ffffff;  /* fallback for old browsers */
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;    min-width: 500px;
+    padding: 30px;
     text-align: center;
-    width: 700px;
-    height: 500px;
-    background: rgb(236, 236, 236);
-    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    color: rgb(2, 2, 2);
 }
 
 video{
-    position: absolute;
-    top: -100px;
-    left: 50px;
+    margin: auto;
+    width: 100%;
+    max-height: 500px;
+    border-radius: 5px;
 }
 
 /* End of Scan QR */
@@ -699,9 +714,11 @@ video{
     margin-bottom: 25px;
 }
 
-.file-upload-contet{
+.file-upload-content{
     width: 420px;
 }
+
+
 
 .download-template label{
     font-size: 15px;
@@ -729,6 +746,23 @@ video{
 
 }
 
+.email-template-section{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.email-template-section select{
+    text-align: center;
+    outline: none;
+    width: 190px;
+    height: 41px;
+    border: 1px solid rgb(228, 228, 228);
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .2));
+    border-radius: 5px;
+    margin-bottom: 13px;
+}
+
 /* Loading Animation */
 .sk-chase-position{
     position: absolute;
@@ -739,7 +773,7 @@ video{
     width: 100%;
     display: grid;
     place-items: center;
-    z-index: 999;
+    z-index: 9999;
     background-color: #21212172;
 }
 
@@ -831,4 +865,14 @@ video{
 }
 
 /* End of Upload GC List Section */
+.add_email_header{
+    font-size: 15px;
+}
 
+.code-box{
+    width: 100%;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}

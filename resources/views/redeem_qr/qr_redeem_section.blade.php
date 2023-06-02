@@ -26,18 +26,29 @@
 
 @section('content')
   <!-- Your html goes here -->
-  @if ($row->redeem && $row->invoice_number)
-  {{-- <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p> --}}
+  <div class="sk-chase-position" style="display: none;">
+    <div class="sk-chase">
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+    </div>
+    <div class="sk-chase-text">
+      <p>Please wait, system is on process...</p>
+    </div>
+  </div>
+  @if ($row->uploaded_img)
+    <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p>
   @endif
   <div class='panel panel-default'>
     <div class='panel-heading' style="background-color: #fff;">Redeem Form</div>
     <div class='panel-body qr_redeem_section'>
-      <form method='post' action='{{ route('redeem_code') }}' autocomplete="off" style="display: none;" enctype="multipart/form-data">
+      <form id="redeem-close-transaction" method='post' action='{{ route('redeem_code') }}' autocomplete="off" style="display: none;" enctype="multipart/form-data">
         @csrf
         <input class="hidden" type="text" name="user_id" id="user_id" value="{{ $row->id }}" >
-
         <div class="redeem_layout">
-
           <div class="qr-reference-card" style="display: none;">
             <div class="close-icon">
               <button type="button" id="close-qr-reference-code"><i class="fa fa-close"></i></button>
@@ -112,7 +123,7 @@
               <button id="uploading-item-ended" type="button">Close Transaction</button>
             </div>
             @else
-              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style="max-width: 500px; max-height: 500px; object-fit: contain;">
+              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style="width: 100%; height: 100%; object-fit: contain;">
             @endif
           </div>
           
@@ -197,7 +208,11 @@
             <button type='button' class='redeem-code' id="show-input-invoice" disabled><i class='fa fa-pencil '></i>Step 3 - Input POS Invoice #</button>
           </div>
           <div class="redeem-btn" style="margin-top: 5px;">
+            @if ($row->uploaded_img)
+            <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Uploaded Item</button>
+            @else
             <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Upload Item</button>
+            @endif
           </div>
         </div>
       </form>
@@ -212,6 +227,11 @@
     $(document).ready(function() {
   
       $('form').css('display','block');
+      $('body').addClass('sidebar-collapse');
+
+      $('#redeem-close-transaction').submit(function(){
+        $('.sk-chase-position').show();
+      })
   
       // Transaction Validation 
       function transactionValidation(){

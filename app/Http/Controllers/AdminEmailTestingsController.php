@@ -1,26 +1,12 @@
 <?php namespace App\Http\Controllers;
 
-use App\IdType;
-use Session;
-use Request;
-use DB;
-use CRUDBooster;
-use Illuminate\Http\Request as IlluminateRequest;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
-use App\Imports\GcListImport;
-use App\Exports\GCListTemplateExport;
-use App\GCList;
-use App\QrCreation;
-use App\EmailTesting;
-use Mail;
-use Illuminate\Support\Facades\Session as UserSession;
-use App\Mail\QrEmail;
-use App\Jobs\SendEmailJob;
+	use Session;
+	use Illuminate\Http\Request;
+	use Illuminate\Support\Facades\Request as Input;
+	use DB;
+	use CRUDBooster;
 
-
-
-	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminEmailTestingsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
@@ -40,38 +26,28 @@ use App\Jobs\SendEmailJob;
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "qr_creations";
+			$this->table = "email_testings";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			// $this->col[] = ["label"=>"ID","name"=>"id"];
-			$this->col[] = ["label"=>"Campaign Id","name"=>"campaign_id"];
-			$this->col[] = ["label"=>"Gc Description","name"=>"gc_description"];
-			$this->col[] = ["label"=>"Gc Value","name"=>"gc_value"];
-			$this->col[] = ["label"=>"Number Of Gcs","name"=>"number_of_gcs"];
-			$this->col[] = ["label"=>"Batch Group","name"=>"batch_group"];
-			$this->col[] = ["label"=>"Batch Number","name"=>"batch_number"];
+			$this->col[] = ["label"=>"Id","name"=>"id"];
+			$this->col[] = ["label"=>"Title of the email","name"=>"title_of_the_email"];
+			$this->col[] = ["label"=>"Subject","name"=>"subject_of_the_email"];
+			$this->col[] = ["label"=>"Created by","name"=>"created_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Created at","name"=>"created_at"];
+			$this->col[] = ["label"=>"Updated by","name"=>"updated_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Updated at","name"=>"updated_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Campaign Id','name'=>'campaign_id','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Gc Description','name'=>'gc_description','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Gc Value','name'=>'gc_value','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Number Of Gcs','name'=>'number_of_gcs','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Batch Group','name'=>'batch_group','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Batch Number','name'=>'batch_number','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
+			$this->form[] = ['label'=>'Html Email','name'=>'html_email','type'=>'wysiwyg','validation'=>'required|string','width'=>'col-sm-8'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Campaign Id','name'=>'campaign_id','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			//$this->form[] = ['label'=>'Gc Description','name'=>'gc_description','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			//$this->form[] = ['label'=>'Gc Value','name'=>'gc_value','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			//$this->form[] = ['label'=>'Number Of Gcs','name'=>'number_of_gcs','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			//$this->form[] = ['label'=>'Batch Number','name'=>'redemption_start','type'=>'date','validation'=>'required|date','width'=>'col-sm-6'];
-			//$this->form[] = ['label'=>'Batch Group','name'=>'redemption_end','type'=>'date','validation'=>'required|date','width'=>'col-sm-6'];
+			//$this->form[] = ['label'=>'Html Email','name'=>'html_email','type'=>'wysiwyg','validation'=>'required|string','width'=>'col-sm-8'];
 			# OLD END FORM
 
 			/* 
@@ -171,7 +147,7 @@ use App\Jobs\SendEmailJob;
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = '';
+	        $this->script_js = NULL;
 
 
             /*
@@ -281,7 +257,13 @@ use App\Jobs\SendEmailJob;
 	    */
 	    public function hook_before_add(&$postdata) {        
 	        //Your code here
+			$email = Input::all();
+
+			$postdata['title_of_the_email'] = $email['title_of_the_email'];
+			$postdata['subject_of_the_email'] = $email['subject_of_the_email'];
+			$postdata['html_email'] = $email['email_content'];
 			$postdata['created_by'] = CRUDBooster::myId();
+			
 	    }
 
 	    /* 
@@ -293,8 +275,6 @@ use App\Jobs\SendEmailJob;
 	    */
 	    public function hook_after_add($id) {        
 	        //Your code here
-
-			return CRUDBooster::redirect(CRUDBooster::mainpath("edit/$id"), sprintf("The Campaign ID has been added. Please proceed with the import of the Excel file."),"success")->send();
 
 	    }
 
@@ -308,6 +288,7 @@ use App\Jobs\SendEmailJob;
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
+			$postdata['updated_by'] = CRUDBooster::myId();
 
 	    }
 
@@ -347,93 +328,22 @@ use App\Jobs\SendEmailJob;
 
 	    }
 
-	    //By the way, you can still create your own method in here... :) 
-		public function getEdit($id){
-
+		public function getAdd() {
+			//Create an Auth
 			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 			
 			$data = [];
-			$data['page_title'] = 'Upload GC List';
-			$data['row'] = DB::table('qr_creations')->find($id);
-			$data['valid_ids'] = IdType::get();
-			$data['email_templates'] = EmailTesting::get();
-	
-			return $this->view('redeem_qr.upload_gc_list',$data);
-
+			$data['page_title'] = 'Email Testing';
+			
+			//Please use view method instead view method from laravel
+			return $this->view('email_testing.add_email',$data);
 		}
 
-		public function exportGCListTemplate(){
 
-			return Excel::download(new GCListTemplateExport, 'gc_list_template.xlsx');
-		}
 
-		public function uploadGCListPost(IlluminateRequest $request){
+	    //By the way, you can still create your own method in here... :) 
 
-			$validatedData = $request->validate([
-				'excel_file' => 'required|mimes:xls,xlsx',
-			]);
-		
-			$campaign_id = $request->all()['campaign_id'];
-			$email_template_id = $request->all()['email_template_id'];
-			$uploaded_excel = $request->file('excel_file');
-			
-			$import = new GcListImport(compact('campaign_id', 'email_template_id'));
-			$rows = Excel::import($import, $uploaded_excel);
-			
-			// Send Email
-			$generated_qr_info = QrCreation::find($campaign_id);
-
-			$gc_list_user = GCList::where('campaign_id', $campaign_id)
-				->where('email_is_sent', 0)
-				->pluck('id')
-				->all();
-			
-			foreach($gc_list_user as $user){
-
-				$gcList = GCList::find($user);
-				
-				$id = $gcList->id;
-				$name = $gcList->name;
-				$email = $gcList->email;
-				$generated_qr_code = $gcList->qr_reference_number;
-				$campaign_id_qr = $generated_qr_info->campaign_id;
-				$gc_description = $generated_qr_info->gc_description;
-				$email_template_id = $gcList->email_template_id;
-
-				$email_testing = EmailTesting::find($email_template_id);
-				$email_template = $email_testing->html_email;
-				$email_subject = $email_testing->subject_of_the_email;
-
-				$url = url('admin/g_c_lists/edit/' . $id.'?value='.$generated_qr_code);
-				$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
-				$qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
-				
-				$html_email = str_replace(
-					['[name]', '[campaign_id]', '[gc_description]', '[qr_code]'],
-					[$name, $campaign_id_qr, $gc_description, $qr_code ],
-					$email_template
-				);
-				
-				$data = array(
-					'name'=> $name,
-					'id' => $id,
-					'qr_reference_number'=>$generated_qr_code,
-					'campaign_id_qr' => $campaign_id_qr,
-					'gc_description' => $gc_description,
-					'email' => $email,
-					'html_email' => $html_email,
-					'email_subject' => $email_subject
-				);
-
-				dispatch(new SendEmailJob($data));
-
-				// SendEmailJob::dispatch($data);
-			}
-
-			return redirect(route('qr_creations_edit', $campaign_id))->with('success', 'Excel file uploaded successfully. QR codes have been sent to the email addresses.')->send();
-
-		}
 
 	}

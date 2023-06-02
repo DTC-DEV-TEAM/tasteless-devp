@@ -15,9 +15,9 @@
         <div class='panel-body panel_body_section'>
             <div class="camera">
                 <div class="camera_card">
-                    <video id="video" width="600" height="700" autoplay></video>
-                    <canvas id="canvas" style="display: none;"></canvas>
                     <div id="output"></div>
+                    <video id="video" autoplay></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
                 </div>
             </div>
             <div class="qr_code">
@@ -56,8 +56,13 @@
                 const video = document.getElementById('video');
                 const canvas = document.getElementById('canvas');
                 const output = document.getElementById('output');
-                const constraints = { video: true };
-        
+                // const constraints = { video: true };
+                let constraints = { video: { facingMode: { exact: 'user' } } };
+
+                if (navigator.userAgent.includes('Mobile')) {
+                    constraints = { video: { facingMode: { exact: 'environment' } } };
+                }
+                
                 navigator.mediaDevices.getUserMedia(constraints)
                     .then((stream) => {
                         video.srcObject = stream;
