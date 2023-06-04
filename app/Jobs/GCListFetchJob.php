@@ -51,10 +51,10 @@ class GCListFetchJob implements ShouldQueue
         
         $gc_list_data = array_reverse($gc_list_fetch['data']);
 
-        foreach ((array)$gc_list_data as $item) {
+        foreach ($gc_list_data as $item) {
             GCList::updateOrCreate(
-                ['id' => $item['id']],
-                (array) $item
+                ['id' => $item['id'], 'qr_reference_number' => $item['qr_reference_number']],
+                $item
             );
         }
     }
