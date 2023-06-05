@@ -19,7 +19,7 @@ class RunJobs extends Command
      *
      * @var string
      */
-    protected $description = 'Run Email send';
+    protected $description = 'Run api fetching';
 
     /**
      * Create a new command instance.
