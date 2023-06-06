@@ -75,7 +75,7 @@ return [
             'prefix'    => env('DB_WEBPOS_PREFIX', ''),
             'timezone'  => env('DB_WEBPOS_TIMEZONE', '+08:00'),
             'strict'    => env('DB_WEBPOS_STRICT_MODE', false),
-        ],
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
