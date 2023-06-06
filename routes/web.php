@@ -65,16 +65,22 @@ Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt
     
     $data['pos_sale'] = DB::connection('mysql_tunnel')
     ->table('pos_sale')
-    ->where('ftermid',$terminal)
     ->where('fcompanyid',$company)
+    ->where('fofficeid',$store)
     ->where('fdocument_no',$receipt)
     ->first();
 
+    $data['pos_sale_discount'] = DB::connection('mysql_tunnel')
+            ->table('pos_sale_product_discount')
+            ->where('fcompanyid',$company)
+            ->where('frecno',$data['pos_sale']->frecno)
+            ->first();
+
     $data['pos_sale_discount_detail'] = DB::connection('mysql_tunnel')
-    ->table('mst_discount')
-    ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
-    ->where('fcompanyid',$company)
-    ->first();
+        ->table('mst_discount')
+        ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
+        ->where('fcompanyid',$company)
+        ->first();
 
     return $data;
 });
