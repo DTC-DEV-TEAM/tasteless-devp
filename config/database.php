@@ -63,6 +63,20 @@ return [
             ]) : [],
         ],
 
+        'mysql_tunnel' => [
+            'driver'    => 'mysql',
+            'host'      => env('TUNNELER_LOCAL_ADDRESS'),
+            'port'      => env('TUNNELER_LOCAL_PORT'),
+            'database'  => env('DB_WEBPOS_DATABASE'),
+            'username'  => env('DB_WEBPOS_USERNAME'),
+            'password'  => env('DB_WEBPOS_PASSWORD'),
+            'charset'   => env('DB_WEBPOS_CHARSET', 'utf8'),
+            'collation' => env('DB_WEBPOS_COLLATION', 'utf8_unicode_ci'),
+            'prefix'    => env('DB_WEBPOS_PREFIX', ''),
+            'timezone'  => env('DB_WEBPOS_TIMEZONE', '+08:00'),
+            'strict'    => env('DB_WEBPOS_STRICT_MODE', false),
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
