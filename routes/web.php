@@ -60,3 +60,21 @@ Route::get('/redeemed_email', function() {
 
     return view('redeem_qr.redeemedemail', compact('htmlEmail'));
 });
+
+Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
+    
+    $data['pos_sale'] = DB::connection('mysql_tunnel')
+    ->table('pos_sale')
+    ->where('ftermid',$terminal)
+    ->where('fcompanyid',$company)
+    ->where('fdocument_no',$receipt)
+    ->first();
+
+    $data['pos_sale_discount_detail'] = DB::connection('mysql_tunnel')
+    ->table('mst_discount')
+    ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
+    ->where('fcompanyid',$company)
+    ->first();
+
+    return $data;
+});
