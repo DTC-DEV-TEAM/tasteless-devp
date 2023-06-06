@@ -79,8 +79,8 @@
                     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                     const code = jsQR(imageData.data, imageData.width, imageData.height);
                     if (code) {
-                        output.innerText = 'Scanned QR code: ' + code.data;
-                        window.location.href = code.data;
+                        output.innerText = 'Scanned QR code: '+"{{ CRUDBooster::adminPath() }}" + code.data;
+                        window.location.href = "{{ CRUDBooster::adminPath() }}"+code.data;
                         return
                     } else {
                         output.innerText = 'No QR code detected.';
