@@ -254,7 +254,7 @@ use Illuminate\Support\Facades\Http;
 	    |
 	    */
 	    public function hook_query_index(&$query) {
-
+			
 			GCListFetchJob::dispatch();
 
 			$query->where('uploaded_img', null);
@@ -384,7 +384,7 @@ use Illuminate\Support\Facades\Http;
 			$slug = Request::all()['value'];
 			$user = GCList::find($id);
 
-			if ($user->qr_reference_number == $slug || CRUDBooster::isSuperAdmin()){
+			if ($user->qr_reference_number == $slug && !$user->uploaded_img || CRUDBooster::isSuperAdmin()){
 			
 				$data = [];
 				$data['page_title'] = 'Redeem QR';
