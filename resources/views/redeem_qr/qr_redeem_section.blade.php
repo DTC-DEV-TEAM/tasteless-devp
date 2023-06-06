@@ -86,9 +86,9 @@
             </div>
             <div class="redemption-success">
               @if ($row->invoice_number)
-              <span>POS INVOCE NUMBER</span>
+              <span>POS INVOICE NUMBER</span>
               @else
-              <span id="inv-success">INPUT POS INVOCE NUMBER</span>
+              <span id="inv-success">INPUT POS INVOICE NUMBER</span>
               @endif
             </div>
             <div class="input-invoice">
@@ -96,7 +96,7 @@
               <button type="button" id="submit-invoice-btn" {{ $row->invoice_number ? 'disabled' : '' }}>Save</button>
             </div>
             <div class="input-invoice-notes">
-              <span style="text-transform: uppercase;">Note: Please Input POS# use in the transaction.</span>
+              <span style="text-transform: uppercase;">Note: Please Input POS INVOICE# use in the transaction.</span>
             </div>
           </div>
 

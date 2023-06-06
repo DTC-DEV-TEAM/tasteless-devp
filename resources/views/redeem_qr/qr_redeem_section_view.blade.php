@@ -35,14 +35,6 @@
             <td>{{ $row->gc_description }}</td>
           </tr>
           <tr>
-            <td class="label-bold">Redemption Start Date</td>
-            <td>{{ $row->redemption_start }}</td>
-          </tr>
-          <tr>
-            <td class="label-bold">Redemption End Date</td>
-            <td>{{ $row->redemption_end }}</td>
-          </tr>
-          <tr>
             <td class="label-bold">Redeemed</td>
             @if ($row->redeem)
             <td>Yes</td>
