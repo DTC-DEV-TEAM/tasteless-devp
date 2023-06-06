@@ -386,44 +386,50 @@
 
         event.preventDefault();
 
-        $.ajax({
-          url: "{{ route('input_invoice') }}",
-          dataType: 'json',
-          type: 'POST',
-          data: {
-            posInvoiceNumber: posInvoiceNumber,
-            userId: user_id,
-          },
-          success: function(response){
-            console.log(response);
-            $('#pos-invoice-number').attr('readonly', true);
-            $('#show-upload-item').attr('disabled', false);
-            $('#submit-invoice-btn').hide();
-            $('#inv-success').text('POS INVOICE NUMBER');
+        if(posInvoiceNumber == ''){
+          alert('POS INVOICE NUMBER REQUIRED');
+        }
+        
+        else{
+          $.ajax({
+            url: "{{ route('input_invoice') }}",
+            dataType: 'json',
+            type: 'POST',
+            data: {
+              posInvoiceNumber: posInvoiceNumber,
+              userId: user_id,
+            },
+            success: function(response){
+              console.log(response);
+              $('#pos-invoice-number').attr('readonly', true);
+              $('#show-upload-item').attr('disabled', false);
+              $('#submit-invoice-btn').hide();
+              $('#inv-success').text('POS INVOICE NUMBER');
 
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'bottom-end',
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-              }
-            })
+              const Toast = Swal.mixin({
+                toast: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+              })
 
-            Toast.fire({
-              icon: 'success',
-              title: 'Pos invoice number saved successfully'
-            })
+              Toast.fire({
+                icon: 'success',
+                title: 'Pos invoice number saved successfully'
+              })
 
-          },
-          error: function(error){
-            console.log(error);
-          }
+            },
+            error: function(error){
+              console.log(error);
+            }
+          })
+        }
         })
-      })
       // End of Invoice Submit Button
 
       function stepFour(){
