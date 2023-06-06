@@ -17,7 +17,7 @@ use App\EmailTesting;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/admin/login');
 });
 
 // Scan QR
