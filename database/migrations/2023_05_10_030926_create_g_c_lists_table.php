@@ -26,6 +26,7 @@ class CreateGCListsTable extends Migration
             $table->string('other_id_type')->nullable();
             $table->string('customer_reference_number')->nullable();
             $table->string('qr_reference_number')->nullable();
+            $table->string('store_concept')->nullable();
             $table->string('invoice_number')->nullable();
             $table->string('redeem')->nullable();
             $table->string('uploaded_img')->nullable();
