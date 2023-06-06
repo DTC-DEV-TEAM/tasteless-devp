@@ -250,9 +250,19 @@ video{
     color: rgb(255, 255, 255);
 }
 
+/* Qr Reference-header */
+
+.qr-reference-header{
+    margin-top: 10px;
+    margin-bottom: 3px;
+    font-size: 15px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+
+}
+
 /* QR Reference content */
 .qr-reference-content{
-    margin-top: 35px;
     min-width: 255px;
     padding: 12px;
     background-color: rgba(255, 255, 255, 0.87);

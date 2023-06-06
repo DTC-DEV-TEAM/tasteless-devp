@@ -69,11 +69,14 @@
               <span>REDEMPTION SUCCESS</span>
               @endif
             </div>
+            <div class="qr-reference-header">
+              <span>CAMPAIGN ID REFERENCE #</span>
+            </div>
             <div class="qr-reference-content">
-              <span id="qr-reference-number">CAMPAIGN ID REFERENCE #: {{ $row->campaign_id }} - {{ $row->qr_reference_number }}</span>
+              <span id="qr-reference-number">{{ $row->campaign_id }} - {{ $row->qr_reference_number }}</span>
             </div>
             <div class="input-invoice-notes">
-              <span style="text-transform: uppercase;">Note: Please copy paste below your POS memo field</span>
+              <span style="text-transform: uppercase;">Note: Please copy and paste above your POS memo field</span>
             </div>
           </div>
 
@@ -96,7 +99,7 @@
               <button type="button" id="submit-invoice-btn" {{ $row->invoice_number ? 'disabled' : '' }}>Save</button>
             </div>
             <div class="input-invoice-notes">
-              <span style="text-transform: uppercase;">Note: Please Input POS INVOICE# use in the transaction.</span>
+              <span style="text-transform: uppercase;">Note: Please Input POS INVOICE# used in the transaction.</span>
             </div>
           </div>
 
@@ -209,9 +212,9 @@
           </div>
           <div class="redeem-btn" style="margin-top: 5px;">
             @if ($row->uploaded_img)
-            <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Uploaded Item</button>
+            <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Uploaded Receipt</button>
             @else
-            <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Upload Item</button>
+            <button type='button' class='redeem-code' id="show-upload-item" disabled><i class='fa fa-file-image-o '></i>Step 4 - Upload Receipt</button>
             @endif
           </div>
         </div>
