@@ -257,7 +257,7 @@ video{
     margin-bottom: 3px;
     font-size: 15px;
     font-weight: bold;
-    color: rgb(255, 255, 255);
+    color: #ffffff;
 
 }
 
@@ -332,7 +332,7 @@ video{
 }
 
 .input-invoice{
-    margin-top: 40px;
+    margin-top: 25px;
 }
 
 .input-invoice input{
