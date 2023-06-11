@@ -20,7 +20,6 @@
       background-color: #222D32 !important;
       color: white !important;
     }
-
   </style>
 @endpush
 
@@ -39,6 +38,7 @@
       <p>Please wait, system is on process...</p>
     </div>
   </div>
+  
   @if ($row->uploaded_img)
     <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p>
   @endif
@@ -99,6 +99,7 @@
               <button type="button" id="submit-invoice-btn" {{ $row->invoice_number ? 'disabled' : '' }}>Save</button>
             </div>
             <div class="input-invoice-notes">
+              <span id="invoice-number-message" style="display: block;"></span>
               <span style="text-transform: uppercase;">Note: Please Input POS INVOICE# used in the transaction.</span>
             </div>
           </div>
@@ -126,10 +127,10 @@
               <button id="uploading-item-ended" type="button">Close Transaction</button>
             </div>
             @else
-              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style="width: 100%; height: 100%; object-fit: contain;">
+              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style="width: 100%; max-height: 500px; object-fit: contain;">
             @endif
           </div>
-          
+
           <div class="user-info-content">
             <div class="user-info">
               <div class="user-element">
@@ -194,17 +195,11 @@
             </div>
           </div>
           <br>
-          {{-- @php
-          $qrCodeUrl = route('scan_qr', ['data' => 'your-data-goes-here']);
-          $qrCodeURL = url()->current();
-          @endphp
-          {!! QrCode::size(200)->generate(url()->current()); !!} --}}
+
           <div class="text-center">
-              
               <img style="height: 130px; width: 130px;" src="{{ asset('img/scan-women.jpg') }}" alt="">
               <p style="font-weight: bold; font-size: 15px;">Redeem code here and unlock exclusive benefits and rewards.</p>
           </div>
-        
           <div class="redeem-btn">
             <button type='submit' class='redeem-code' id="redeem-code"><i class='fa fa-credit-card-alt '></i> Step 1 - Redeem Code</button>
             <button type='button' class='redeem-code' id="show-reference-number" disabled><i class='fa fa-sticky-note-o '></i>Step - 2 Show QR Reference #</button>
@@ -220,9 +215,6 @@
         </div>
       </form>
     </div>
-    {{-- <div class='panel-footer' style="background-color: #fff;">
-    </div> --}}
-
   </div>
 
   <script>
@@ -345,7 +337,7 @@
               origin: { y: 0.8, x: 0.57 }
             });
             
-            $('#qr-reference-number').text(`CAMPAIGN ID REFERENCE #: ${response.test.campaign_id} - ${response.test.qr_reference_number}`)
+            // $('#qr-reference-number').text(`CAMPAIGN ID REFERENCE #: ${response.test.campaign_id} - ${response.test.qr_reference_number}`)
             $('#redeem-code').css({'box-shadow': 'none', 'transform': 'translateY(5px)', 'opacity': '0.9'});
             $('#redeem-code').attr('disabled', true);
             $('#show-reference-number').attr('disabled', false)
@@ -376,8 +368,6 @@
             console.log(error)
           }
         })
-        
-
       })
       // End of Redeem Button
 
@@ -403,29 +393,50 @@
               userId: user_id,
             },
             success: function(response){
-              console.log(response);
-              $('#pos-invoice-number').attr('readonly', true);
-              $('#show-upload-item').attr('disabled', false);
-              $('#submit-invoice-btn').hide();
-              $('#inv-success').text('POS INVOICE NUMBER');
+              console.log(response.success);
+              if(response.success == true){
+                $('#inv-success').text('POS INVOICE NUMBER');
+                $('#invoice-number-message').text('');
+                $('#pos-invoice-number').attr('readonly', true);
+                $('#show-upload-item').attr('disabled', false); 
+                $('#submit-invoice-btn').hide();
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'bottom-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  }
+                })
 
-              const Toast = Swal.mixin({
-                toast: true,
-                position: 'bottom-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.addEventListener('mouseenter', Swal.stopTimer)
-                  toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-              })
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Pos invoice number saved successfully'
+                })
+              }
+              else{
+                $('#invoice-number-message').text('POS INVOICE NUMBER does not match to the system');
+                $('#invoice-number-message').css('color', '#FF312E');
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'bottom-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  }
+                })
 
-              Toast.fire({
-                icon: 'success',
-                title: 'Pos invoice number saved successfully'
-              })
-
+                Toast.fire({
+                  icon: 'error',
+                  title: 'The Invoice number does not match to the system'
+                })
+              }
             },
             error: function(error){
               console.log(error);
@@ -445,9 +456,7 @@
       }
 
       transactionValidation();
-
       toggleAndClosing();
-
       stepFour();
 
     });
