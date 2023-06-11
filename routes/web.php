@@ -42,25 +42,6 @@ Route::get('admin/g_c_lists/email', function(){
     return view('/redeem_qr.sendemail');
 });
 
-// Redeemed Email
-Route::get('/redeemed_email', function() {
-    $email = EmailTesting::get()->first();
-    $name = 'Patrick';
-    $gc_description = '50% sale';
-    $gc_value = '500php';
-    $url = url('admin/g_c_lists/edit/' . $id.'?value='.$qr_reference_number);
-    $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
-    $qr_code = "<a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a>";
-    
-    $htmlEmail = str_replace(
-        ['[name]', '[campaign_id]', '[gc_description]', '[qr_code]'],
-        [$name, $gc_description, $gc_value, $qr_code ],
-        $email->html_email
-    );
-
-    return view('redeem_qr.redeemedemail', compact('htmlEmail'));
-});
-
 Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
     $data['pos_sale'] = DB::connection('mysql_tunnel')
