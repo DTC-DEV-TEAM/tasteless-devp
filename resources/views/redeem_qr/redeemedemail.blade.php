@@ -19,7 +19,7 @@
 
         <p>Campaign ID: {{ $row->campaign_id }}</p>
         <p>Redeemed On: {{ date('F d, Y', strtotime($row->cashier_date_transact)) }}</p>
-
+        <br>
         <p>If you have any questions or need further assistance, please don't hesitate to contact our customer support team.</p>
 
         <p>Thank you again for choosing our service.</p>
