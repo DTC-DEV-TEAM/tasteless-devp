@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\CompanyId;
 use App\GCList;
 use App\IdType;
 use Session;
@@ -20,10 +21,18 @@ use Intervention\Image\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\EmailTesting;
 use App\Jobs\GCListFetchJob;
+use App\StoreConcept;
 use Illuminate\Support\Facades\Http;
 
 
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {
+
+		function __construct(){
+			
+			GCListFetchJob::dispatch();
+			date_default_timezone_set("Asia/Manila");
+			date_default_timezone_get();
+		}
 
 	    public function cbInit() {
 
@@ -36,7 +45,12 @@ use Illuminate\Support\Facades\Http;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
 			$this->button_add = false;
-			$this->button_edit = true;
+			if(CRUDBooster::isSuperAdmin()){
+				$this->button_edit = true;
+			}
+			else{
+				$this->button_edit = false;
+			}
 			$this->button_delete = true;
 			$this->button_detail = true;
 			$this->button_show = true;
@@ -254,26 +268,23 @@ use Illuminate\Support\Facades\Http;
 	    |
 	    */
 	    public function hook_query_index(&$query) {
-			
-			GCListFetchJob::dispatch();
 
 			$query->where('uploaded_img', null);
 
+			$faker = Factory::create();
+
+			// for($i=0; $i<5; $i++){
+			// 	GCList::create([
+			// 		'name' => $faker->name,
+			// 		'phone' => $faker->phoneNumber,
+			// 		'email' => $faker->email,
+			// 		'campaign_id' => 1,
+			// 		'qr_reference_number' => Str::random(10)
+			// 	]);
+			// }
 	    }
 		
 	    /*
-		// $faker = Factory::create();
-
-		// for($i=0; $i<5; $i++){
-		// 	GCList::create([
-		// 		'name' => $faker->name,
-		// 		'phone' => $faker->phoneNumber,
-		// 		'email' => $faker->email,
-		// 		'campaign_id' => 1,
-		// 		'qr_reference_number' => Str::random(10)
-		// 	]);
-		// }
-
 	    | ---------------------------------------------------------------------- 
 	    | Hook for manipulate row of index table html 
 	    | ---------------------------------------------------------------------- 
@@ -361,7 +372,7 @@ use Illuminate\Support\Facades\Http;
 	    //By the way, you can still create your own method in here... :) 
 
 		public function getScanQR(IlluminateRequest $request) {
-			//Create an Auth
+			
 			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
@@ -370,13 +381,11 @@ use Illuminate\Support\Facades\Http;
 			$data['page_title'] = 'Scan QR';
 			$data['scannedData'] = $request->input('data'); 
 
-			
-			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.scan_qr',$data);
 		}
 
 		public function getEdit($id) {
-			//Create an Auth
+			
 			if(!CRUDBooster::isUpdate() && $this->global_privilege==FALSE || $this->button_edit==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
@@ -403,20 +412,16 @@ use Illuminate\Support\Facades\Http;
 					->first();
 
 				$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
-				
-				//Please use view method instead view method from laravel
+
 				return $this->view('redeem_qr.qr_redeem_section',$data);
 
-			}
+			}else{
 
-			else{
 				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
-
 			}
-
 		}
 
-		public function redeemCode(IlluminateRequest $request){
+		public function redeemCode(IlluminateRequest $request) {
 			
 			$return_inputs = $request->all();
 			$id = $return_inputs['user_id'];
@@ -452,23 +457,41 @@ use Illuminate\Support\Facades\Http;
 			return response()->json(['test'=>$user_information]);
 		}
 
-		public function inputInvoice(IlluminateRequest $request){
+		public function inputInvoice(IlluminateRequest $request) {
 
 			$return_inputs = $request->all();
+			$crudbooster_my_id = CRUDBooster::myId();
+
+			$cms_user = DB::table('cms_users')->where('id', $crudbooster_my_id)->first();
+
 			$id = $return_inputs['userId'];
 			$invoice_number = $return_inputs['posInvoiceNumber'];
 
 			$user_information = GCList::find($id);
 
-			$user_information->update(
-				['invoice_number'=>$invoice_number]
-			);
+			// For testing 
+			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
 
-			return response()->json(['success'=>'Successful saving invoice number']);
+			// // $invoice_number_exists = DB::connection('mysql_tunnel')
+			// // ->table('pos_sale')
+			// // ->where('fcompanyid',$company_name)
+			// // ->where('fofficeid',$store_name)
+			// // ->where('fdocument_no',$invoice_number)
+			// // ->exists();
 
+			if($invoice_number_exists){
+
+				$user_information->update(
+					['invoice_number'=>$invoice_number]
+				);
+			}else{
+				$invoice_number_exists;
+			}
+
+			return response()->json(['success'=>$invoice_number_exists]);
 		}
 
-		public function closeTransaction(IlluminateRequest $request){
+		public function closeTransaction(IlluminateRequest $request) {
 			
 			$validate = $request->validate([
 				'item_image' => 'required|image'
@@ -492,9 +515,9 @@ use Illuminate\Support\Facades\Http;
 			->where('g_c_lists.id',$id)
 			->first();
 			
-			$filename = 'redeemed_item'.'_'.$user_information->id.'_'.substr(uniqid(), 0, 5).'.'.$img_file->getClientOriginalExtension();
+			$filename = 'redeemed_item_'.'id'."$id".'_'.bin2hex(random_bytes(3)).'.'.$img_file->getClientOriginalExtension();
 			$image = Image::make($img_file);
-
+			
 			$image->resize(1024, 768, function ($constraint) {
 				$constraint->aspectRatio();
 				$constraint->upsize();
@@ -521,8 +544,8 @@ use Illuminate\Support\Facades\Http;
 					$message->to($email)->subject('Qr Code Redemption!');
 					$message->from('punzalan2233@gmail.com', 'Patrick Lester Punzalan');
 				});
-
 			} catch (\Exception $e) {
+
 				dd($e);
 			}
 			
@@ -551,7 +574,6 @@ use Illuminate\Support\Facades\Http;
 				->where('g_c_lists.id',$id)
 				->first();
 			
-			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.qr_redeem_section_view',$data);
 		}
 
