@@ -31,7 +31,8 @@ use Session;
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			// $this->col[] = ["label"=>"ID","name"=>"id"];
+			$this->col[] = ["label"=>"Item Receipt","name"=>"uploaded_img"];
+			$this->col[] = ["label"=>"ID","name"=>"id"];
 			$this->col[] = ["label"=>"Name","name"=>"name"];
 			$this->col[] = ["label"=>"Phone","name"=>"phone"];
 			$this->col[] = ["label"=>"Email","name"=>"email"];
@@ -251,6 +252,10 @@ use Session;
 	    */    
 	    public function hook_row_index($column_index,&$column_value) {	        
 	    	//Your code here
+			if($column_index == '2'){
+				$url = asset('uploaded_item/img/');
+				$column_value = "<img src='$url"."/$column_value' style='max-height: 100px; max-width: 120px;'>";
+			}
 	    }
 
 	    /*
