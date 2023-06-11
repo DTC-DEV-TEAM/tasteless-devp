@@ -8,6 +8,9 @@
 	class AdminIdTypesController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 		public function __construct() {
+
+			date_default_timezone_set("Asia/Manila");
+			date_default_timezone_get();
 			DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping("enum", "string");
 		}
 
@@ -259,8 +262,9 @@
 	    |
 	    */
 	    public function hook_before_add(&$postdata) {        
-	        //Your code here
+	        
 			$postdata['created_by'] = CRUDBooster::myId();
+			$postdata['updated_at'] = date('Y-m-d H:i:s');
 
 	    }
 
@@ -285,8 +289,9 @@
 	    | 
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
-	        //Your code here
+	        
 			$postdata['updated_by'] = CRUDBooster::myId();
+			$postdata['updated_at'] = date('Y-m-d H:i:s');
 
 	    }
 
