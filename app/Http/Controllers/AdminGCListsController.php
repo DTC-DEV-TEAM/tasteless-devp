@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Http;
 			
 			GCListFetchJob::dispatch();
 			date_default_timezone_set("Asia/Manila");
-			date_default_timezone_get();
+			date_default_timezone_get();	
 		}
 
 	    public function cbInit() {
@@ -468,16 +468,20 @@ use Illuminate\Support\Facades\Http;
 			$invoice_number = $return_inputs['posInvoiceNumber'];
 
 			$user_information = GCList::find($id);
-
+			
 			// For testing 
 			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
-
-			// // $invoice_number_exists = DB::connection('mysql_tunnel')
-			// // ->table('pos_sale')
-			// // ->where('fcompanyid',$company_name)
-			// // ->where('fofficeid',$store_name)
-			// // ->where('fdocument_no',$invoice_number)
-			// // ->exists();
+			
+			
+			// $company_name = CompanyId::find($user_information->company_id)->company_name;
+			// $store_name = StoreConcept::find($user_information->id_store_concept)->name;
+			
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$company_name)
+			// ->where('fofficeid',$store_name)
+			// ->where('fdocument_no',$invoice_number)
+			// ->exists();
 
 			if($invoice_number_exists){
 
