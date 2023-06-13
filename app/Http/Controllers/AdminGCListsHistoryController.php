@@ -149,7 +149,7 @@ use Session;
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = 'NULL';
+	        $this->script_js = null;
 
 
             /*
