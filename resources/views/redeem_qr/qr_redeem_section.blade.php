@@ -334,7 +334,7 @@
             confetti({
               particleCount: 100,
               spread: 70,
-              origin: { y: 0.8, x: 0.57 }
+              origin: { y: 0.8, x: 0.5 }
             });
             
             // $('#qr-reference-number').text(`CAMPAIGN ID REFERENCE #: ${response.test.campaign_id} - ${response.test.qr_reference_number}`)
