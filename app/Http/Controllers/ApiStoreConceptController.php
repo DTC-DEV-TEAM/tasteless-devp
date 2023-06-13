@@ -22,7 +22,7 @@
 
 		    public function hook_query(&$query) {
 		        //This method is to customize the sql query
-
+				$query->orderBy('id','asc');
 		    }
 
 		    public function hook_after($postdata,&$result) {
