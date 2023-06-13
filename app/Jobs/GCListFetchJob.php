@@ -36,6 +36,7 @@ class GCListFetchJob implements ShouldQueue
     public function handle()
     {  
 
+        sleep(1);
         // Prod
         // $response = Http::withHeaders([
         //     'Content-Type' => 'application/json',
@@ -74,15 +75,20 @@ class GCListFetchJob implements ShouldQueue
         ])->get('http://127.0.0.1:8080/api/redemption_code');
 
         $gc_list_fetch = $redemption_list->json();
-        
-        $gc_list_data = array_reverse($gc_list_fetch['data']);
 
-        foreach ($gc_list_data as $item) {
-            GCList::firstOrCreate(
-                ['id' => $item['id']],
-                $item
-            );
+        if($gc_list_fetch['data']){
+
+            foreach ($gc_list_fetch['data'] as $item) {
+                GCList::firstOrCreate(
+                    ['id' => $item['id']],
+                    $item
+                );
+            }
+        }else{
+            return;
         }
+
+        sleep(1);
 
         // Localhost fetch campaign
 		$response = Http::withHeaders([
@@ -99,13 +105,16 @@ class GCListFetchJob implements ShouldQueue
 
         $gc_list_fetch = $redemption_list->json();
         
-        $gc_list_data = array_reverse($gc_list_fetch['data']);
+        if($gc_list_fetch['data']){
 
-        foreach ($gc_list_data as $item) {
-            QrCreation::updateOrCreate(
-                ['id' => $item['id']],
-                $item
-            );
+            foreach ($gc_list_fetch['data'] as $item) {
+                QrCreation::firstOrCreate(
+                    ['id' => $item['id']],
+                    $item
+                );
+            }
+        }else{
+            return;
         }
     }
 }
