@@ -53,10 +53,19 @@ class AdminCmsUsersController extends CBController {
 
 			$(document).ready(function(){
 
+				const check_privilege_id = $('#id_cms_privileges').val();
+
 				$('#form-group-company_id').hide();
 				$('#form-group-id_store_concept').hide();
 				$('#company_id').attr('required', false);
 				$('#id_store_concept').attr('required', false);
+				
+				if(check_privilege_id == 3){
+					$('#form-group-company_id').show();
+					$('#form-group-id_store_concept').show();
+					$('#company_id').attr('required', true);
+					$('#id_store_concept').attr('required', true);
+				}
 
 				$('#id_cms_privileges').on('change', function(){
 
