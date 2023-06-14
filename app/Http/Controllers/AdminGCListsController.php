@@ -535,7 +535,7 @@ use Illuminate\Support\Facades\Http;
 
 			GCList::find($id)->update([
 				'uploaded_img'=>$filename,
-				'cashier_date_transact' => date('Y-m-d'),
+				'cashier_date_transact' => date('Y-m-d H:i:s'),
 				'cashier_name' => CRUDBooster::myId()
 			]);
 			
