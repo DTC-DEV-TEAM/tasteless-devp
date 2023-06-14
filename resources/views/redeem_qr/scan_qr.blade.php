@@ -9,7 +9,7 @@
 
 @section('content')
     <!-- Your html goes here -->
-    <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p>
+    {{-- <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p> --}}
     <div class='panel panel-default'>
         <div class='panel-heading'>Show Results</div>
         <div class='panel-body panel_body_section'>
