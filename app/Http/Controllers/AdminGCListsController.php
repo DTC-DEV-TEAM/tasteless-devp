@@ -269,9 +269,13 @@ use Illuminate\Support\Facades\Http;
 	    */
 	    public function hook_query_index(&$query) {
 
-			$query->where('uploaded_img', null);
+			if(CRUDBooster::isSuperAdmin()){
+				$query->where('uploaded_img', null);
+			}else{
+				$query->whereRaw('1 = 0'); // Return an empty result
+			}
 
-			$faker = Factory::create();
+			// $faker = Factory::create();
 
 			// for($i=0; $i<5; $i++){
 			// 	GCList::create([
@@ -382,6 +386,10 @@ use Illuminate\Support\Facades\Http;
 			$data['scannedData'] = $request->input('data'); 
 
 			return $this->view('redeem_qr.scan_qr',$data);
+		}
+
+		public function getIndex(){
+			return redirect(CRUDBooster::mainpath('scan_qr'));
 		}
 
 		public function getEdit($id) {
