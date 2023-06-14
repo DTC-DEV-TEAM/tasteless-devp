@@ -39,8 +39,8 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Valids","name"=>"valid_ids"];
 			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
-			$this->col[] = ["label"=>"Updated By","name"=>"updated_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Created At","name"=>"created_at"];
+			$this->col[] = ["label"=>"Updated By","name"=>"updated_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Updated At","name"=>"updated_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
