@@ -65,41 +65,40 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            {{-- <?php
+            <?php
+                // $url = 'https://devp.digitstrading.ph/api/get-token';
+                // $body = [
+                //     'secret' => '9f56aa110c022b17fc1c7cec3fca2016'
+                // ];
+                // $curl = curl_init($url);
+                // curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                // curl_setopt($curl, CURLOPT_POST, true);
+                // curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
+                // $response = curl_exec($curl);
+                // curl_close($curl);
+                // $data = json_decode($response, true);
 
-                $url = 'https://devp.digitstrading.ph/api/get-token';
-                $body = [
-                    'secret' => '9f56aa110c022b17fc1c7cec3fca2016'
-                ];
-                $curl = curl_init($url);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
-                $response = curl_exec($curl);
-                curl_close($curl);
-                $data = json_decode($response, true);
+                // $access_token = $data['data']['access_token'];
 
-                $access_token = $data['data']['access_token'];
+                // // DEVP URL
+                // $devp_url = 'https://devp.digitstrading.ph/api/redemption_code';
 
-                // DEVP URL
-                $devp_url = 'https://devp.digitstrading.ph/api/redemption_code';
+                // $headers = array(
+                //     'Authorization: Bearer ' . $access_token,
+                // );
 
-                $headers = array(
-                    'Authorization: Bearer ' . $access_token,
-                );
+                // $curl = curl_init($devp_url);
+                // curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-                $curl = curl_init($devp_url);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                // $response = curl_exec($curl);
+                // curl_close($curl);
 
-                $response = curl_exec($curl);
-                curl_close($curl);
+                // $data = json_decode($response, true);
 
-                $data = json_decode($response, true);
-
-                dd($data);
-            ?> --}}
+                // dd($data);
+            ?>
         </div>
     </body>
 </html>
