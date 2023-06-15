@@ -73,9 +73,9 @@ use App\Jobs\SendEmailJob;
 			$this->form[] = ['label'=>'Batch Group','name'=>'batch_group','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
 			$this->form[] = ['label'=>'Batch Number','name'=>'batch_number','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
 			$this->form[] = ['label'=>'Company Name','name'=>'company_id','type'=>'select','validation'=>'required|min:1|max:255',"datatable"=>"company_ids,company_name",'width'=>'col-sm-6'];
-			if(!(CRUDBooster::getCurrentMethod() == "getEdit")){
-				$this->form[] = ['label'=>'Upload Limit','name'=>'upload_limit','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			}
+			// if(!(CRUDBooster::getCurrentMethod() == "getEdit")){
+			// 	$this->form[] = ['label'=>'Upload Limit','name'=>'upload_limit','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
+			// }
 			# END FORM DO NOT REMOVE THIS LINE
 
 			/* 
