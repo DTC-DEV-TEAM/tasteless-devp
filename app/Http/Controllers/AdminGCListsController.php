@@ -425,7 +425,7 @@ use Illuminate\Support\Facades\Http;
 
 			}else{
 
-				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
+				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area."),"danger");
 			}
 		}
 
