@@ -554,7 +554,7 @@ use Illuminate\Support\Facades\Http;
 
 				Mail::send(['html' => 'redeem_qr.redeemedemail'], $data, function($message) use ($email) {
 					$message->to($email)->subject('Qr Code Redemption!');
-					$message->from('punzalan2233@gmail.com', 'Patrick Lester Punzalan');
+					$message->from(env('MAIL_USERNAME'), env('APP_NAME'));
 				});
 			} catch (\Exception $e) {
 
