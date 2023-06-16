@@ -39,9 +39,6 @@ class RunJobs extends Command
      */
     public function handle()
     {
-        // Artisan::call('queue:restart');
-        // Artisan::call('queue:work');
-        // Artisan::call('queue:retry', ['--all' => true]);
 
         Artisan::call('queue:restart');
         // Retry all failed jobs
