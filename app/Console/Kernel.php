@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\RunJobs::class,
+        \App\Console\Commands\RunFetchGcListApi::class,
     ];
 
     /**
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('command:runjobs')->everyMinute();
+        $schedule->command('command:fetchgclistapi')->dailyAt('00:00');
     }
 
     /**
