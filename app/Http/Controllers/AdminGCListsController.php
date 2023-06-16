@@ -425,7 +425,7 @@ use Illuminate\Support\Facades\Http;
 
 			}else{
 
-				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area."),"danger");
+				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"info");
 			}
 		}
 
@@ -561,7 +561,7 @@ use Illuminate\Support\Facades\Http;
 				dd($e);
 			}
 			
-			CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE # : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
+			CRUDBooster::redirect(CRUDBooster::adminPath('g_c_lists/scan_qr'), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE # : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
 		}
 
 		public function getDetail($id) {
