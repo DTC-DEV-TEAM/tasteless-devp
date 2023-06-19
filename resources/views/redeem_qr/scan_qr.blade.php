@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-
+    @once
     <script>
         
         $(document).ready(function(){
@@ -93,7 +93,7 @@
                 });
             }
         })
-
     </script>
+    @endonce
     
 @endsection
