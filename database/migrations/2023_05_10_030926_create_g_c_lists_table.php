@@ -23,7 +23,7 @@ class CreateGCListsTable extends Migration
             $table->integer('email_is_sent')->default('0')->nullable();
             $table->string('id_number')->nullable();
             $table->string('id_type')->nullable();
-            $table->string('other_id_type')->nullable();
+            $table->string('is_fetch')->nullable();
             $table->string('customer_reference_number')->nullable();
             $table->string('qr_reference_number')->nullable();
             $table->string('store_concept')->nullable();
