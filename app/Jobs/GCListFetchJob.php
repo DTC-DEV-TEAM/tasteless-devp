@@ -43,7 +43,7 @@ class GCListFetchJob implements ShouldQueue
             // Localhost Fetch Gclist
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post('http://egc.digits.com.ph/api/get-token', [
+            ])->post('https://egc.digits.com.ph/api/get-token', [
                 'secret' => '84aad301b67368285f7b6f17eed0a064',
             ]);
 
@@ -51,7 +51,7 @@ class GCListFetchJob implements ShouldQueue
 
             $redemption_list = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get('http://egc.digits.com.ph/api/redemption_code');
+            ])->get('https://egc.digits.com.ph/api/redemption_code');
 
             $gc_list_fetch = $redemption_list->json();
 
@@ -72,7 +72,7 @@ class GCListFetchJob implements ShouldQueue
             // Localhost fetch campaign
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post('http://egc.digits.com.ph/api/get-token', [
+            ])->post('https://egc.digits.com.ph/api/get-token', [
                 'secret' => '84aad301b67368285f7b6f17eed0a064',
             ]);
 
@@ -80,7 +80,7 @@ class GCListFetchJob implements ShouldQueue
 
             $redemption_list = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get('http://egc.digits.com.ph/api/qr_creation');
+            ])->get('https://egc.digits.com.ph/api/qr_creation');
 
             $gc_list_fetch = $redemption_list->json();
             
