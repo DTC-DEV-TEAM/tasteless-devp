@@ -435,7 +435,6 @@ use Illuminate\Support\Facades\Http;
 			$id = $return_inputs['user_id'];
 			$id_number = $return_inputs['id_number'];
 			$id_type = $return_inputs['id_type'];
-			$other_id_type = $return_inputs['other_id_type'];
 
 			GCList::where('id', $id)->update([
 
@@ -444,7 +443,6 @@ use Illuminate\Support\Facades\Http;
 				'cashier_date_transact' => date('Y-m-d H:i:s'),
 				'id_number' => $id_number,
 				'id_type' => $id_type,
-				'other_id_type' => $other_id_type,
 				'status' => 'CLAIMED',
 			]);
 
