@@ -58,6 +58,9 @@ class GCListFetchJob implements ShouldQueue
             if($gc_list_fetch['data']){
 
                 foreach ($gc_list_fetch['data'] as $item) {
+
+                    $item['is_fetch'] = 1;
+
                     GCList::firstOrCreate(
                         ['id' => $item['id']],
                         $item
