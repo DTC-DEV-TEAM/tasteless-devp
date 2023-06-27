@@ -189,7 +189,9 @@ video{
 
 .qr-reference-card{
     height: 300px;
-    width: calc(100% - 110px);
+    width: 100%;
+    max-width: 550px;
+    /* width: calc(100% - 110px); */
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
     position: absolute;
     top: 50%;
@@ -293,7 +295,8 @@ video{
 /* Input Invoice Number */
 .qr-invoice-number-card{
     height: 300px;
-    width: calc(100% - 110px);
+    width: 100%;
+    max-width: 550px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
     position: absolute;
     top: 50%;
