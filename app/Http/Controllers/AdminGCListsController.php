@@ -504,7 +504,7 @@ use Illuminate\Support\Facades\Http;
 		public function closeTransaction(IlluminateRequest $request) {
 			
 			$validate = $request->validate([
-				'item_image' => 'required|image'
+				'item_image' => 'required|image|max:5120'
 			]);
 
 			$img_file = $request->all()['item_image'];

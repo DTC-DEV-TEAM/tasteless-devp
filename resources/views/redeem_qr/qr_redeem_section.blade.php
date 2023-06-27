@@ -120,7 +120,7 @@
             </div>
             <div style="display: flex; justify-content: center;">
               @if ($errors->has('item_image'))
-              <span style="color: rgb(237, 66, 66); font-weight: bold; margin: auto;">Upload Image Only</span>
+              <span style="color: rgb(237, 66, 66); font-weight: bold; margin: auto;">{{ $errors->first('item_image') }}</span>
               @endif
             </div>
             <div class="uploading-item-close-transaction">
