@@ -37,11 +37,13 @@ use Session;
 			$this->col[] = ["label"=>"Phone","name"=>"phone"];
 			$this->col[] = ["label"=>"Email","name"=>"email"];
 			$this->col[] = ["label"=>"Campaign ID", "name"=>"campaign_id", "join"=>"qr_creations,campaign_id"];
-			$this->col[] = ["label"=>"GC Description", "name"=>"campaign_id", "join"=>"qr_creations,gc_description"];
-			$this->col[] = ["label"=>"GC Value", "name"=>"campaign_id", "join"=>"qr_creations,gc_value"];
-			$this->col[] = ["label"=>"Number of Gcs", "name"=>"campaign_id", "join"=>"qr_creations,number_of_gcs"];
-			$this->col[] = ["label"=>"Batch Group","name"=>"campaign_id","join"=>"qr_creations,batch_group"];
-			$this->col[] = ["label"=>"Batch Number","name"=>"campaign_id","join"=>"qr_creations,batch_number"];
+			$this->col[] = ["label"=>"GC Description","name"=>"campaign_id", "join"=>"qr_creations,gc_description"];
+			$this->col[] = ["label"=>"GC Value","name"=>"campaign_id", "join"=>"qr_creations,gc_value"];
+			$this->col[] = ["label"=>"GC Reference Number","name"=>"qr_reference_number"];
+			$this->col[] = ["label"=>"POS Invoice Number","name"=>"invoice_number"];
+			// $this->col[] = ["label"=>"Number of Gcs", "name"=>"campaign_id", "join"=>"qr_creations,number_of_gcs"];
+			// $this->col[] = ["label"=>"Batch Group","name"=>"campaign_id","join"=>"qr_creations,batch_group"];
+			// $this->col[] = ["label"=>"Batch Number","name"=>"campaign_id","join"=>"qr_creations,batch_number"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
