@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\GCList;
 use App\IdType;
 use Session;
 	use Request;
@@ -343,29 +344,34 @@ use Session;
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 			
-			$data = [];
-			$data['page_title'] = 'Redeem QR';
-			$data['row'] = DB::table('g_c_lists')
-				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-				->select('g_c_lists.*',
-					'qr.campaign_id',
-					'qr.gc_description',
-					'qr.gc_value',
-					'qr.number_of_gcs',
-					'qr.batch_group',
-					'qr.batch_number',
-					'id_name.valid_ids')
-				->where('g_c_lists.id',$id)
-				->first();
+			if(GCList::find($id)->uploaded_img == null){
+				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
+			}else{
 
-			$data['valid_ids'] = IdType::get();
-
-			// Generate QR Code
-			$qrCodeData = $data['row']->email.'|'.$data['row']->id;
-
-			//Please use view method instead view method from laravel
-			return $this->view('redeem_qr.qr_redeem_section',$data);
+				$data = [];
+				$data['page_title'] = 'Redeem QR';
+				$data['row'] = DB::table('g_c_lists')
+					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+					->select('g_c_lists.*',
+						'qr.campaign_id',
+						'qr.gc_description',
+						'qr.gc_value',
+						'qr.number_of_gcs',
+						'qr.batch_group',
+						'qr.batch_number',
+						'id_name.valid_ids')
+					->where('g_c_lists.id',$id)
+					->first();
+	
+				$data['valid_ids'] = IdType::get();
+	
+				// Generate QR Code
+				$qrCodeData = $data['row']->email.'|'.$data['row']->id;
+	
+				//Please use view method instead view method from laravel
+				return $this->view('redeem_qr.qr_redeem_section',$data);
+			};
 
 		}
 
