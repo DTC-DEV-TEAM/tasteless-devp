@@ -40,7 +40,7 @@ use Session;
 			$this->col[] = ["label"=>"Campaign ID", "name"=>"campaign_id", "join"=>"qr_creations,campaign_id"];
 			$this->col[] = ["label"=>"GC Description","name"=>"campaign_id", "join"=>"qr_creations,gc_description"];
 			$this->col[] = ["label"=>"GC Value","name"=>"campaign_id", "join"=>"qr_creations,gc_value"];
-			$this->col[] = ["label"=>"GC Reference Number","name"=>"qr_reference_number"];
+			$this->col[] = ["label"=>"GC Reference Number","name"=>"id", "join"=>"g_c_lists_view,gclists", "join_id"=>"id"];
 			$this->col[] = ["label"=>"POS Invoice Number","name"=>"invoice_number"];
 			// $this->col[] = ["label"=>"Number of Gcs", "name"=>"campaign_id", "join"=>"qr_creations,number_of_gcs"];
 			// $this->col[] = ["label"=>"Batch Group","name"=>"campaign_id","join"=>"qr_creations,batch_group"];
@@ -244,7 +244,7 @@ use Session;
 			// 	->where(function($sub_query){
 			// 		$sub_query->where('invoice_number', '!=', null)->where('status', '!=', 'EXPIRED');
 			// 	});
-			$query->where('uploaded_img', '!=', null);
+			$query->where('g_c_lists.uploaded_img', '!=', null);
 	    }
 
 	    /*
