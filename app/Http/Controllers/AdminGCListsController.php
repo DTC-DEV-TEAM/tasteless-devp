@@ -401,7 +401,7 @@ use Illuminate\Support\Facades\Http;
 			$slug = Request::all()['value'];
 			$user = GCList::find($id);
 
-			if ($user->qr_reference_number == $slug && !$user->uploaded_img || CRUDBooster::isSuperAdmin()){
+			if ($user->qr_reference_number == $slug && $slug || CRUDBooster::isSuperAdmin()){
 			
 				$data = [];
 				$data['page_title'] = 'Redeem QR';
