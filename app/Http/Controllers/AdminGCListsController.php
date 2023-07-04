@@ -45,12 +45,7 @@ use Illuminate\Support\Facades\Http;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
 			$this->button_add = false;
-			if(CRUDBooster::isSuperAdmin()){
-				$this->button_edit = true;
-			}
-			else{
-				$this->button_edit = false;
-			}
+			$this->button_edit = true;
 			$this->button_delete = true;
 			$this->button_detail = true;
 			$this->button_show = true;
@@ -269,11 +264,11 @@ use Illuminate\Support\Facades\Http;
 	    */
 	    public function hook_query_index(&$query) {
 
-			if(CRUDBooster::isSuperAdmin()){
-				$query->where('uploaded_img', null);
-			}else{
-				$query->whereRaw('1 = 0'); // Return an empty result
-			}
+			// if(CRUDBooster::isSuperAdmin()){
+			// 	$query->where('uploaded_img', null);
+			// }else{
+			// 	$query->whereRaw('1 = 0'); // Return an empty result
+			// }
 
 			// $faker = Factory::create();
 
@@ -398,10 +393,16 @@ use Illuminate\Support\Facades\Http;
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 
-			$slug = Request::all()['value'];
-			$user = GCList::find($id);
 
-			if ($user->qr_reference_number == $slug && $slug || CRUDBooster::isSuperAdmin()){
+			$slug = Request::all()['value'];
+			$user_store = DB::table('cms_users')->where('id', CRUDBooster::myId())->get()->first();
+			$user = GCList::find($id);
+			$campaign_id = QrCreation::find($user->campaign_id);
+			$participating_stores = explode(",",$campaign_id->number_of_gcs);
+
+			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
+
+			if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDBooster::isSuperAdmin()){
 			
 				$data = [];
 				$data['page_title'] = 'Redeem QR';
