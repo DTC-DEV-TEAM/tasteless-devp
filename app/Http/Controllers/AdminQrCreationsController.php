@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\CompanyId;
 use App\IdType;
 use Session;
 use Request;
@@ -17,7 +18,9 @@ use Mail;
 use Illuminate\Support\Facades\Session as UserSession;
 use App\Mail\QrEmail;
 use App\Jobs\SendEmailJob;
-
+use App\StoreConcept;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
 
 	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -40,7 +43,7 @@ use App\Jobs\SendEmailJob;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
 			$this->button_add = true;
-			$this->button_edit = true;
+			$this->button_edit = false;
 			$this->button_delete = true;
 			$this->button_detail = true;
 			$this->button_show = true;
@@ -71,11 +74,8 @@ use App\Jobs\SendEmailJob;
 			$this->form[] = ['label'=>'Gc Value','name'=>'gc_value','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
 			$this->form[] = ['label'=>'Number Of Gcs','name'=>'batch_number','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
 			$this->form[] = ['label'=>'Batch Group','name'=>'batch_group','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
-			// $this->form[] = ['label'=>'Batch Number','name'=>'batch_number','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
+			$this->form[] = ['label'=>'PO Number','name'=>'po_number','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
 			$this->form[] = ['label'=>'Company Name','name'=>'company_id','type'=>'select','validation'=>'required|min:1|max:255',"datatable"=>"company_ids,company_name",'width'=>'col-sm-6'];
-			// if(!(CRUDBooster::getCurrentMethod() == "getEdit")){
-			// 	$this->form[] = ['label'=>'Upload Limit','name'=>'upload_limit','type'=>'number','validation'=>'required|integer|min:0','width'=>'col-sm-6'];
-			// }
 			# END FORM DO NOT REMOVE THIS LINE
 
 			/* 
@@ -285,9 +285,6 @@ use App\Jobs\SendEmailJob;
 		*/
 		public function hook_before_add(&$postdata) {        
 
-			$postdata['status_id'] = 1;
-			$postdata['created_by'] = CRUDBooster::myId();
-			$postdata['updated_at'] = date('Y-m-d H:i:s');
 		}
 
 		/* 
@@ -440,6 +437,63 @@ use App\Jobs\SendEmailJob;
 			}
 
 			return redirect(route('qr_creations_edit', $campaign_id))->with('success', 'Excel file uploaded successfully. QR codes have been sent to the email addresses.')->send();
+
+		}
+
+		public function getAdd() {
+			//Create an Auth
+			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
+				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+			}
+			
+			$company = CompanyId::get();
+			$store = StoreConcept::get();
+
+			$data = [];
+			$data['page_title'] = 'Add Data';
+			$data['company_id'] = $company;
+			$data['stores'] = $store;
+			// dd($data['company_id']);
+			//Please use view method instead view method from laravel
+			return $this->view('redeem_qr.add_campaign',$data);
+		}
+
+		public function getDetail($id) {
+			
+			$qr_creation = DB::table('qr_creations')->where('qr_creations.id', $id)
+				->leftJoin('company_ids', 'qr_creations.company_id', 'company_ids.id')
+				->select('qr_creations.*','company_ids.company_name')
+				->get()->first();
+
+			// dd($qr_creation);
+			$company = CompanyId::get();
+			$store = StoreConcept::get();
+		
+			$data = [];
+			$data['page_title'] = 'Detail Campaign Creation';
+			$data['company_id'] = $company;
+			$data['stores'] = $store;
+			$data['qr_creation'] = $qr_creation;
+
+			return $this->view('redeem_qr.add_campaign',$data);
+		}
+
+		public function addCampaign(IlluminateRequest $request){
+			
+			$campaign = $request->all();
+
+			$request->validate([
+				'campaign_id' => 'required|unique:qr_creations'
+			]);
+
+			$campaign_stores = implode(",",$campaign['stores']);
+			$campaign['number_of_gcs'] = $campaign_stores;
+			$campaign['created_by'] = CRUDBooster::myId();
+			$campaign['created_at'] = date('Y-m-d H:i:s');
+			
+			QrCreation::insert(Arr::except($campaign , ['_token','stores']));
+
+			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
 
 		}
 
