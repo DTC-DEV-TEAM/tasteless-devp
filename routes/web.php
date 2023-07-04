@@ -35,7 +35,8 @@ Route::post('admin/g_c_list/edit/redeem_code', [AdminGCListsController::class, '
 Route::post('admin/g_c_list/edit/save_invoice_number', [AdminGCListsController::class, 'inputInvoice'])->name('input_invoice');
 // Redemption Period Ended
 Route::post('admin/g_c_list/edit/close_transaction', [AdminGCListsController::class, 'closeTransaction'])->name('close_transaction');
-// Email Testing
+// Add Campaign
+Route::post('admin/qr_creations/add/campaign', [AdminQrCreationsController::class, 'addCampaign'])->name('add_campaign');
 
 // Email
 Route::get('admin/g_c_lists/email', function(){
