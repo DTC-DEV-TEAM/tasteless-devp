@@ -19,9 +19,10 @@ class CreateQrCreationsTable extends Migration
             $table->string('campaign_id')->nullable();
             $table->string('gc_description')->nullable();
             $table->integer('gc_value')->nullable();
-            $table->integer('number_of_gcs')->nullable();
+            $table->string('number_of_gcs')->nullable();
             $table->string('batch_number')->nullable();
             $table->string('batch_group')->nullable();
+            $table->string('po_number')->nullable();
             // $table->string('id_store_concept')->nullable();
             $table->string('company_id')->nullable();
             $table->string('upload_limit')->nullable();
