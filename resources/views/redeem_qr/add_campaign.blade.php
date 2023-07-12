@@ -5,6 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     <style>
         
@@ -14,6 +15,12 @@
         }
 
         .form-inputs{
+            margin: 3px 20px;
+            width: 600px;
+            flex-grow: 1;
+        }
+
+        .form-inpunts-file-type{
             margin: 3px 20px;
             width: 600px;
             flex-grow: 1;
@@ -51,6 +58,10 @@
             color: #999;
         }
 
+        .file-upload-content input[type="file"]::after {
+            content: "Choose an PDF File";
+        }
+
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             background-color: #E6E6FA; 
             color: #000000; 
@@ -82,7 +93,7 @@
     <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Campaign Creation Home</a></p>
     <div class='panel panel-default'>
         <div class='panel-heading'>Add Form</div>
-        <form method='post' action='{{ route('add_campaign') }}' autocomplete="off">
+        <form method='post' action='{{ route('add_campaign') }}' autocomplete="off" enctype="multipart/form-data">
             @csrf
             <div class='panel-body'>
 
@@ -108,24 +119,24 @@
                         <input type="number" name="batch_group" placeholder="Batch Group" required>
                     </div>
                     <div class="form-inputs">
-                        <label for="">PO Number:</label>
-                        <input type="text" name="po_number" placeholder="PO number" required>
-                    </div>
-                    <div class="form-inputs">
                         <label for="">Company Name:</label>
                         <select id="company_select" name="company_id" required>
                             <option value="" disabled required selected>Select Company Tag</option>
                             @foreach ($company_id as $company)
-                                <option value="{{ $company->id }}" {{ $qr_creation->company_id == $company->id ? 'selected':'' }}>{{ $company->company_name }}</option>
+                            <option value="{{ $company->id }}" {{ $qr_creation->company_id == $company->id ? 'selected':'' }}>{{ $company->company_name }}</option>
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-inputs">
+                        <label for="">PO Number:</label>
+                        <input type="text" name="po_number" placeholder="PO number">
+                    </div>
                     <div class="form-inputs f-select">
-                        <label for="">Participating Stores:</label>
+                        <label for="">Excluded Stores:</label>
                         <select class="store_concept" name="stores[]" multiple='multiple' required>
                             @if (!$qr_creation->campaign_id)
                             @foreach ($stores as $store)
-                                <option value="{{ $store->id }}" selected>{{ $store->name }}</option>
+                                <option value="{{ $store->id }}">{{ $store->name }}</option>
                             @endforeach
                             @else
                             @foreach ($stores as $store)
@@ -134,16 +145,36 @@
                             @endif
                         </select>
                     </div>
-                    <div class="form-inputs">
-                        @if($errors->has('campaign_id'))
-                        <p style="color: red;">{{ $errors->first('campaign_id') }}</p>
+                    <div class="form-inpunts-file-type file-upload-content">
+                        @if (!$qr_creation->po_attachment)
+                        <label for="">PO Attachment (Optional):</label>
+                        <input type="file" name="po_attachment" accept=".pdf">
+                        <br>
                         @endif
                     </div>
+                    <div class="form-inputs">
+                        <label for="">Store Logo:</label>
+                        <select id="company_select" name="store_logo" required>
+                            <option value="" disabled required selected>Select Logo</option>
+                            @foreach ($store_logo as $store)
+                            <option value="{{ $store->id }}" {{ $qr_creation->store_logo == $store->id ? 'selected':'' }}>{{ $store->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div>
+                <div class="form-inputs">
+                    @if($errors->has('campaign_id'))
+                    <p style="color: red;">{{ $errors->first('campaign_id') }}</p>
+                    @endif
                 </div>
+                @if ($qr_creation->po_attachment)
+                <div class="text-center">
+                <br>
+                    <label for="">PO Attachment</label>
+                    <iframe src="{{ asset("uploaded_po/file/$qr_creation->po_attachment") }}" width='100%' height='650' frameborder='0'></iframe>
+                </div>
+                @endif
             </div>
-
             <div class='panel-footer'>
                 <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default" style="border: 1px solid #ddd;">Cancel</a>
                 <input type='submit' class='btn btn-primary hide' id="submit_form" value='Save changes'/>
