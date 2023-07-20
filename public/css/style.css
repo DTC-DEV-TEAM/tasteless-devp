@@ -271,6 +271,7 @@ video{
     background-color: rgba(255, 255, 255, 0.87);
     border-radius: 10px;
     text-align: center;
+    position: relative;
 }
 
 .qr-reference-content span{
@@ -279,14 +280,21 @@ video{
     
 }
 
+.qr-reference-content #copy-clipboard{
+    position: absolute;
+    right: 7px;
+    cursor: pointer;
+}
+
 .redeem_layout{
     height: 100%;
-    width: 100%;
+    max-width: 100%;
     background-color: #fff;
     padding: 25px;
     border-radius: 50px;
-    box-shadow: 4px 4px  #323232;
-    border: 2px solid #323232;
+    box-shadow: 4px 4px  #323232a6;
+    border: 2px solid #323232a6;
+    /* filter: drop-shadow(0 0 0.30rem #323232); */
     position: relative;
     /* text-align: center; */
 
@@ -558,7 +566,8 @@ video{
 }
 
 .user-element input{
-    min-width: 260px;
+    width: 100%;
+    max-width: 260px;
     height: 35px;
     border-radius: 5px;
     border: 1px solid #c1c0c0;
