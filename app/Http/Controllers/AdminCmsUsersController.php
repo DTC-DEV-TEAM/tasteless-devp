@@ -28,6 +28,7 @@ class AdminCmsUsersController extends CBController {
 		# START COLUMNS DO NOT REMOVE THIS LINE
 		$this->col = array();
 		$this->col[] = array("label"=>"Name","name"=>"name");
+		$this->col[] = array("label"=>"Store","name"=>"id_store_concept", "join"=>'store_concepts,name' );
 		$this->col[] = array("label"=>"Email","name"=>"email");
 		$this->col[] = array("label"=>"Privilege","name"=>"id_cms_privileges","join"=>"cms_privileges,name");
 		$this->col[] = array("label"=>"Photo","name"=>"photo","image"=>1);		
@@ -35,7 +36,7 @@ class AdminCmsUsersController extends CBController {
 
 		# START FORM DO NOT REMOVE THIS LINE
 		$this->form = array(); 		
-		$this->form[] = array("label"=>"Name","name"=>"name",'required'=>true,'validation'=>'required|alpha_spaces|min:3','width'=>'col-sm-6');
+		$this->form[] = array("label"=>"Name","name"=>"name",'required'=>true,'validation'=>'required|min:3','width'=>'col-sm-6');
 		$this->form[] = array("label"=>"Email","name"=>"email",'required'=>true,'type'=>'email','validation'=>'required|email|unique:cms_users,email,'.CRUDBooster::getCurrentId(),'width'=>'col-sm-6');		
 		$this->form[] = array("label"=>"Photo","name"=>"photo","type"=>"upload","help"=>"Recommended resolution is 200x200px",'required'=>true,'validation'=>'required|image|max:1000','resize_width'=>90,'resize_height'=>90,'width'=>'col-sm-6');											
 		if(CRUDBooster::isSuperAdmin()){
@@ -44,7 +45,7 @@ class AdminCmsUsersController extends CBController {
 			$this->form[] = array("label"=>"Privilege","name"=>"id_cms_privileges","type"=>"select","datatable"=>"cms_privileges,name",'required'=>true,'width'=>'col-sm-6','datatable_where'=>'name="Store QR"');			
 		}
 		$this->form[] = array('label'=>'Store Concept','name'=>'id_store_concept','type'=>'select','validation'=>'required|min:1|max:255',"datatable"=>"store_concepts,name",'width'=>'col-sm-6');			
-		$this->form[] = array("label"=>"Company Name","name"=>"company_id","type"=>"select","datatable"=>"company_ids,company_name",'required'=>true,'width'=>'col-sm-6');						
+		// $this->form[] = array("label"=>"Company Name","name"=>"company_id","type"=>"select","datatable"=>"company_ids,company_name",'required'=>true,'width'=>'col-sm-6');						
 		$this->form[] = array("label"=>"Password","name"=>"password","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');
 		$this->form[] = array("label"=>"Password Confirmation","name"=>"password_confirmation","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');
 		# END FORM DO NOT REMOVE THIS LINE
@@ -111,6 +112,7 @@ class AdminCmsUsersController extends CBController {
 
 	public function hook_query_index(&$query) {
 		
+		$query->orderBy('id', 'asc');
 
 		if(CRUDBooster::myPrivilegeName() == 'Admin'){
 			$query
