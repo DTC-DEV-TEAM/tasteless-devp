@@ -37,6 +37,8 @@ Route::post('admin/g_c_list/edit/save_invoice_number', [AdminGCListsController::
 Route::post('admin/g_c_list/edit/close_transaction', [AdminGCListsController::class, 'closeTransaction'])->name('close_transaction');
 // Add Campaign
 Route::post('admin/qr_creations/add/campaign', [AdminQrCreationsController::class, 'addCampaign'])->name('add_campaign');
+// Campaign Approval
+Route::post('admin/qr_creations/edit/campaign-approval', [AdminQrCreationsController::class, 'campaignApproval'])->name('campaign_approval');
 
 // Email
 Route::get('admin/g_c_lists/email', function(){
