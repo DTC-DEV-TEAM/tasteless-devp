@@ -20,6 +20,35 @@
       background-color: #222D32 !important;
       color: white !important;
     }
+
+    .clipboard-tooltip:hover::after{
+      content: "Copy to clipboard";
+      position: absolute;
+      left: -25px;
+      top: -50px;
+      background-color: white;
+      padding: 5px;
+      color: black;
+      font-size: 12px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      border-radius: 5px;
+    }
+
+    .clipboard-tooltip:active{
+      transform: translateY(4px);
+      box-shadow: 0px 0px 0px 0px #a29bfe;
+    }
+
+    .qr_status{
+      position: absolute;
+      margin: 15px;
+      background-color: rgb(74 222 128);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
   </style>
 @endpush
 
@@ -44,6 +73,9 @@
   @endif
   <div class='panel panel-default'>
     <div class='panel-heading' style="background-color: #fff;">Redeem Form</div>
+    @if ($row->status == 'CLAIMED')
+    <div class="qr_status">{{ $row->status }}</div>
+    @endif
     <div class='panel-body qr_redeem_section'>
       <form id="redeem-close-transaction" method='post' action='{{ route('redeem_code') }}' autocomplete="off" style="display: none;" enctype="multipart/form-data">
         @csrf
@@ -74,6 +106,7 @@
             </div>
             <div class="qr-reference-content">
               <span id="qr-reference-number">{{ $row->campaign_id }} - {{ $row->qr_reference_number }}</span>
+              <span id="copy-clipboard" class="clipboard-tooltip" onclick="copyToClipboard('#qr-reference-number')"><i class='fa fa-clipboard'></i></span>
             </div>
             <div class="input-invoice-notes">
               <span style="text-transform: uppercase;">Note: Please copy and paste above your POS memo field</span>
@@ -455,10 +488,21 @@
         });        
       }
 
+
+
       transactionValidation();
       toggleAndClosing();
       stepFour();
 
     });
+
+    function copyToClipboard(element) {
+
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+      }
   </script>
 @endsection
