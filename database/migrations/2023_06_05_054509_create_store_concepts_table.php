@@ -16,6 +16,7 @@ class CreateStoreConceptsTable extends Migration
         Schema::create('store_concepts', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('fcompanyid')->nullable();
             $table->enum('status', ['ACTIVE', 'INACTIVE'])->default('ACTIVE')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
