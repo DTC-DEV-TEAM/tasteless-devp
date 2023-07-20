@@ -23,9 +23,16 @@ class CreateQrCreationsTable extends Migration
             $table->string('batch_number')->nullable();
             $table->string('batch_group')->nullable();
             $table->string('po_number')->nullable();
-            // $table->string('id_store_concept')->nullable();
+            $table->string('po_attachment')->nullable();
             $table->string('company_id')->nullable();
             $table->string('upload_limit')->nullable();
+            $table->string('store_logo')->nullable();
+            $table->integer('manager_approval')->nullable();
+            $table->timestamp('manager_approval_date')->nullable();
+            $table->integer('accounting_approval')->nullable();
+            $table->timestamp('accounting_approval_date')->nullable();
+            $table->string('billing_number')->nullable();
+            $table->integer('campaign_status')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();
