@@ -57,7 +57,7 @@
                 const canvas = document.getElementById('canvas');
                 const output = document.getElementById('output');
                 // const constraints = { video: true };
-                let constraints = { video: { facingMode: { exact: 'user' } } };
+                let constraints = { video: true };
 
                 if (navigator.userAgent.includes('Mobile')) {
                     constraints = { video: { facingMode: { exact: 'environment' } } };
