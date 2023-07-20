@@ -26,7 +26,7 @@
 			$this->button_action_style = "button_icon";
 			$this->button_add = true;
 			$this->button_edit = true;
-			$this->button_delete = true;
+			$this->button_delete = CRUDBooster::myPrivilegeName() == 'Admin' ? false : true;
 			$this->button_detail = true;
 			$this->button_show = true;
 			$this->button_filter = true;
@@ -267,7 +267,7 @@
 	    public function hook_before_add(&$postdata) {        
 	        
 			$postdata['created_by'] = CRUDBooster::myId();
-			$postdata['updated_at'] = date('Y-m-d H:i:s');
+			$postdata['created_at'] = date('Y-m-d H:i:s');
 
 	    }
 
