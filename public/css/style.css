@@ -267,7 +267,7 @@ video{
 /* QR Reference content */
 .qr-reference-content{
     min-width: 255px;
-    padding: 12px;
+    padding: 12px 27px;
     background-color: rgba(255, 255, 255, 0.87);
     border-radius: 10px;
     text-align: center;
