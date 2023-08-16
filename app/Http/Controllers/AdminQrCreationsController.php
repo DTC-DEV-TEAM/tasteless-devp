@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Validator;
 			date_default_timezone_set("Asia/Manila");
 			date_default_timezone_get();
 			DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping("enum", "string");
+
 		}
 
 		public function cbInit() {
@@ -51,7 +52,7 @@ use Illuminate\Support\Facades\Validator;
 			$this->button_show = true;
 			$this->button_filter = true;
 			$this->button_import = false;
-			$this->button_export = false;
+			$this->button_export = true;
 			$this->table = "qr_creations";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
@@ -276,16 +277,15 @@ use Illuminate\Support\Facades\Validator;
 		*/
 		public function hook_query_index(&$query) {
 			//Your code here	
-			$query->orderByRaw("
-			CASE
-				WHEN campaign_status = 'campaign_status' THEN 1
-				WHEN campaign_status = 3 THEN 2
-				WHEN campaign_status = 1 THEN 3
-				WHEN campaign_status = 2 THEN 4
-				WHEN campaign_status = 4 THEN 5
-				ELSE 6
-			END
-		");
+			$query->orderByRaw(
+				"CASE
+					WHEN campaign_status = 1 THEN 1
+					WHEN campaign_status = 2 THEN 2
+					WHEN campaign_status = 3 THEN 3
+					WHEN campaign_status = 4 THEN 5
+					ELSE 6
+				END"
+			);
 		
 		}
 
@@ -302,14 +302,14 @@ use Illuminate\Support\Facades\Validator;
 					$column_value = '<span class="label" style="background-color: rgb(34 211 238); color: white; font-size: 12px;">FOR APPROVAL</span>';
 				}else if($column_value == '2'){
 					$column_value = '<span class="label" style="background-color: rgb(251 146 60);
-					; color: white; font-size: 12px;">FOR ACCOUNTING APPROVAL</span>';
+					color: white; font-size: 12px;">FOR ACCOUNTING APPROVAL</span>';
 				}
 				else if($column_value == '3'){
 					$column_value = '<span class="label" style="background-color: rgb(74 222 128);
-					; color: white; font-size: 12px;">APPROVED</span>';
+					color: white; font-size: 12px;">APPROVED</span>';
 				}else{
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68);
-					; color: white; font-size: 12px;">REJECTED</span>';
+					color: white; font-size: 12px;">REJECTED</span>';
 				}
 			}
 		}
@@ -332,11 +332,10 @@ use Illuminate\Support\Facades\Validator;
 		| @id = last insert id
 		| 
 		*/
-		public function hook_after_add($id) {        
+		public function hook_after_add($id) {   
+			
 			//Your code here
-
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("The Campaign ID has been added."),"success")->send();
-
 		}
 
 		/* 
@@ -389,96 +388,13 @@ use Illuminate\Support\Facades\Validator;
 
 		}
 
-		//By the way, you can still create your own method in here... :) 
-		// public function getEdit($id){
-
-		// 	if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
-		// 		CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
-		// 	}
-			
-		// 	$data = [];
-		// 	$data['page_title'] = 'Upload GC List';
-		// 	$data['row'] = DB::table('qr_creations')->find($id);
-		// 	$data['valid_ids'] = IdType::get();
-		// 	$data['email_templates'] = EmailTesting::get();
-	
-		// 	return $this->view('redeem_qr.upload_gc_list',$data);
-
-		// }
-
 		public function exportGCListTemplate(){
 
 			return Excel::download(new GCListTemplateExport, 'gc_list_template.xlsx');
 		}
 
-		public function uploadGCListPost(IlluminateRequest $request){
-
-			$validatedData = $request->validate([
-				'excel_file' => 'required|mimes:xls,xlsx',
-			]);
-		
-			$campaign_id = $request->all()['campaign_id'];
-			$email_template_id = $request->all()['email_template_id'];
-			$uploaded_excel = $request->file('excel_file');
-			
-			$import = new GcListImport(compact('campaign_id', 'email_template_id'));
-			$rows = Excel::import($import, $uploaded_excel);
-			
-			// Send Email
-			$generated_qr_info = QrCreation::find($campaign_id);
-
-			$gc_list_user = GCList::where('campaign_id', $campaign_id)
-				->where('email_is_sent', 0)
-				->pluck('id')
-				->all();
-			
-			foreach($gc_list_user as $user){
-
-				$gcList = GCList::find($user);
-				
-				$id = $gcList->id;
-				$name = $gcList->name;
-				$email = $gcList->email;
-				$generated_qr_code = $gcList->qr_reference_number;
-				$campaign_id_qr = $generated_qr_info->campaign_id;
-				$gc_description = $generated_qr_info->gc_description;
-				$email_template_id = $gcList->email_template_id;
-
-				$email_testing = EmailTesting::find($email_template_id);
-				$email_template = $email_testing->html_email;
-				$email_subject = $email_testing->subject_of_the_email;
-
-				$url = url('admin/g_c_lists/edit/' . $id.'?value='.$generated_qr_code);
-				$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
-				$qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
-				
-				$html_email = str_replace(
-					['[name]', '[campaign_id]', '[gc_description]', '[qr_code]'],
-					[$name, $campaign_id_qr, $gc_description, $qr_code ],
-					$email_template
-				);
-				
-				$data = array(
-					'name'=> $name,
-					'id' => $id,
-					'qr_reference_number'=>$generated_qr_code,
-					'campaign_id_qr' => $campaign_id_qr,
-					'gc_description' => $gc_description,
-					'email' => $email,
-					'html_email' => $html_email,
-					'email_subject' => $email_subject
-				);
-
-				dispatch(new SendEmailJob($data));
-
-				// SendEmailJob::dispatch($data);
-			}
-
-			return redirect(route('qr_creations_edit', $campaign_id))->with('success', 'Excel file uploaded successfully. QR codes have been sent to the email addresses.')->send();
-
-		}
-
 		public function getAdd() {
+			
 			//Create an Auth
 			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
@@ -494,7 +410,6 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['store_logo'] = $store_logo;
 
-			// dd($data['company_id']);
 			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.add_campaign',$data);
 		}
@@ -531,11 +446,16 @@ use Illuminate\Support\Facades\Validator;
 				->leftJoin('campaign_statuses', 'qr_creations.campaign_status', 'campaign_statuses.id')
 				->leftJoin('cms_users as manager', 'qr_creations.manager_approval', 'manager.id')
 				->leftJoin('cms_users as accounting', 'qr_creations.accounting_approval', 'accounting.id')
-				->select('qr_creations.*','company_ids.company_name', 'manager.name as manager_name', 'accounting.name as accounting_name', 'campaign_statuses.name as campaign_status_name')
+				->select(
+					'qr_creations.*',
+					'company_ids.company_name', 
+					'manager.name as manager_name', 
+					'accounting.name as accounting_name', 
+					'campaign_statuses.name as campaign_status_name'
+				)
 				->get()
 				->first();
 
-			// dd($qr_creation);
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
@@ -554,6 +474,10 @@ use Illuminate\Support\Facades\Validator;
 			
 			$campaign = $request->all();
 			$excel_file = $campaign['po_attachment'];
+
+			$campaign = $request->all();
+			
+			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
 			
 			$request->validate([
 				'campaign_id' => 'required|unique:qr_creations'
@@ -576,12 +500,32 @@ use Illuminate\Support\Facades\Validator;
 				$excel_file->move(public_path('uploaded_po/file/'),$campaign_information->po_attachment);
 			}
 
+			// $email = $cms_users->email;
+			$email = 'ptice.0318@gmail.com';
+			
+			Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+				$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+				$message->from(config('send_email.username'), config('send_email.name'));
+			});
+
+			// Mail::send(['html' => 'email_testing.campaign_email'], $data, function($message) use ($test_email, $data) {
+			// 	$message->to($test_email)->subject($data['subject_of_the_email']);
+			// 	$message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+			// });
+
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
 		}
 
 		public function campaignApproval(IlluminateRequest $request){
 
 			$qr_creation = QrCreation::find($request->get('id'));
+			
+			$campaign = array(
+				'campaign_status' => $qr_creation->campaign_status,
+				'campaign_id' => $qr_creation->campaign_id,
+				'gc_description' => $qr_creation->gc_description,
+				'gc_value' => $qr_creation->gc_value
+			);
 			
 			if($qr_creation->campaign_status == 1){
 				if($request->get('approve')){
@@ -591,6 +535,13 @@ use Illuminate\Support\Facades\Validator;
 						'campaign_status' => 2,
 						'manager_approval_date' => date('Y-m-d H:i:s')
 					]);
+
+					$email = 'ptice.0318@gmail.com';
+			
+					Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+						$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+						$message->from(config('send_email.username'), config('send_email.name'));
+					});
 				}else{
 
 					$qr_creation->update([
@@ -608,6 +559,13 @@ use Illuminate\Support\Facades\Validator;
 						'billing_number' => $request->get('billing_number'),
 						'accounting_approval_date' => date('Y-m-d H:i:s')
 					]);
+
+					$email = 'ptice.0318@gmail.com';
+			
+					Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+						$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+						$message->from(config('send_email.username'), config('send_email.name'));
+					});
 				}else{
 
 					$qr_creation->update([

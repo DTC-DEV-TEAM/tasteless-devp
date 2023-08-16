@@ -505,7 +505,7 @@ use Illuminate\Support\Facades\Http;
 		public function closeTransaction(IlluminateRequest $request) {
 			
 			$validate = $request->validate([
-				'item_image' => 'required|image|max:5120'
+				'item_image' => 'required|image'
 			]);
 
 			$img_file = $request->all()['item_image'];
@@ -560,7 +560,7 @@ use Illuminate\Support\Facades\Http;
 				dd($e);
 			}
 			
-			CRUDBooster::redirect(CRUDBooster::adminPath('g_c_lists/scan_qr'), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE # : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
+			CRUDBooster::redirect(CRUDBooster::adminPath('g_c_lists/scan_qr'), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE# : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
 		}
 
 		public function getDetail($id) {
