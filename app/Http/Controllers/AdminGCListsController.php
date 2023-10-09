@@ -22,6 +22,7 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\EmailTesting;
 use App\Jobs\GCListFetchJob;
 use App\StoreConcept;
+use DateTime;
 use Illuminate\Support\Facades\Http;
 
 
@@ -392,42 +393,46 @@ use Illuminate\Support\Facades\Http;
 			if(!CRUDBooster::isUpdate() && $this->global_privilege==FALSE || $this->button_edit==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
-
+			// dd('hello world');
 
 			$slug = Request::all()['value'];
 			$user_store = DB::table('cms_users')->where('id', CRUDBooster::myId())->get()->first();
 			$user = GCList::find($id);
 			$campaign_id = QrCreation::find($user->campaign_id);
 			$participating_stores = explode(",",$campaign_id->number_of_gcs);
-
 			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
 
-			if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDBooster::isSuperAdmin()){
-			
-				$data = [];
-				$data['page_title'] = 'Redeem QR';
-				$data['row'] = DB::table('g_c_lists')
+			if((($campaign_id->campaign_type_id == 2) && (new \DateTime() <= new \DateTime($campaign_id->expiry_date))) || ($campaign_id->campaign_type_id == 1)){
+				if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
+					$data = [];
+					$data['page_title'] = 'Redeem QR';
+					$data['row'] = DB::table('g_c_lists')
 					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
 					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
 					->select('g_c_lists.*',
-						'qr.campaign_id',
-						'qr.gc_description',
-						'qr.gc_value',
-						'qr.number_of_gcs',
-						'qr.batch_group',
-						'qr.batch_number',
-						'id_name.valid_ids')
+					'qr.campaign_id',
+					'qr.gc_description',
+					'qr.gc_value',
+					'qr.number_of_gcs',
+					'qr.batch_group',
+					'qr.batch_number',
+					'qr.campaign_type_id',
+					'id_name.valid_ids')
 					->where('g_c_lists.id',$id)
 					->first();
-
-				$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
-
-				return $this->view('redeem_qr.qr_redeem_section',$data);
-
+					
+					$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
+					
+					return $this->view('redeem_qr.qr_redeem_section',$data);
+					
+				}else{
+	
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
+				}
 			}else{
-
-				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"info");
+				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 			}
+
 		}
 
 		public function redeemCode(IlluminateRequest $request) {
@@ -477,18 +482,25 @@ use Illuminate\Support\Facades\Http;
 			$user_information = GCList::find($id);
 			
 			// For testing 
-			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
+			// $invoice_number_exists = GCList::where('id', $invoice_number)->exists();
 			
+			$store_information = DB::table('cms_users')->where('id', 6)->first();
+			$store_name = StoreConcept::find($store_information->id_store_concept)->first();
 			
-			// $company_name = CompanyId::find($user_information->company_id)->company_name;
-			// $store_name = StoreConcept::find($user_information->id_store_concept)->name;
+			$fcompanyid = $store_name->fcompanyid;
+			$ftermid = $store_information->ftermid;
+			$fofficeid = $store_information->fofficeid;
 			
-			// $invoice_number_exists = DB::connection('mysql_tunnel')
-			// ->table('pos_sale')
-			// ->where('fcompanyid',$company_name)
-			// ->where('fofficeid',$store_name)
-			// ->where('fdocument_no',$invoice_number)
-			// ->exists();
+			$invoice_number_exists = DB::connection('mysql_tunnel')
+			->table('pos_sale')
+			->where('fcompanyid',$fcompanyid) //need setup store - DONE
+			->where('fofficeid',$fofficeid) //need setup user management (TAG USER TO STORE BRANCH)
+			->where('fdocument_no',$invoice_number)
+			->where('ftermid', $ftermid) //need setup user management
+			->where('fdoctype',6000)
+			->exists();
+
+			// SELECT fdocument_no,fsale_date FROM bc_webpos.pos_sale where fdocument_no='12' and ftermid='0011' and fcompanyid='BC-17020882' and fofficeid='SAMPLE' and fdoctype=6000;
 
 			if($invoice_number_exists){
 
