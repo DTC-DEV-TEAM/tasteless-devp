@@ -41,9 +41,9 @@
 
     <script>
         
+        // $('body').addClass('sidebar-collapse');
         $(document).ready(function(){
 
-            $('body').addClass('sidebar-collapse');
 
             $('.show_qr_code_scanner').click(function(){
                 $('.camera').show(function(){
