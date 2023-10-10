@@ -393,7 +393,6 @@ use Illuminate\Support\Facades\Http;
 			if(!CRUDBooster::isUpdate() && $this->global_privilege==FALSE || $this->button_edit==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
-			// dd('hello world');
 
 			$slug = Request::all()['value'];
 			$user_store = DB::table('cms_users')->where('id', CRUDBooster::myId())->get()->first();
@@ -401,8 +400,39 @@ use Illuminate\Support\Facades\Http;
 			$campaign_id = QrCreation::find($user->campaign_id);
 			$participating_stores = explode(",",$campaign_id->number_of_gcs);
 			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
-
-			if((($campaign_id->campaign_type_id == 2) && (new \DateTime() <= new \DateTime($campaign_id->expiry_date))) || ($campaign_id->campaign_type_id == 1)){
+						
+			if(($campaign_id->campaign_type_id == 2)){
+				if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
+					if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
+						$data = [];
+						$data['page_title'] = 'Redeem QR';
+						$data['row'] = DB::table('g_c_lists')
+						->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+						->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+						->select('g_c_lists.*',
+						'qr.campaign_id',
+						'qr.gc_description',
+						'qr.gc_value',
+						'qr.number_of_gcs',
+						'qr.batch_group',
+						'qr.batch_number',
+						'qr.campaign_type_id',
+						'id_name.valid_ids')
+						->where('g_c_lists.id',$id)
+						->first();
+						
+						$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
+						
+						return $this->view('redeem_qr.qr_redeem_section',$data);
+						
+					}else{
+		
+						CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
+					}
+				}else{
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
+				}
+			}else{
 				if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 					$data = [];
 					$data['page_title'] = 'Redeem QR';
@@ -429,10 +459,7 @@ use Illuminate\Support\Facades\Http;
 	
 					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
 				}
-			}else{
-				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 			}
-
 		}
 
 		public function redeemCode(IlluminateRequest $request) {
@@ -482,14 +509,14 @@ use Illuminate\Support\Facades\Http;
 			$user_information = GCList::find($id);
 			
 			// For testing 
-			// $invoice_number_exists = GCList::where('id', $invoice_number)->exists();
+			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
 			
-			$store_information = DB::table('cms_users')->where('id', 6)->first();
-			$store_name = StoreConcept::find($store_information->id_store_concept)->first();
+			// $store_information = DB::table('cms_users')->where('id', 6)->first();
+			// $store_name = StoreConcept::find($store_information->id_store_concept)->first();
 			
-			$fcompanyid = $store_name->fcompanyid;
-			$ftermid = $store_information->ftermid;
-			$fofficeid = $store_information->fofficeid;
+			// $fcompanyid = $store_name->fcompanyid;
+			// $ftermid = $store_information->ftermid;
+			// $fofficeid = $store_information->fofficeid;
 			
 			$invoice_number_exists = DB::connection('mysql_tunnel')
 			->table('pos_sale')
