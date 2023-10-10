@@ -366,11 +366,11 @@
                                     <select class="store_concept" id="store_concept" name="stores[]" multiple>
                                         @if (!$qr_creation->campaign_id)
                                         @foreach ($stores as $store)
-                                            <option value="{{ $store->id }}" charge_to="{{ $store->concept }}">{{ $store->name }}</option>
+                                            <option value="{{ $store->id }}" charge_to="{{ $store->concept }}">{{ $store->beach_name }}</option>
                                         @endforeach
                                         @else
                                         @foreach ($stores as $store)
-                                        <option value="{{ $store->id }}" {{ in_array($store->id,explode(',',$qr_creation->number_of_gcs)) ? 'selected':'' }}>{{ $store->name }}</option>
+                                        <option value="{{ $store->id }}" {{ in_array($store->id,explode(',',$qr_creation->number_of_gcs)) ? 'selected':'' }}>{{ $store->beach_name }}</option>
                                         @endforeach
                                         @endif
                                     </select>                                
