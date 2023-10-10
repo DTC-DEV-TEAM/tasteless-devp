@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\CampaignStatus;
+use App\ChargeTo;
 use App\CompanyId;
 use App\IdType;
 use Session;
@@ -25,6 +26,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 
+
 	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 		public function __construct() {
@@ -45,7 +47,7 @@ use Illuminate\Support\Facades\Validator;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
+			$this->button_add = false;
 			$this->button_edit = false;
 			$this->button_delete = true;
 			$this->button_detail = true;
@@ -59,6 +61,7 @@ use Illuminate\Support\Facades\Validator;
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			// $this->col[] = ["label"=>"ID","name"=>"id"];
+			$this->col[] = ["label"=>"Campaign Type","name"=>"campaign_type_id"];
 			$this->col[] = ["label"=>"Campaign Id","name"=>"campaign_id"];
 			$this->col[] = ["label"=>"Gc Description","name"=>"gc_description"];
 			$this->col[] = ["label"=>"Gc Value","name"=>"gc_value"];
@@ -156,7 +159,10 @@ use Illuminate\Support\Facades\Validator;
 			| 
 			*/
 			$this->index_button = array();
-
+			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
+				$this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+				$this->index_button[] = ['label'=>'In House Campaign','url'=>CRUDBooster::mainpath("getAddIhc"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+			}
 
 
 			/* 
@@ -297,9 +303,9 @@ use Illuminate\Support\Facades\Validator;
 		*/    
 		public function hook_row_index($column_index,&$column_value) {	        
 			//Your code here
-			if($column_index == '10'){
+			if($column_index == '11'){
 				if($column_value == '1'){
-					$column_value = '<span class="label" style="background-color: rgb(34 211 238); color: white; font-size: 12px;">FOR APPROVAL</span>';
+					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">FOR APPROVAL</span>';
 				}else if($column_value == '2'){
 					$column_value = '<span class="label" style="background-color: rgb(251 146 60);
 					color: white; font-size: 12px;">FOR ACCOUNTING APPROVAL</span>';
@@ -310,6 +316,12 @@ use Illuminate\Support\Facades\Validator;
 				}else{
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68);
 					color: white; font-size: 12px;">REJECTED</span>';
+				}
+			}else if($column_index == '2'){
+				if($column_value == '1'){
+					$column_value = '<span class="label" style="background-color: #297373; color: white; font-size: 12px;">Third Party Campaign</span>';
+				}else if($column_value == '2'){
+					$column_value = '<span class="label" style="background-color: #584D3D; color: white; font-size: 12px;">In House Campaign</span>';
 				}
 			}
 		}
@@ -411,7 +423,7 @@ use Illuminate\Support\Facades\Validator;
 			$data['store_logo'] = $store_logo;
 
 			//Please use view method instead view method from laravel
-			return $this->view('redeem_qr.add_campaign',$data);
+			return $this->view('redeem_qr.add_campaign_tpc',$data);
 		}
 
 		public function getEdit($id) {
@@ -428,6 +440,7 @@ use Illuminate\Support\Facades\Validator;
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
+			$charge_to = ChargeTo::get();
 
 			$data = [];
 			$data['page_title'] = 'Detail Campaign Creation';
@@ -435,8 +448,14 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['qr_creation'] = $qr_creation;
 			$data['store_logo'] = $store_logo;
+			$data['stores1'] = StoreConcept::whereIn('id',explode(',',$qr_creation->number_of_gcs))->get();
+			$data['charge_to'] = $charge_to;
 
-			return $this->view('redeem_qr.add_campaign',$data);
+			if($qr_creation->campaign_type_id == 1){
+				return $this->view('redeem_qr.add_campaign_tpc',$data);
+			}else{
+				return $this->view('redeem_qr.add_campaign_ihc',$data);
+			}
 		}
 
 		public function getDetail($id) {
@@ -446,19 +465,14 @@ use Illuminate\Support\Facades\Validator;
 				->leftJoin('campaign_statuses', 'qr_creations.campaign_status', 'campaign_statuses.id')
 				->leftJoin('cms_users as manager', 'qr_creations.manager_approval', 'manager.id')
 				->leftJoin('cms_users as accounting', 'qr_creations.accounting_approval', 'accounting.id')
-				->select(
-					'qr_creations.*',
-					'company_ids.company_name', 
-					'manager.name as manager_name', 
-					'accounting.name as accounting_name', 
-					'campaign_statuses.name as campaign_status_name'
-				)
+				->select('qr_creations.*','company_ids.company_name', 'manager.name as manager_name', 'accounting.name as accounting_name', 'campaign_statuses.name as campaign_status_name')
 				->get()
 				->first();
 
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
+			$charge_to = ChargeTo::get();
 
 			$data = [];
 			$data['page_title'] = 'Detail Campaign Creation';
@@ -466,16 +480,44 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['qr_creation'] = $qr_creation;
 			$data['store_logo'] = $store_logo;
+			$data['stores1'] = StoreConcept::whereIn('id',explode(',',$qr_creation->number_of_gcs))->get();
+			$data['charge_to'] = $charge_to;
 
-			return $this->view('redeem_qr.add_campaign',$data);
+			if($qr_creation->campaign_type_id == 1){
+				return $this->view('redeem_qr.add_campaign_tpc',$data);
+			}else{
+				return $this->view('redeem_qr.add_campaign_ihc',$data);
+			}
+		}
+
+		public function getAddIhc() {
+			
+			//Create an Auth
+			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
+				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+			}
+			
+			$company = CompanyId::get();
+			$store = StoreConcept::get();
+			$store_logo = StoreLogo::get();
+			$charge_to = ChargeTo::get();
+
+			$data = [];
+			$data['page_title'] = 'Add Data';
+			$data['company_id'] = $company;
+			$data['stores'] = $store;
+			$data['store_logo'] = $store_logo;
+			$data['charge_to'] = $charge_to;
+
+			//Please use view method instead view method from laravel
+			return $this->view('redeem_qr.add_campaign_ihc',$data);
 		}
 
 		public function addCampaign(IlluminateRequest $request){
 			
 			$campaign = $request->all();
+			$campaign['campaign_type_id'] = "1";
 			$excel_file = $campaign['po_attachment'];
-
-			$campaign = $request->all();
 			
 			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
 			
@@ -483,7 +525,7 @@ use Illuminate\Support\Facades\Validator;
 				'campaign_id' => 'required|unique:qr_creations'
 			]);
 
-			$campaign_stores = implode(",",$campaign['stores']);
+			$campaign_stores = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
 			$campaign['number_of_gcs'] = $campaign_stores;
 			$campaign['created_by'] = CRUDBooster::myId();
 			$campaign['created_at'] = date('Y-m-d H:i:s');
@@ -503,10 +545,59 @@ use Illuminate\Support\Facades\Validator;
 			// $email = $cms_users->email;
 			$email = 'ptice.0318@gmail.com';
 			
-			Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
-				$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
-				$message->from(config('send_email.username'), config('send_email.name'));
-			});
+			// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+			// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+			// 	$message->from(config('send_email.username'), config('send_email.name'));
+			// });
+
+			// Mail::send(['html' => 'email_testing.campaign_email'], $data, function($message) use ($test_email, $data) {
+			// 	$message->to($test_email)->subject($data['subject_of_the_email']);
+			// 	$message->from(env('MAIL_USERNAME'), env('APP_NAME'));
+			// });
+
+			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
+		}
+
+		public function addCampaignIhc(IlluminateRequest $request){
+			
+			$campaign = $request->all();
+			$campaign['campaign_type_id'] = "2";
+			
+			// dd(StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
+
+			$memo_pdf = $campaign['memo_attachment'];
+			$campaign_stores = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
+			// dd($campaign);
+			
+			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
+			
+			$request->validate([
+				'campaign_id' => 'required|unique:qr_creations'
+			]);
+
+			// $campaign_stores = implode(",",$campaign['stores']);
+			$campaign['number_of_gcs'] = $campaign_stores;
+			$campaign['created_by'] = CRUDBooster::myId();
+			$campaign['created_at'] = date('Y-m-d H:i:s');
+			
+			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','po_attachment','memo_attachment','id']));
+			$campaign_information->save();
+			$campaign_information->campaign_status = 1;
+			$campaign_information->save();
+
+			if($memo_pdf){
+				$campaign_information->memo_attachment = $campaign_information->campaign_id.'.'.$memo_pdf->getClientOriginalExtension();
+				$campaign_information->save();
+				$memo_pdf->move(public_path('uploaded_memo/file/'),$campaign_information->memo_attachment);
+			}
+
+			// $email = $cms_users->email;
+			$email = 'ptice.0318@gmail.com';
+			
+			// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+			// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+			// 	$message->from(config('send_email.username'), config('send_email.name'));
+			// });
 
 			// Mail::send(['html' => 'email_testing.campaign_email'], $data, function($message) use ($test_email, $data) {
 			// 	$message->to($test_email)->subject($data['subject_of_the_email']);
@@ -538,10 +629,10 @@ use Illuminate\Support\Facades\Validator;
 
 					$email = 'ptice.0318@gmail.com';
 			
-					Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
-						$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
-						$message->from(config('send_email.username'), config('send_email.name'));
-					});
+					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+					// 	$message->from(config('send_email.username'), config('send_email.name'));
+					// });
 				}else{
 
 					$qr_creation->update([
@@ -562,10 +653,10 @@ use Illuminate\Support\Facades\Validator;
 
 					$email = 'ptice.0318@gmail.com';
 			
-					Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
-						$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
-						$message->from(config('send_email.username'), config('send_email.name'));
-					});
+					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
+					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
+					// 	$message->from(config('send_email.username'), config('send_email.name'));
+					// });
 				}else{
 
 					$qr_creation->update([
@@ -577,6 +668,23 @@ use Illuminate\Support\Facades\Validator;
 			}
 
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation successfully updated', 'success')->send();
+
+		}
+
+		public function Stores(IlluminateRequest $request){
+
+			$return_inputs = $request->all();
+
+			$results = StoreConcept::
+				select('id', 'name')
+				->where('status', 'ACTIVE')
+				->where('name', 'LIKE', '%'. $return_inputs['term']. '%')
+				// ->orWhere('id', 'LIKE', '%'. $request->input('q'). '%')
+				->orderBy('id')
+				->get();
+
+						
+			return response()->json($results);
 
 		}
 
