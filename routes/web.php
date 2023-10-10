@@ -37,34 +37,38 @@ Route::post('admin/g_c_list/edit/save_invoice_number', [AdminGCListsController::
 Route::post('admin/g_c_list/edit/close_transaction', [AdminGCListsController::class, 'closeTransaction'])->name('close_transaction');
 // Add Campaign
 Route::post('admin/qr_creations/add/campaign', [AdminQrCreationsController::class, 'addCampaign'])->name('add_campaign');
+Route::post('admin/qr_creations/add/campaignIhc', [AdminQrCreationsController::class, 'addCampaignIhc'])->name('add_campaign_ihc');
 // Campaign Approval
 Route::post('admin/qr_creations/edit/campaign-approval', [AdminQrCreationsController::class, 'campaignApproval'])->name('campaign_approval');
-
+// getAddIhc
+Route::get('admin/qr_creations/getAddIhc/', [AdminQrCreationsController::class, 'getAddIhc']);
+// Stores
+Route::post('admin/qr_creations/getStores', [AdminQrCreationsController::class, 'Stores'])->name('getStores');
 // Email
 Route::get('admin/g_c_lists/email', function(){
     return view('/redeem_qr.sendemail');
 });
 
-Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
+// Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
-    $data['pos_sale'] = DB::connection('mysql_tunnel')
-    ->table('pos_sale')
-    ->where('fcompanyid',$company)
-    ->where('fofficeid',$store)
-    ->where('fdocument_no',$receipt)
-    ->first();
+//     $data['pos_sale'] = DB::connection('mysql_tunnel')
+//     ->table('pos_sale')
+//     ->where('fcompanyid',$company)
+//     ->where('fofficeid',$store)
+//     ->where('fdocument_no',$receipt)
+//     ->first();
 
-    $data['pos_sale_discount'] = DB::connection('mysql_tunnel')
-            ->table('pos_sale_product_discount')
-            ->where('fcompanyid',$company)
-            ->where('frecno',$data['pos_sale']->frecno)
-            ->first();
+//     $data['pos_sale_discount'] = DB::connection('mysql_tunnel')
+//             ->table('pos_sale_product_discount')
+//             ->where('fcompanyid',$company)
+//             ->where('frecno',$data['pos_sale']->frecno)
+//             ->first();
 
-    $data['pos_sale_discount_detail'] = DB::connection('mysql_tunnel')
-        ->table('mst_discount')
-        ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
-        ->where('fcompanyid',$company)
-        ->first();
+//     $data['pos_sale_discount_detail'] = DB::connection('mysql_tunnel')
+//         ->table('mst_discount')
+//         ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
+//         ->where('fcompanyid',$company)
+//         ->first();
 
-    return $data;
-});
+//     return $data;
+// });
