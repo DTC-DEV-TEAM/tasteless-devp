@@ -12,3 +12,4 @@ npm-debug.log
 yarn-error.log
 /public/uploaded_item/img
 /public/uploaded_po/file
+/public/uploaded_memo/file
