@@ -78,7 +78,7 @@
     @endif
     <div class='panel-body qr_redeem_section'>
       <form id="redeem-close-transaction" method='post' action='{{ route('redeem_code') }}' autocomplete="off" style="display: none;" enctype="multipart/form-data">
-        @csrf
+        <input class="hidden" type="text" value="{{ csrf_token() }}" id="_token">
         <input class="hidden" type="text" name="user_id" id="user_id" value="{{ $row->id }}" >
         <div class="redeem_layout">
           <div class="qr-reference-card" style="display: none;">
@@ -164,6 +164,7 @@
             @endif
           </div>
 
+          @if($row->campaign_type_id == 1)
           <div class="user-info-content">
             <div class="user-info">
               <div class="user-element">
@@ -227,7 +228,64 @@
               </div>
             </div>
           </div>
+          @else
+          <div class="user-info-content">
+            <div class="user-info">
+              <div class="user-element">
+                <label for="">Name: </label>
+                <input type="text" value="{{ $row->name }}" readonly>
+              </div>
+              <div class="user-element">
+                <label for="">Email: </label>
+                <input type="text" value="{{ $row->email }}" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="user-info-content">
+            <div class="user-info">
+              <div class="user-element">
+                <label for="">Phone Number: </label>
+                <input type="text" value="{{ $row->phone }}" readonly>
+              </div>
+              <div class="user-element">
+                <label for="">GC Description: </label>
+                <input type="text" value="{{ $row->gc_description }}" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="user-info-content">
+            <div class="user-info">
+              <div class="user-element">
+                <label for="">GC Value: </label>
+                <input type="text" value="{{ $row->gc_value }}" readonly>
+              </div>
+              <div class="user-element">
+                <label for="">Batch Number: </label>
+                <input id="redemption_end_date" type="text" value="{{ $row->batch_number }}" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="user-info-content">
+            <div class="user-info">
+              <div class="user-element">
+                <label for=""><span class="required">*</span> ID Type: </label>
+                {{ $row->id_types }}
+                <select name="id_type" id="id-type" {{ $row->id_type ? 'disabled': '' }} required>
+                  <option value="" disabled selected>Select Valid IDs</option>
+                  @foreach ($valid_ids as $valid_id)
+                    <option {{ $row->id_type == $valid_id->id ? 'selected': '' }} value="{{ $valid_id->id }}">{{ $valid_id->valid_ids }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="user-element">
+                <label for=""><span class="required">*</span> Government ID#: </label>
+                <input type="text" name="id_number" 
+                id="id_number"  value="{{ $row->id_number }}" {{ $row->id_number ? 'readonly' : '' }} required>
+              </div>
+            </div>
+          </div>
           <br>
+          @endif
 
           <div class="text-center">
               <img style="height: 130px; width: 130px;" src="{{ asset('img/scan-women.jpg') }}" alt="">
@@ -356,6 +414,7 @@
           dataType: 'json',
           type: 'POST',
           data: {
+            _token: $('#_token').val(),
             id_type: id_type,
             id_number: id_number,
             user_id: user_id,
@@ -407,7 +466,7 @@
       // Invoice Submit Button
       $('#submit-invoice-btn').click(function(event){
 
-        const posInvoiceNumber = $('#pos-invoice-number').val();
+        const posInvoiceNumber = parseInt($('#pos-invoice-number').val());
         const user_id = $('#user_id').val();
 
         event.preventDefault();
