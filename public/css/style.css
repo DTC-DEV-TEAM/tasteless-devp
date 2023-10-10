@@ -27,6 +27,14 @@ input[type=number] {
     }
 }
 
+.file_title{
+    background-color: rgb(21 94 117);
+    color: white;
+    padding: 20px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
 /* End of Reuse-code */
 
 
@@ -898,4 +906,59 @@ video{
     display: flex;
     align-items: center;
     padding: 15px;
+}
+
+.table-label{
+    vertical-align: middle; 
+    font-weight: 600; 
+    width: 200px;
+}
+
+/* Table Design */
+
+.default-table-design td, .default-table-design th{
+    border-bottom: 1px solid #323639;
+    color: #565360;
+}
+
+.default-table-design td{
+    vertical-align: middle !important;
+}
+
+.default-table-design  tr:nth-child(odd){
+    background-color: #f2f2f2;
+}
+
+.default-table-design  tr:hover {background-color: #ddd;}
+
+.client-table{
+    border-collapse: collapse;
+    margin-left: 10px;
+}
+
+.client-table td, .client-table th {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 14px;
+    width: 350px;
+}
+
+.client-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.client-table tr:hover {background-color: #ddd;}
+
+.client-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #323639;
+    color: white;
+}
+
+.table-responsive{
+    overflow-x: auto;
+}
+
+.table-responsive::-webkit-scrollbar{
+    height: 5px;
 }
