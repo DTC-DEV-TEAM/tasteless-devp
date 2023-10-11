@@ -113,12 +113,12 @@ use Illuminate\Support\Facades\Validator;
 			*/
 			$this->addaction = array();
 
-			if(CRUDBooster::myPrivilegeName() == 'Head'){
+			if(CRUDBooster::myPrivilegeName() == 'Marketing'){
+				// $this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
+			}elseif(CRUDBooster::myPrivilegeName() == 'Marketing Head'){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
-			}elseif(CRUDBooster::myPrivilegeName() == 'Accounting'){
+			}elseif(CRUDBooster::myPrivilegeName() == 'Accounting Head'){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 2"];
-			}elseif(CRUDBooster::myPrivilegeName() == 'Admin'){
-				return;
 			}else{
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
 			}
