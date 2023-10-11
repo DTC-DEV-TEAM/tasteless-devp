@@ -22,7 +22,7 @@ use Session;
 			$this->button_add = false;
 			$this->button_edit = false;
 			$this->button_delete = false;
-			$this->button_detail = true;
+			$this->button_detail = false;
 			$this->button_show = true;
 			$this->button_filter = true;
 			$this->button_import = false;
@@ -33,14 +33,18 @@ use Session;
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
 			$this->col[] = ["label"=>"Item Receipt","name"=>"uploaded_img"];
+			$this->col[] = ["label"=>"Redeemed Date","name"=>"cashier_date_transact"];
 			$this->col[] = ["label"=>"Name","name"=>"name"];
 			$this->col[] = ["label"=>"Phone","name"=>"phone"];
-			$this->col[] = ["label"=>"Email","name"=>"email"];
+			$this->col[] = ["label"=>"Customer Email","name"=>"email"];
+			$this->col[] = ["label"=>"Cashier Email","name"=>"cashier_name","join"=>"cms_users,email"];
 			$this->col[] = ["label"=>"Campaign ID", "name"=>"campaign_id", "join"=>"qr_creations,campaign_id"];
 			$this->col[] = ["label"=>"GC Description","name"=>"campaign_id", "join"=>"qr_creations,gc_description"];
 			$this->col[] = ["label"=>"GC Value","name"=>"campaign_id", "join"=>"qr_creations,gc_value"];
 			$this->col[] = ["label"=>"GC Reference Number","name"=>"id", "join"=>"g_c_lists_view,gclists", "join_id"=>"id"];
 			$this->col[] = ["label"=>"POS Invoice Number","name"=>"invoice_number"];
+			$this->col[] = ["label"=>"POS Terminal","name"=>"pos_terminal"];
+			$this->col[] = ["label"=>"Status","name"=>"accounting_is_audit"];
 			// $this->col[] = ["label"=>"Number of Gcs", "name"=>"campaign_id", "join"=>"qr_creations,number_of_gcs"];
 			// $this->col[] = ["label"=>"Batch Group","name"=>"campaign_id","join"=>"qr_creations,batch_group"];
 			// $this->col[] = ["label"=>"Batch Number","name"=>"campaign_id","join"=>"qr_creations,batch_number"];
@@ -48,10 +52,10 @@ use Session;
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Name','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
-			$this->form[] = ['label'=>'Email','name'=>'email','type'=>'email','validation'=>'required|min:1|max:255|email|unique:g_c_lists','width'=>'col-sm-10','placeholder'=>'Please enter a valid email address'];
-			$this->form[] = ['label'=>'Number Of Gcs','name'=>'number_of_gcs','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Gc Description','name'=>'gc_description','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			// $this->form[] = ['label'=>'Name','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
+			// $this->form[] = ['label'=>'Email','name'=>'email','type'=>'email','validation'=>'required|min:1|max:255|email|unique:g_c_lists','width'=>'col-sm-10','placeholder'=>'Please enter a valid email address'];
+			// $this->form[] = ['label'=>'Number Of Gcs','name'=>'number_of_gcs','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			// $this->form[] = ['label'=>'Gc Description','name'=>'gc_description','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			/* 
@@ -81,6 +85,12 @@ use Session;
 	        | 
 	        */
 	        $this->addaction = array();
+			if(CRUDBooster::myPrivilegeName() == 'Marketing Head'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('detail/[id]'),'icon'=>'fa fa-eye'];
+			}else if(CRUDBooster::myPrivilegeName() == 'Accounting Head'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('detail/[id]'),'icon'=>'fa fa-eye','color'=>'warning'];
+			}
 
 
 	        /* 
@@ -257,6 +267,12 @@ use Session;
 			if($column_index == '2'){
 				$url = asset('uploaded_item/img/');
 				$column_value = "<img src='$url"."/$column_value' style='max-height: 100px; max-width: 120px;'>";
+			}else if($column_index == '14'){
+				if($column_value == '1'){
+					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">CLOSED</span>';
+				}else{
+					$column_value = '<span class="label" style="background-color: rgb(74,222,128); color: white; font-size: 12px;">CLAIMED</span>';
+				}
 			}
 	    }
 
@@ -294,7 +310,11 @@ use Session;
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
 	        //Your code here
-
+			GCList::find($id)->update([
+				'accounting_id_transact'=>CRUDBooster::myId(),
+				'accounting_date_transact'=>date('Y-m-d H:i:s'),
+				'accounting_is_audit'=>1
+			]);
 	    }
 
 	    /* 
@@ -348,7 +368,45 @@ use Session;
 			}else{
 
 				$data = [];
-				$data['page_title'] = 'Redeem QR';
+				$data['page_title'] = 'Redeem QR Details';
+				$data['row'] = DB::table('g_c_lists')
+					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+					->select('g_c_lists.*',
+						'qr.campaign_id',
+						'qr.gc_description',
+						'qr.gc_value',
+						'qr.number_of_gcs',
+						'qr.batch_group',
+						'qr.batch_number',
+						'id_name.valid_ids')
+					->where('g_c_lists.id',$id)
+					->first();
+	
+				$data['valid_ids'] = IdType::get();
+
+				// Generate QR Code
+				$qrCodeData = $data['row']->email.'|'.$data['row']->id;
+	
+				//Please use view method instead view method from laravel
+				// return $this->view('redeem_qr.qr_redeem_section',$data);
+				return $this->view('redeem_qr.qr_redeem_section_view',$data);
+			};
+
+		}
+
+		public function getEdit($id) {
+			//Create an Auth
+			if(!CRUDBooster::isUpdate() && $this->global_privilege==FALSE || $this->button_edit==FALSE) {    
+				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+			}
+			
+			if(GCList::find($id)->uploaded_img == null){
+				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
+			}else{
+
+				$data = [];
+				$data['page_title'] = 'Redeem QR Edit';
 				$data['row'] = DB::table('g_c_lists')
 					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
 					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
@@ -369,7 +427,7 @@ use Session;
 				$qrCodeData = $data['row']->email.'|'.$data['row']->id;
 	
 				//Please use view method instead view method from laravel
-				return $this->view('redeem_qr.qr_redeem_section',$data);
+				return $this->view('redeem_qr.qr_redeem_section_history_edit',$data);
 			};
 
 		}
