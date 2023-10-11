@@ -78,8 +78,10 @@
     @endif
     <div class='panel-body qr_redeem_section'>
       <form id="redeem-close-transaction" method='post' action='{{ route('redeem_code') }}' autocomplete="off" style="display: none;" enctype="multipart/form-data">
-        <input class="hidden" type="text" value="{{ csrf_token() }}" id="_token">
+        {{-- <input class="hidden" type="text" value="{{ csrf_token() }}" id="_token"> --}}
+        @csrf
         <input class="hidden" type="text" name="user_id" id="user_id" value="{{ $row->id }}" >
+        <input class="hidden" type="text" name="my_id" id="my_id" value="{{ CRUDBooster::myId() }}" >
         <div class="redeem_layout">
           <div class="qr-reference-card" style="display: none;">
             <div class="close-icon">
@@ -306,8 +308,13 @@
         </div>
       </form>
     </div>
+    {{-- @if (Request::segment(3) == 'edit' && Request::segment(2) == 'redemption_history')
+      <div style="text-align: center; margin: 25px;">
+        <a style="padding: 10px 60px; font-weight: bold; color:white; border: none; background-color: #3C8DBC">Close</a>
+      </div>
+    @endif --}}
   </div>
-
+  
   <script>
 
     $(document).ready(function() {
@@ -385,6 +392,7 @@
         const id_type = $('#id-type').val();
         const id_number = $('#id_number').val();
         const user_id = $('#user_id').val();
+        const my_id = $('#my_id').val();
         
         event.preventDefault();
 
@@ -418,6 +426,7 @@
             id_type: id_type,
             id_number: id_number,
             user_id: user_id,
+            my_id: my_id,
           },
           success: function(response){
 
