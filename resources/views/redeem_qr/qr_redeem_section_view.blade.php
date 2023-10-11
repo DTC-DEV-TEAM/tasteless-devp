@@ -31,8 +31,28 @@
             <td>{{ $row->campaign_id }}</td>
           </tr>
           <tr>
-            <td class="label-bold">Campaign Description</td>
+            <td class="label-bold">GC Description</td>
             <td>{{ $row->gc_description }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">GC Value</td>
+            <td>{{ $row->gc_value }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">Number of GCs</td>
+            <td>{{ $row->batch_number }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">Goverment ID#</td>
+            <td>{{ $row->valid_ids }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">GC Reference #</td>
+            <td>{{ $row->campaign_id.' - '.$row->qr_reference_number }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">Invoice #</td>
+            <td>{{ $row->invoice_number }}</td>
           </tr>
           <tr>
             <td class="label-bold">Redeemed</td>
