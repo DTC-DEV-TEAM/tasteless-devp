@@ -472,7 +472,7 @@ use Illuminate\Support\Facades\Validator;
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
-			$charge_to = ChargeTo::get();
+			$charge_to = ChargeTo::whereNull('deleted_at')->get();
 
 			$data = [];
 			$data['page_title'] = 'Detail Campaign Creation';
@@ -500,7 +500,7 @@ use Illuminate\Support\Facades\Validator;
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
-			$charge_to = ChargeTo::get();
+			$charge_to = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->get();
 
 			$data = [];
 			$data['page_title'] = 'Add Data';
