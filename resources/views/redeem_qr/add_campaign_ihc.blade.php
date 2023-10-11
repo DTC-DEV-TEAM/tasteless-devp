@@ -380,7 +380,7 @@
                         @else
                         <div>
                             @if (Request::segment(3) == 'edit')
-                            <div style="font-weight: bold; font-size: 15px;">Stores:</div>
+                            <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
                             @else
                             <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
                             @endif
