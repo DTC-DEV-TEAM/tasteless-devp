@@ -3,7 +3,6 @@
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
 @endpush
 
@@ -40,9 +39,9 @@
     </div>
 
     <script>
-        
         // $('body').addClass('sidebar-collapse');
         $(document).ready(function(){
+
 
 
             $('.show_qr_code_scanner').click(function(){
