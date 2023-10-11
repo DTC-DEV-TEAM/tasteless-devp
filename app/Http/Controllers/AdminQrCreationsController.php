@@ -448,7 +448,7 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['qr_creation'] = $qr_creation;
 			$data['store_logo'] = $store_logo;
-			$data['stores1'] = StoreConcept::whereIn('id',explode(',',$qr_creation->number_of_gcs))->get();
+			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
 			$data['charge_to'] = $charge_to;
 
 			if($qr_creation->campaign_type_id == 1){
