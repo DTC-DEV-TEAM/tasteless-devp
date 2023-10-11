@@ -23,7 +23,6 @@ use App\EmailTesting;
 use App\Jobs\GCListFetchJob;
 use App\StoreConcept;
 use DateTime;
-use Illuminate\Support\Facades\Http;
 
 
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -468,6 +467,7 @@ use Illuminate\Support\Facades\Http;
 			$id = $return_inputs['user_id'];
 			$id_number = $return_inputs['id_number'];
 			$id_type = $return_inputs['id_type'];
+			$my_id = $return_inputs['my_id'];
 
 			GCList::where('id', $id)->update([
 
@@ -477,6 +477,7 @@ use Illuminate\Support\Facades\Http;
 				'id_number' => $id_number,
 				'id_type' => $id_type,
 				'status' => 'CLAIMED',
+				'pos_terminal' => StoreConcept::find((DB::table('cms_users')->where('id', CRUDBooster::myId())->first()->id_store_concept))->ftermid
 			]);
 
 			$user_information = DB::table('g_c_lists')
@@ -509,10 +510,9 @@ use Illuminate\Support\Facades\Http;
 			$user_information = GCList::find($id);
 			
 			// For testing 
-			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
+// 			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
 			
-			// $store_information = DB::table('cms_users')->where('id', 6)->first();
-			// $store_name = StoreConcept::find($store_information->id_store_concept)->first();
+			$store_name = StoreConcept::find($cms_user->id_store_concept);
 			
 			// $fcompanyid = $store_name->fcompanyid;
 			// $ftermid = $store_information->ftermid;
@@ -520,12 +520,21 @@ use Illuminate\Support\Facades\Http;
 			
 			$invoice_number_exists = DB::connection('mysql_tunnel')
 			->table('pos_sale')
-			->where('fcompanyid',$fcompanyid) //need setup store - DONE
-			->where('fofficeid',$fofficeid) //need setup user management (TAG USER TO STORE BRANCH)
+			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
 			->where('fdocument_no',$invoice_number)
-			->where('ftermid', $ftermid) //need setup user management
+			->where('ftermid', $store_name->ftermid) //need setup user management
 			->where('fdoctype',6000)
 			->exists();
+
+// 			$invoice_number_exists = DB::connection('mysql_tunnel')
+// 			->table('pos_sale')
+// 			->where('fcompanyid','BC-17020882') //need setup store - DONE
+// 			->where('fofficeid','SAMPLE') //need setup user management (TAG USER TO STORE BRANCH)
+// 			->where('fdocument_no',$invoice_number)
+// 			->where('ftermid', '0011') //need setup user management
+// 			->where('fdoctype',6000)
+// 			->exists();
 
 			// SELECT fdocument_no,fsale_date FROM bc_webpos.pos_sale where fdocument_no='12' and ftermid='0011' and fcompanyid='BC-17020882' and fofficeid='SAMPLE' and fdoctype=6000;
 
