@@ -417,6 +417,8 @@
 
         }
 
+        $('.sk-chase-position').show();
+
         $.ajax({
           url: "{{ route('redeem_code') }}",
           dataType: 'json',
@@ -431,6 +433,7 @@
           success: function(response){
 
             console.log(response.test.qr_reference_number);
+            $('.sk-chase-position').hide();
 
             confetti({
               particleCount: 100,
@@ -467,6 +470,7 @@
           },
           error: function(error){
             console.log(error)
+            $('.sk-chase-position').hide();
           }
         })
       })
@@ -485,6 +489,7 @@
         }
         
         else{
+          $('.sk-chase-position').show();
           $.ajax({
             url: "{{ route('input_invoice') }}",
             dataType: 'json',
@@ -512,13 +517,14 @@
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                   }
                 })
-
+                $('.sk-chase-position').hide();
                 Toast.fire({
                   icon: 'success',
                   title: 'Pos invoice number saved successfully'
                 })
               }
               else{
+                $('.sk-chase-position').hide();
                 $('#invoice-number-message').text('POS INVOICE NUMBER does not match to the system');
                 $('#invoice-number-message').css('color', '#FF312E');
                 const Toast = Swal.mixin({
@@ -532,7 +538,7 @@
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                   }
                 })
-
+                $('.sk-chase-position').hide();
                 Toast.fire({
                   icon: 'error',
                   title: 'The Invoice number does not match to the system'
