@@ -85,9 +85,12 @@ use Session;
 	        | 
 	        */
 	        $this->addaction = array();
-			if(CRUDBooster::myPrivilegeName() == 'Marketing Head'){
+			if(CRUDBooster::myPrivilegeName() == 'Marketing Head' || CRUDBooster::myPrivilegeName() == 'Marketing'){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('detail/[id]'),'icon'=>'fa fa-eye'];
-			}else if(CRUDBooster::myPrivilegeName() == 'Accounting Head'){
+			}else if(CRUDBooster::myPrivilegeName() == 'Accounting Head' || CRUDBooster::myPrivilegeName() == 'Accounting'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('detail/[id]'),'icon'=>'fa fa-eye','color'=>'warning'];
+			}else if(CRUDBooster::myPrivilegeName() == 'Super Administrator'){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('detail/[id]'),'icon'=>'fa fa-eye','color'=>'warning'];
 			}
