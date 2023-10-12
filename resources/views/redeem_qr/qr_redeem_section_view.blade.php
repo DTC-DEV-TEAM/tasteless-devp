@@ -62,6 +62,12 @@
             <td>No</td>
             @endif
           </tr>
+          <tr>
+            <td class="label-bold">Uploaded Receipt</td>
+            <td>
+              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style=" margin: 15px 0; max-width:100%; max-height: 500px; object-fit: contain;">
+            </td>
+          </tr>
           </table>
         </div>
                 
