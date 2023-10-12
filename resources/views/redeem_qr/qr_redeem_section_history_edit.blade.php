@@ -18,6 +18,15 @@
             font-size: 17px !important;
             color: rgb(0, 0, 0) !important;
         }
+
+        .qr_status{
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            z-index: 1;
+            text-align: center;
+            font-size: 20px;
+        }
     </style>
 @endpush
 @section('content')
@@ -28,11 +37,15 @@
         <div class='panel-body'>
             <form method='post' action='{{CRUDBooster::mainpath('edit-save/'.$row->id)}}'>
                 @csrf
+                @if ($row->accounting_is_audit)
+                <div class="qr_status" style="background-color: rgb(31,114,183);">Closed</div>
+                @else
+                <div class="qr_status" style="background-color: rgb(74 222 128);">Claimed</div>
+                @endif
                 <div class="row">
                     <div class="col-md-12">
                         <table class="table default-table-design">
                             <tr>
-                                {{-- <label for=""> Campaign ID:</label> --}}
                                 <td class="text-center table-label"> Name:</td>
                                 <td style="width: 200px;">
                                     <input class="input" type="text" value="{{ $row->name }}" disabled>
