@@ -160,8 +160,10 @@ use Illuminate\Support\Facades\Validator;
 			*/
 			$this->index_button = array();
 			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
-				$this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
-				$this->index_button[] = ['label'=>'In House Campaign','url'=>CRUDBooster::mainpath("getAddIhc"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+				if(CRUDBooster::myPrivilegeName() == 'Marketing'){
+					$this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+					$this->index_button[] = ['label'=>'In House Campaign','url'=>CRUDBooster::mainpath("getAddIhc"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+				}
 			}
 
 
