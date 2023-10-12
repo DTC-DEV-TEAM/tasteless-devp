@@ -160,7 +160,7 @@ use Illuminate\Support\Facades\Validator;
 			*/
 			$this->index_button = array();
 			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
-				if(CRUDBooster::myPrivilegeName() == 'Marketing'){
+				if(CRUDBooster::myPrivilegeName() == 'Marketing' || CRUDBooster::myPrivilegeName() == 'Super Administrator'){
 					$this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
 					$this->index_button[] = ['label'=>'In House Campaign','url'=>CRUDBooster::mainpath("getAddIhc"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
 				}
@@ -594,7 +594,7 @@ use Illuminate\Support\Facades\Validator;
 			}
 
 			// $email = $cms_users->email;
-			$email = 'ptice.0318@gmail.com';
+			// $email = 'ptice.0318@gmail.com';
 			
 			// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
 			// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
@@ -619,17 +619,23 @@ use Illuminate\Support\Facades\Validator;
 				'gc_description' => $qr_creation->gc_description,
 				'gc_value' => $qr_creation->gc_value
 			);
-			
+
 			if($qr_creation->campaign_status == 1){
 				if($request->get('approve')){
-
-					$qr_creation->update([
-						'manager_approval' => CRUDBooster::myId(),
-						'campaign_status' => 2,
-						'manager_approval_date' => date('Y-m-d H:i:s')
-					]);
-
-					$email = 'ptice.0318@gmail.com';
+					if($qr_creation->campaign_status == 1){
+						$qr_creation->update([
+							'manager_approval' => CRUDBooster::myId(),
+							'campaign_status' => 2,
+							'manager_approval_date' => date('Y-m-d H:i:s')
+						]);
+					}else if($qr_creation->campaign_status == 2){
+						$qr_creation->update([
+							'accounting_approval' => CRUDBooster::myId(),
+							'campaign_status' => 3,
+							'accounting_approval_date' => date('Y-m-d H:i:s')
+						]);
+					}
+					// $email = 'ptice.0318@gmail.com';
 			
 					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
 					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
@@ -653,7 +659,7 @@ use Illuminate\Support\Facades\Validator;
 						'accounting_approval_date' => date('Y-m-d H:i:s')
 					]);
 
-					$email = 'ptice.0318@gmail.com';
+					// $email = 'ptice.0318@gmail.com';
 			
 					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
 					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
