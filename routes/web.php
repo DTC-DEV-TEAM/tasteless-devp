@@ -38,6 +38,8 @@ Route::post('admin/g_c_list/edit/close_transaction', [AdminGCListsController::cl
 // Add Campaign
 Route::post('admin/qr_creations/add/campaign', [AdminQrCreationsController::class, 'addCampaign'])->name('add_campaign');
 Route::post('admin/qr_creations/add/campaignIhc', [AdminQrCreationsController::class, 'addCampaignIhc'])->name('add_campaign_ihc');
+// Save Campaign
+Route::post('admin/qr_creations/edit/saveCampaignIhc', [AdminQrCreationsController::class, 'saveCampaignIhc'])->name('save_campaign_ihc');
 // Campaign Approval
 Route::post('admin/qr_creations/edit/campaign-approval', [AdminQrCreationsController::class, 'campaignApproval'])->name('campaign_approval');
 // getAddIhc

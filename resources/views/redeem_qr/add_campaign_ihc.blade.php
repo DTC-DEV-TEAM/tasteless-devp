@@ -11,7 +11,7 @@
         
         .form-input-content{
             display: flex;
-            flex-wrap: wrap
+            flex-wrap: wrap;
         }
 
         .form-inputs{
@@ -225,19 +225,19 @@
         .sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
 
         @keyframes sk-chase {
-        100% { transform: rotate(360deg); } 
+            100% { transform: rotate(360deg); } 
         }
 
         @keyframes sk-chase-dot {
-        80%, 100% { transform: rotate(360deg); } 
+            80%, 100% { transform: rotate(360deg); } 
         }
 
         @keyframes sk-chase-dot-before {
-        50% {
-            transform: scale(0.4); 
-        } 100%, 0% {
-            transform: scale(1.0); 
-        } 
+            50% {
+                transform: scale(0.4); 
+            } 100%, 0% {
+                transform: scale(1.0); 
+            } 
         }
     </style>
 @endpush
@@ -262,6 +262,7 @@
         <div class='panel-heading'>Add Form</div>
         <form method='post' action='{{ route('add_campaign_ihc') }}' autocomplete="off" enctype="multipart/form-data">
             @csrf
+            <input type="text" class="hide" name="qr_creations_id" value="{{ $qr_creation->qr_creations_id }}">
             <input type="text" class="hide" name="id" value="{{ $qr_creation->id }}">
             <div class='panel-body'>
                 <div class="for_approval">
@@ -279,12 +280,6 @@
                         <span class="rejected">{{ $qr_creation->campaign_status_name }}</span>
                         @endif
                     </div>
-                    {{-- @if ($qr_creation->campaign_status == 2 || $qr_creation->campaign_status == 3)     
-                    <div class="for_approval_content" style="max-width: 200px;">
-                        <label for="">Billing Number</label>
-                        <input type="text" name="billing_number" placeholder="Input billing number" value="{{ $qr_creation->billing_number }}" {{ (Request::segment(3) == 'detail') ? 'disabled' : '' }} required>
-                    </div>
-                    @endif --}}
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -349,14 +344,21 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        @if (Request::segment(3) == 'getAddIhc')
+                        @if ((Request::segment(3) == 'getAddIhc' || $qr_creation->campaign_status == 1) && Request::segment(3) != 'detail')
                         <table class="table default-table-design">
                             <tr>
                                 <td class="text-center table-label">Excluded Concept:</td>
                                 <td>
-                                    <select class="excluded_concept" id="excluded_concept" multiple>
-                                        <option value="1">DW</option>
-                                        <option value="2">BTB</option>
+                                    <select class="excluded_concept" id="excluded_concept" name="store[]" multiple>
+                                        @if (!$qr_creation->campaign_id)
+                                        @foreach ($excluded_concept as $store)
+                                            <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                        @endforeach
+                                        @else
+                                        @foreach ($excluded_concept as $store)
+                                            <option value="{{ $store->id }}" {{ in_array($store->id, explode(',', $qr_creation->store)) ? 'selected' : '' }}>{{ $store->name }}</option>
+                                        @endforeach
+                                        @endif
                                     </select>                                
                                 </td>
                             </tr>
@@ -365,25 +367,23 @@
                                 <td>
                                     <select class="store_concept" id="store_concept" name="stores[]" multiple>
                                         @if (!$qr_creation->campaign_id)
-                                        @foreach ($stores as $store)
-                                            <option value="{{ $store->id }}" charge_to="{{ $store->concept }}">{{ $store->beach_name }}</option>
-                                        @endforeach
-                                        @else
-                                        @foreach ($stores as $store)
-                                        <option value="{{ $store->id }}" {{ in_array($store->id,explode(',',$qr_creation->number_of_gcs)) ? 'selected':'' }}>{{ $store->beach_name }}</option>
-                                        @endforeach
+                                            @foreach ($stores as $store)
+                                                <option value="{{ $store->id }}" charge_to="{{ $store->concept }}">{{ $store->beach_name }}</option>
+                                            @endforeach
+                                            @else
+                                            @foreach ($stores as $store)
+                                                <option value="{{ $store->id }}" charge_to="{{ $store->concept }}" {{ !in_array($store->id, explode(',', $qr_creation->number_of_gcs)) ? 'selected' : '' }}>
+                                                    {{ $store->beach_name }}
+                                                </option>
+                                            @endforeach
                                         @endif
-                                    </select>                                
+                                    </select>                         
                                 </td>
                             </tr>
                         </table>
                         @else
                         <div>
-                            @if (Request::segment(3) == 'edit')
                             <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
-                            @else
-                            <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
-                            @endif
                             <div style="display: flex; flex-wrap: wrap;">
                                 @foreach ($stores1 as $store)
                                     <span style="margin: 5px 5px 5px 0px; background-color: #605CA8; color: white; padding: 5px; ">{{ $store->name }}</span>
@@ -406,14 +406,12 @@
                 <br>
                 @endif
 
-
                 <div class="form-inputs">
                     @if($errors->has('campaign_id'))
-                    <p style="color: red;">{{ $errors->first('campaign_id') }}</p>
+                    <p style="color: red; font-weight: bold;">{{ $errors->first('campaign_id') }}</p>
                     @endif
                 </div>
                 @if ($qr_creation->memo_attachment)
-                
                 <div class="text-center">
                 <br>
                     <div class="file_title">
@@ -428,13 +426,17 @@
                 <input type='submit' class='btn btn-primary hide' id="submit_form" value='Save changes'/>
                 <input type='submit' class='btn btn-primary hide' id="reject_form" name="reject" value='Reject'/>
                 <input type='submit' class='btn btn-primary hide' id="approve_form" name="approve" value='Approve'/>
-                @if($qr_creation->campaign_status == null)
+                @if (!$qr_creation->campaign_status)
                 <button type="button" class='btn btn-primary' id="submit_btn">Submit</button>
-                @else
-                @if (!(Request::segment(3) == 'detail') && ($qr_creation->campaign_status != 3 && $qr_creation->campaign_status != 4))          
-                <button type="button" class='btn btn-success' style="float: right; margin-left: 5px;" id="approve_btn">Approve</button>
-                <button type="button" class='btn btn-danger' style="float: right;" id="reject_btn">Reject</button>
                 @endif
+                @if (($qr_creation->campaign_status == 1 && Request::segment(3) == 'edit') && (CRUDBooster::myPrivilegeId() == 2 || CRUDBooster::myPrivilegeId() == 1))
+                    <button type="button" class='btn btn-primary' id="save_btn">Save</button>
+                @endif
+                @if ((Request::segment(3) != 'detail' && Request::segment(3) != 'getAddIhc') && ($qr_creation->campaign_status != 3 && $qr_creation->campaign_status != 4)) 
+                    @if(CRUDBooster::myPrivilegeId() != 2)         
+                    <button type="button" class='btn btn-success' style="float: right; margin-left: 5px;" id="approve_btn">Approve</button>
+                    <button type="button" class='btn btn-danger' style="float: right;" id="reject_btn">Reject</button>
+                    @endif
                 @endif
             </div>
         </form>
@@ -478,138 +480,158 @@
         //     id: 'id'
         // })
 
-            $('.store_concept').select2({
-                width: '100%',
-                placeholder: 'Select Stores'
-            });
+        // $(document).ready(function(){
+            
+        //     const stores_excluded = {!! json_encode($qr_creation->number_of_gcs) !!}
 
-            $('.excluded_concept').select2({
-                width: '100%',
-                placeholder: 'Select Store Concept'
+        //     stores_excluded.split(',').forEach(function(item){
+        //         $(`#store_concept option[charge_to="${item}"]`).prop('selected', true);
+        //     })
+
+        // })
+
+        $('.store_concept').select2({
+            width: '100%',
+            placeholder: 'Select Stores'
+        });
+
+        $('.excluded_concept').select2({
+            width: '100%',
+            placeholder: 'Select Store Concept'
+        })
+
+        $('#store_logo').select2({
+            width: '100%',
+            placeholder: 'Select Store Logo'
+        });
+    
+        $('#charge_to').select2({
+            width: '100%',
+            placeholder: 'Select Charge To'
+        });
+
+        $('#excluded_concept').on('change', function (e) {
+            
+            const options = $(this).find('option').get();
+            options.forEach(option => {
+                const value = $(option).text();
+                
+                if ($(option).is(':selected')) {
+                    $(`#store_concept option[charge_to="${value}"]`).attr('selected', true);
+                } else {
+                    $(`#store_concept option[charge_to="${value}"]`).attr('selected', false);
+                }
             })
 
-            $('#store_logo').select2({
-                width: '100%',
-                placeholder: 'Select Store Logo'
-            });
-        
-            $('#charge_to').select2({
-                width: '100%',
-                placeholder: 'Select Charge To'
-            });
-        
-    
-        
-            // $('#store_concept option[charge_to="2"]').attr('selected', true);
-            // $('#store_concept').trigger('change');
-            // $('#excluded_concept').on('change', function(e){
-
-            //     let charge_id = $(this).val();
-            //     console.log(charge_id);
-            //     $(`#store_concept option[charge_to="${charge_id}"]`).attr('selected', true);
-            //     // $('#store_concept').trigger('change');
-            // })
-
-            $('#excluded_concept').on('change', function (e) {
-
-                const options = $(this).find('option').get();
-                options.forEach(option => {
-                    const value = $(option).text();
-                    console.log(value);
-                    if ($(option).is(':selected')) {
-                        $(`#store_concept option[charge_to="${value}"]`).attr('selected', true);
-                    } else {
-                        $(`#store_concept option[charge_to="${value}"]`).attr('selected', false);
-                    }
-                })
-
-                // Trigger the 'change' event to update the Select2 display
-                $('#store_concept').trigger('change');
-            });
+            // Trigger the 'change' event to update the Select2 display
+            $('#store_concept').trigger('change');
+        });
 
 
-            function campaignCreationDetails(){
+        function campaignCreationDetails(){
+            
+            $('input[name="campaign_id"]').val('{{ $qr_creation->campaign_id }}');
+            $('input[name="gc_description"]').val('{{ $qr_creation->gc_description }}');
+            $('input[name="gc_value"]').val('{{ $qr_creation->gc_value }}');
+            $('input[name="batch_number"]').val('{{ $qr_creation->batch_number }}');
+            $('input[name="batch_group"]').val('{{ $qr_creation->batch_group }}');
+            $('input[name="po_number"]').val('{{ $qr_creation->po_number }}');
 
-                if("{{ $qr_creation->campaign_id }}"){
-                    
-                    $('.panel-heading').text('Details');
-                    $('input').css('background-color', '#eee');
-                    $('input').attr('readonly', true);
-                    $('select').css('background-color', '#eee');
-                    $('select').attr('disabled', true);
-                    $('input[name="campaign_id"]').val('{{ $qr_creation->campaign_id }}');
-                    $('input[name="gc_description"]').val('{{ $qr_creation->gc_description }}');
-                    $('input[name="gc_value"]').val('{{ $qr_creation->gc_value }}');
-                    $('input[name="batch_number"]').val('{{ $qr_creation->batch_number }}');
-                    $('input[name="batch_group"]').val('{{ $qr_creation->batch_group }}');
-                    $('input[name="po_number"]').val('{{ $qr_creation->po_number }}');
-                }
-
-                if("{{ $qr_creation->campaign_status == 2 }}"){
-                    $('input[name="billing_number"]').attr('readonly', false);
-                    $('input[name="billing_number"]').css('background-color', '#fff');
-                }
-
+            if(("{{ $qr_creation->campaign_status }}" > 1) || ("{{ CRUDBooster::myPrivilegeId() == 4 }}") || ("{{ CRUDBooster::myPrivilegeId() == 5 }}") || "{{ Request::segment(3) == 'detail' }}"){
+                
+                $('.panel-heading').text('Details');
+                $('input').css('background-color', '#eee');
+                $('input').attr('readonly', true);
+                $('select').css('background-color', '#eee');
+                $('select').attr('disabled', true);
             }
 
-            campaignCreationDetails()
+        }
 
-            $('#submit_btn').click(function(){
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, submit it!',
-                    returnFocus: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('#submit_form').click();
-                    }
-                })
-            });
+        campaignCreationDetails()
 
-            $('#reject_btn').click(function(){
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, submit it!',
-                    returnFocus: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('form').attr("action", "{{ route('campaign_approval') }}");
-                        $('#reject_form').click();
-                    }
-                })
-            });
+        $('#submit_btn').click(function(){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit it!',
+                returnFocus: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#submit_form').click();
+                }
+            })
+        });
 
-            $('#approve_btn').click(function(){
-                // console.log($("input[name='billing_number']").val() == '');
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, submit it!',
-                    returnFocus: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('form').attr("action", "{{ route('campaign_approval') }}");
-                        if($("input[name='billing_number']").val() != ''){
-                            $('.sk-chase-position').show();
-                        }
-                        $('#approve_form').click();
+        $('#reject_btn').click(function(){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit it!',
+                returnFocus: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('form').attr("action", "{{ route('campaign_approval') }}");
+                    $('#reject_form').click();
+                }
+            })
+        });
+
+        $('#approve_btn').click(function(){
+            // console.log($("input[name='billing_number']").val() == '');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit it!',
+                returnFocus: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('form').attr("action", "{{ route('campaign_approval') }}");
+                    if($("input[name='billing_number']").val() != ''){
+                        $('.sk-chase-position').show();
                     }
-                })
-            });
+                    $('#approve_form').click();
+                }
+            })
+        });
+
+        $('#save_btn').click(function(){
+            // console.log($("input[name='billing_number']").val() == '');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, save it!',
+                returnFocus: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('form').attr("action", "{{ route('save_campaign_ihc') }}");
+                    $('#approve_form').click();
+                }
+            })
+        });
+
+        $('input, select').on('keypress', function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+            }
+        })
 
     </script>
 @endsection
+

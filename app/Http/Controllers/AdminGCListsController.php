@@ -401,7 +401,7 @@ use DateTime;
 			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
 						
 			if(($campaign_id->campaign_type_id == 2)){
-				if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
+				// if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
 					if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 						$data = [];
 						$data['page_title'] = 'Redeem QR';
@@ -428,9 +428,9 @@ use DateTime;
 		
 						CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
 					}
-				}else{
-					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
-				}
+				// }else{
+				// 	CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
+				// }
 			}else{
 				if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 					$data = [];

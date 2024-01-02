@@ -31,7 +31,8 @@ class AdminCmsUsersController extends CBController {
 		$this->col[] = array("label"=>"Store","name"=>"id_store_concept", "join"=>'store_concepts,name' );
 		$this->col[] = array("label"=>"Email","name"=>"email");
 		$this->col[] = array("label"=>"Privilege","name"=>"id_cms_privileges","join"=>"cms_privileges,name");
-		$this->col[] = array("label"=>"Photo","name"=>"photo","image"=>1);		
+		$this->col[] = array("label"=>"Photo","name"=>"photo","image"=>1);
+		$this->col[] = ["label"=>"Status","name"=>"status"];
 		# END COLUMNS DO NOT REMOVE THIS LINE
 
 		# START FORM DO NOT REMOVE THIS LINE
@@ -45,7 +46,7 @@ class AdminCmsUsersController extends CBController {
 			$this->form[] = array("label"=>"Privilege","name"=>"id_cms_privileges","type"=>"select","datatable"=>"cms_privileges,name",'required'=>true,'width'=>'col-sm-6','datatable_where'=>'name="Store QR"');			
 		}
 		$this->form[] = array('label'=>'Store','name'=>'id_store_concept','type'=>'select','validation'=>'required|min:1|max:255',"datatable"=>"store_concepts,name",'width'=>'col-sm-6');		
-
+		$this->form[] = ['label'=>'Status','name'=>'status','type'=>'select','validation'=>'required','width'=>'col-sm-6','dataenum'=>'ACTIVE;INACTIVE'];			
 		// $this->form[] = array("label"=>"Company Name","name"=>"company_id","type"=>"select","datatable"=>"company_ids,company_name",'required'=>true,'width'=>'col-sm-6');						
 		$this->form[] = array("label"=>"Password","name"=>"password","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');
 		$this->form[] = array("label"=>"Password Confirmation","name"=>"password_confirmation","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');

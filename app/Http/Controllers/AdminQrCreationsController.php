@@ -22,6 +22,7 @@ use App\Mail\QrEmail;
 use App\Jobs\SendEmailJob;
 use App\StoreConcept;
 use App\StoreLogo;
+use App\Stores;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,7 +50,7 @@ use Illuminate\Support\Facades\Validator;
 			$this->button_action_style = "button_icon";
 			$this->button_add = false;
 			$this->button_edit = false;
-			$this->button_delete = true;
+			$this->button_delete = false;
 			$this->button_detail = true;
 			$this->button_show = true;
 			$this->button_filter = true;
@@ -66,9 +67,9 @@ use Illuminate\Support\Facades\Validator;
 			$this->col[] = ["label"=>"Gc Description","name"=>"gc_description"];
 			$this->col[] = ["label"=>"Gc Value","name"=>"gc_value"];
 			$this->col[] = ["label"=>"Number Of Gcs","name"=>"batch_number"];
-			$this->col[] = ["label"=>"Batch Group","name"=>"batch_group"];
+			// $this->col[] = ["label"=>"Batch Group","name"=>"batch_group"];
 			// $this->col[] = ["label"=>"Batch Number","name"=>"batch_number"];
-			$this->col[] = ["label"=>"Company Name","name"=>"company_id","join"=>"company_ids,company_name"];
+			// $this->col[] = ["label"=>"Company Name","name"=>"company_id","join"=>"company_ids,company_name"];
 			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Created At","name"=>"created_at"];
 			$this->col[] = ["label"=>"Campaign Status","name"=>"campaign_status"];
@@ -115,6 +116,7 @@ use Illuminate\Support\Facades\Validator;
 
 			if(CRUDBooster::myPrivilegeName() == 'Marketing'){
 				// $this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
 			}elseif(CRUDBooster::myPrivilegeName() == 'Marketing Head'){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
 			}elseif(CRUDBooster::myPrivilegeName() == 'Accounting Head'){
@@ -305,7 +307,7 @@ use Illuminate\Support\Facades\Validator;
 		*/    
 		public function hook_row_index($column_index,&$column_value) {	        
 			//Your code here
-			if($column_index == '11'){
+			if($column_index == '9'){
 				if($column_value == '1'){
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">FOR APPROVAL</span>';
 				}else if($column_value == '2'){
@@ -435,7 +437,7 @@ use Illuminate\Support\Facades\Validator;
 				->leftJoin('campaign_statuses', 'qr_creations.campaign_status', 'campaign_statuses.id')
 				->leftJoin('cms_users as manager', 'qr_creations.manager_approval', 'manager.id')
 				->leftJoin('cms_users as accounting', 'qr_creations.accounting_approval', 'accounting.id')
-				->select('qr_creations.*','company_ids.company_name', 'manager.name as manager_name', 'accounting.name as accounting_name', 'campaign_statuses.name as campaign_status_name')
+				->select('qr_creations.*','company_ids.company_name', 'manager.name as manager_name', 'accounting.name as accounting_name', 'campaign_statuses.name as campaign_status_name', 'qr_creations.id as qr_creations_id')
 				->get()
 				->first();
 
@@ -443,15 +445,19 @@ use Illuminate\Support\Facades\Validator;
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
 			$charge_to = ChargeTo::get();
+			$excluded_concept = Stores::get();
 
 			$data = [];
-			$data['page_title'] = 'Detail Campaign Creation';
+			$data['page_title'] = 'Edit Campaign Creation';
 			$data['company_id'] = $company;
 			$data['stores'] = $store;
 			$data['qr_creation'] = $qr_creation;
 			$data['store_logo'] = $store_logo;
 			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
 			$data['charge_to'] = $charge_to;
+			$data['excluded_concept'] = $excluded_concept;
+			// dd($data['stores1']);
+			// dd($data['stores1']);
 
 			if($qr_creation->campaign_type_id == 1){
 				return $this->view('redeem_qr.add_campaign_tpc',$data);
@@ -475,6 +481,7 @@ use Illuminate\Support\Facades\Validator;
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
 			$charge_to = ChargeTo::whereNull('deleted_at')->get();
+			$excluded_concept = Stores::get();
 
 			$data = [];
 			$data['page_title'] = 'Detail Campaign Creation';
@@ -482,8 +489,9 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['qr_creation'] = $qr_creation;
 			$data['store_logo'] = $store_logo;
-			$data['stores1'] = StoreConcept::whereIn('id',explode(',',$qr_creation->number_of_gcs))->get();
+			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
 			$data['charge_to'] = $charge_to;
+			$data['excluded_concept'] = $excluded_concept;
 
 			if($qr_creation->campaign_type_id == 1){
 				return $this->view('redeem_qr.add_campaign_tpc',$data);
@@ -503,6 +511,7 @@ use Illuminate\Support\Facades\Validator;
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
 			$charge_to = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->get();
+			$excluded_concept = Stores::get();
 
 			$data = [];
 			$data['page_title'] = 'Add Data';
@@ -510,6 +519,7 @@ use Illuminate\Support\Facades\Validator;
 			$data['stores'] = $store;
 			$data['store_logo'] = $store_logo;
 			$data['charge_to'] = $charge_to;
+			$data['excluded_concept'] = $excluded_concept;
 
 			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.add_campaign_ihc',$data);
@@ -565,11 +575,9 @@ use Illuminate\Support\Facades\Validator;
 			$campaign = $request->all();
 			$campaign['campaign_type_id'] = "2";
 			
-			// dd(StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
-
 			$memo_pdf = $campaign['memo_attachment'];
+			$campaign['store'] = $campaign['store'] ? implode(',',$campaign['store']) : null;
 			$campaign_stores = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
-			// dd($campaign);
 			
 			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
 			
@@ -577,12 +585,11 @@ use Illuminate\Support\Facades\Validator;
 				'campaign_id' => 'required|unique:qr_creations'
 			]);
 
-			// $campaign_stores = implode(",",$campaign['stores']);
 			$campaign['number_of_gcs'] = $campaign_stores;
 			$campaign['created_by'] = CRUDBooster::myId();
 			$campaign['created_at'] = date('Y-m-d H:i:s');
 			
-			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','po_attachment','memo_attachment','id']));
+			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','po_attachment','memo_attachment','id','qr_creations_id']));
 			$campaign_information->save();
 			$campaign_information->campaign_status = 1;
 			$campaign_information->save();
@@ -607,6 +614,30 @@ use Illuminate\Support\Facades\Validator;
 			// });
 
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
+		}
+
+		public function saveCampaignIhc(IlluminateRequest $request){
+			
+			$campaign = $request->all();
+			$campaign['store'] = $campaign['store'] ? implode(',',$campaign['store']) : null;
+			$campaign['number_of_gcs'] = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
+			$id = $campaign['qr_creations_id'];
+
+			$current = QrCreation::find($id);
+			$current_campaign_id = $current->campaign_id;
+			
+			$campaign_exists = QrCreation::where('campaign_id', $campaign['campaign_id'])->exists();
+
+			if ($campaign_exists && $campaign['campaign_id'] != $current_campaign_id) {
+				return redirect()->back()->withErrors(['campaign_id' => 'Campaign ID exists']);
+			}else{
+				QrCreation::find($campaign['id'])->update(
+					Arr::except($campaign, ['stores', 'approve', '_token', 'id', 'qr_creations_id'])
+				);
+
+				return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign edited succesfully', 'success')->send();
+			}
+
 		}
 
 		public function campaignApproval(IlluminateRequest $request){
