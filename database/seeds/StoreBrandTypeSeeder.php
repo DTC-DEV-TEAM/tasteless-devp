@@ -16,7 +16,9 @@ class StoreBrandTypeSeeder extends Seeder
             ],
             [
                 'name' => 'Beyond the Box',
-                'status' => 'ACTIVE'
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
             ]);
 
         DB::table('store_brand_types')->updateOrInsert([
@@ -24,7 +26,9 @@ class StoreBrandTypeSeeder extends Seeder
             ],
             [
                 'name' => 'BTB x open_source',
-                'status' => 'ACTIVE'
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
             ]);
 
         DB::table('store_brand_types')->updateOrInsert([
@@ -32,7 +36,9 @@ class StoreBrandTypeSeeder extends Seeder
             ],
             [
                 'name' => 'Digital Walker',
-                'status' => 'ACTIVE'
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
             ]);
             
         DB::table('store_brand_types')->updateOrInsert([
@@ -40,7 +46,9 @@ class StoreBrandTypeSeeder extends Seeder
             ],
             [
                 'name' => 'open_source',
-                'status' => 'ACTIVE'
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
             ]);
     }
 }

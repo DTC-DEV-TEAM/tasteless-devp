@@ -92,11 +92,12 @@
     </div>
     <div class='panel-footer'>
         <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
-        <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 1 ? 'Submit' : 'Send' }}"/>
     </div>
 
     <script>
     $(document).ready(function() {
+
+        $('input,select').attr('disabled', true);
 
         if("{{ $customer->store_status == 2 }}"){
             $('input').attr('readonly', false);

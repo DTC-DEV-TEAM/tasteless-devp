@@ -16,7 +16,10 @@ class EgcValueTypeSeeder extends Seeder
             ],
             [
                 'name' => 'P1000',
-                'status' => 'ACTIVE'
+                'value' => '1000',
+                'status' => 'ACTIVE',
+                'created_by' => '7',
+                'created_at' => date('Y-m-d H:i:s')
             ]);
 
         DB::table('egc_value_types')->updateOrInsert([
@@ -24,7 +27,10 @@ class EgcValueTypeSeeder extends Seeder
             ],
             [
                 'name' => 'P5000',
-                'status' => 'ACTIVE'
+                'value' => '5000',
+                'status' => 'ACTIVE',
+                'created_by' => '7',
+                'created_at' => date('Y-m-d H:i:s')
             ]);
     }
 }

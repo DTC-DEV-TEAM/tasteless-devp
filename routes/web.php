@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminGCListsController;
+use App\Http\Controllers\AdminGCListsStoreController;
 use App\Http\Controllers\AdminQrCreationsController;
 use App\Http\Controllers\CustomerRegistrationController;
 use Illuminate\Support\Facades\Route;
@@ -57,9 +58,21 @@ Route::get('/customer_registration/beyond_the_box', [CustomerRegistrationControl
 Route::get('/customer_registration/digital_walker', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/btb_x_open_source', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/open_source', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/suggest-existing-customer', [CustomerRegistrationController::class, 'suggestExistingCustomer'])->name('suggest_existing_customer');
+Route::post('/customer_registration/view-existing-customer', [CustomerRegistrationController::class, 'viewCustomerInfo'])->name('viewCustomerInfo');
 // Add Customer
 Route::post('/customer_registration/store', [CustomerRegistrationController::class, 'store'])->name('store_ui');
+// Peding Invoice
+Route::post('admin/store/edit/pendingInvoice', [AdminGCListsStoreController::class, 'pendingInvoice'])->name('pending_invoice');
+// OIC Approval
+Route::post('admin/store/edit/pendingOIC', [AdminGCListsStoreController::class, 'pendingOIC'])->name('pending_oic');
 
+// Email Template
+Route::get(config('crudbooster.ADMIN_PATH').'email_testings/add-template', [AdminEmailTestingsController::class, 'getAddTemplate'])->name('add-template');
+Route::post(config('crudbooster.ADMIN_PATH').'delete-images', [AdminEmailTestingsController::class, 'deleteImages'])->name('delete-images');
+Route::post(config('crudbooster.ADMIN_PATH').'/selectedHeader',[AdminEmailTestingsController::class, 'selectedHeader'])->name('selected-header');
+//Send Email testing
+Route::post(config('crudbooster.ADMIN_PATH').'send-email-testing', [AdminEmailTestingsController::class, 'sendEmailTesting'])->name('send-email-testing');
 
 // Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     

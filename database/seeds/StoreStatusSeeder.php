@@ -30,5 +30,15 @@ class StoreStatusSeeder extends Seeder
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+        
+        DB::table('store_statuses')->updateOrInsert([
+            'name' => 'Email Sent',
+            ],
+            [
+                'name' => 'Email Sent',
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
     }
 }

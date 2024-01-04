@@ -15,7 +15,8 @@ class CreateEgcValueTypesTable extends Migration
     {
         Schema::create('egc_value_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->nullable();
+            $table->integer('value')->nullable();
             $table->enum('status', ['ACTIVE', 'INACTIVE'])->default('ACTIVE')->nullable();
             $table->integer('created_by')->unsigned()->length(10)->nullable();
             $table->integer('updated_by')->unsigned()->length(10)->nullable();

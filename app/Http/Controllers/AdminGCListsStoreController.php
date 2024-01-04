@@ -1,7 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-	use Session;
-	use Request;
+use App\EgcValueType;
+use App\GCList;
+use Session;
+	use Illuminate\Http\Request;
 	use DB;
 	use CRUDBooster;
 
@@ -25,14 +27,14 @@
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
-			$this->button_add = true;
+			$this->button_add = false;
 			$this->button_edit = true;
 			$this->button_delete = false;
 			$this->button_detail = true;
 			$this->button_show = true;
 			$this->button_filter = true;
 			$this->button_import = false;
-			$this->button_export = false;
+			$this->button_export = true;
 			$this->table = "g_c_lists";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
@@ -262,6 +264,9 @@
 				else if($column_value == 'OIC Approval'){
 					$column_value = '<span class="label" style="background-color: rgb(251 146 60); color: white; font-size: 12px;">OIC Approval</span>';
 				}
+				else if($column_value == 'Email Sent'){
+					$column_value = '<span class="label" style="background-color: rgb(74 222 128); color: white; font-size: 12px;">Email Sent</span>';
+				}
 			}
 	    }
 
@@ -347,14 +352,78 @@
 			$gc_list = DB::table('g_c_lists')->where('g_c_lists.id', $id)
 				->get()
 				->first();
-
+			
+			$egc_value = DB::table('egc_value_types')->get();
 
 			$data = [];
-			$data['page_title'] = 'Pending Invoice';
+			$data['page_title'] = $gc_list->store_status == 1 ? 'Pending Invoice' : 'OIC Approval';
 			$data['customer'] = $gc_list;
+			$data['egcs'] = $egc_value;
 
 			return $this->view('customer.customer_edit',$data);
 			
+		}
+
+		public function getDetail($id) {
+			
+			$gc_list = DB::table('g_c_lists')->where('g_c_lists.id', $id)
+				->get()
+				->first();
+			
+			$egc_value = DB::table('egc_value_types')->get();
+
+			$data = [];
+			$data['page_title'] = $gc_list->store_status == 1 ? 'Pending Invoice' : 'OIC Approval';
+			$data['customer'] = $gc_list;
+			$data['egcs'] = $egc_value;
+
+			return $this->view('customer.customer_detail',$data);
+			
+		}
+
+		public function pendingInvoice(Request $request){
+
+			$customer = $request->all();
+
+			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+
+			$gc_list = GCList::where('id', $customer['id'])
+				->update([
+					'store_status' => 2,
+					'egc_value_id' => $egc_value->id,
+					'invoice_number' => $customer['invoice_number'],
+					'st_cashier_id' => CRUDBooster::myId(),
+					'st_cashier_date_transact' => date('Y-m-d H:i:s')
+				]);
+
+			return CRUDBooster::redirect(
+				CRUDBooster::mainpath(),
+				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['invoice_number']}.",
+				'success'
+			)->send();
+		}
+
+		public function pendingOIC(Request $request){
+
+			$customer = $request->all();
+
+			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+
+			$gc_list = GCList::where('id', $customer['id'])
+				->update([
+					'store_status' => 2,
+					'egc_value_id' => $egc_value->id,
+					'invoice_number' => $customer['invoice_number'],
+					'st_oic_id' => CRUDBooster::myId(),
+					'st_oic_date_transact' => date('Y-m-d H:i:s')
+				]);
+
+			return CRUDBooster::redirect(
+				CRUDBooster::mainpath(),
+				"QR codes have been sent to their email.",
+				'success'
+			)->send();
+
 		}
 
 	}

@@ -15,7 +15,7 @@ class CreateStoreBrandTypesTable extends Migration
     {
         Schema::create('store_brand_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->enum('status', ['ACTIVE', 'INACTIVE'])->default('ACTIVE')->nullable();
             $table->integer('created_by')->unsigned()->length(10)->nullable();
             $table->integer('updated_by')->unsigned()->length(10)->nullable();

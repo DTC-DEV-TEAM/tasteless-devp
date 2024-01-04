@@ -1,0 +1,873 @@
+/* Reuse-code */
+.label-bold{
+    font-weight: bold;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;/* Firefox */
+}
+/* End of Reuse-code */
+
+
+/* Scan QR */
+.panel_body_section{
+    height: 67vh;
+    position: relative;
+}
+
+.qr_code{
+    display: flex;
+    height: 100%;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px;
+}
+
+.qr_code_content, .qr_code_img{
+    width: 50%;
+}
+
+.qr_code_content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr_code_img{
+    height: 100%;
+
+}
+
+.scan_qr_img{
+    width: 100%;
+    height: 100%;
+}
+
+.qr_code_box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px;
+    height: 250px;
+    background-color: #ffffff;
+    border-radius: 10%;
+    border: 1px solid #ddd;
+    box-shadow: 10px 10px 0px #666666;
+    position: relative;
+}
+
+.qr_code_box{
+    font-size: 17px;
+}
+
+.qr_code_box span {
+    position: absolute;
+    overflow: hidden;
+    width: 150px;
+    height: 150px;
+    top: -10px;
+    left: -10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr_code_box span::before {
+    content: 'Steps';
+    position: absolute;
+    width: 150%;
+    height: 40px;
+    background-image: linear-gradient(45deg, #47ffff 0%, #44abff  51%, #53bdff  100%);
+    transform: rotate(-45deg) translateY(-20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.23);
+}
+
+.qr_code_box span::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    bottom: 0;
+    left: 0;
+    height: 10px;
+    z-index: -1;
+    box-shadow: 140px -140px #cc3f47;
+    background-image: linear-gradient(45deg, #FF512F 0%, #F09819  51%, #FF512F  100%);
+}
+
+/* Show QR SCANNER */
+.show_scanner_content{
+    margin-top: 25px;
+}
+
+.show_qr_code_scanner{
+    border: none;
+    outline: none;
+    background-color: #6c5ce7;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 5px;
+    transition: all ease 0.1s;
+    box-shadow: 0px 5px 0px 0px #a29bfe;
+}
+
+.show_qr_code_scanner:active{
+    transform: translateY(5px);
+    box-shadow: 0px 0px 0px 0px #a29bfe;
+}
+
+.show_qr_code_scanner:hover{
+    opacity: 0.9;
+}
+
+/* End of Qr Scanner */
+
+.camera{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    display: none;
+}
+
+.camera_card{
+    text-align: center;
+    width: 700px;
+    height: 500px;
+    background: rgb(236, 236, 236);
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+video{
+    position: absolute;
+    top: -100px;
+    left: 50px;
+}
+
+/* End of Scan QR */
+
+/* User Edit */
+.qr_redeem_section{
+    display: flex;
+    justify-content: center;
+    /* background-color: rgb(240, 240, 240); */
+    
+}
+
+.qr-reference-card{
+    height: 300px;
+    width: calc(100% - 110px);
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #174b69d9;
+    z-index: 999;
+    flex-direction: column;
+    margin: auto;
+    align-items: center;
+}
+
+.close-icon{
+    display: grid;
+    place-items: center;
+    right: 10px;
+    top: 8px;
+    position: absolute;
+}
+
+.check-icon{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #b4f6d1;
+    display: grid;
+    place-items: center;
+}
+
+.check-icon span{
+    color: rgb(31, 32, 49);
+    font-size: 50px;
+}
+
+.expired-icon{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #ee7c7c;
+    display: grid;
+    place-items: center;
+}
+
+.expired-icon span{
+    color: rgb(31, 32, 49);
+    font-size: 50px;
+}
+
+
+/* Redemption Text */
+.redemption-success{
+    font-size: 20px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+}
+
+/* QR Reference content */
+.qr-reference-content{
+    margin-top: 35px;
+    min-width: 255px;
+    padding: 12px;
+    background-color: rgba(255, 255, 255, 0.87);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.qr-reference-content span{
+    font-size: 17px;
+    font-weight: bold;
+    
+}
+
+.redeem_layout{
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 50px;
+    box-shadow: 4px 4px  #323232;
+    border: 2px solid #323232;
+    position: relative;
+    /* text-align: center; */
+
+}
+
+/* Input Invoice Number */
+.qr-invoice-number-card{
+    height: 300px;
+    width: calc(100% - 110px);
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #174b69d9;
+    z-index: 999;
+    flex-direction: column;
+    margin: auto;
+    align-items: center;
+}
+
+.invoice-number-check-icon{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #ecf6f7;
+    display: grid;
+    place-items: center;
+}
+
+.invoice-number-check-icon span{
+    color: rgb(31, 32, 49);
+    font-size: 50px;
+}
+
+.invoice-number-close-icon{
+    display: grid;
+    place-items: center;
+    right: 10px;
+    top: 8px;
+    position: absolute;
+}
+
+.input-invoice{
+    margin-top: 40px;
+}
+
+.input-invoice input{
+    padding: 7px 15px;
+    outline: none;
+    font-size: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.input-invoice button{
+    padding: 7.9px 14px;
+    background-color: white;
+    border: 1px solid #eee;
+    font-weight: bold;
+    border-radius: 5px;
+
+}
+
+.input-invoice button:disabled{
+    display: none;
+}
+
+.input-invoice button:hover{
+    opacity: 0.9;
+}
+
+.input-invoice-notes{
+    margin-top: 10px;
+    text-align: center;
+}
+.input-invoice-notes span{
+    color: white;
+    font-size: 14px;
+}
+
+/* End of Input Invoice Number */
+
+/* Redemption Period Over */
+.uploading-item-card{
+    /* height: 300px; */
+    width: calc(100% - 110px);
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #174b69d9;
+    z-index: 999;
+    flex-direction: column;
+    margin: auto;
+    align-items: center;
+}
+
+.uploading-item-check-icon{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #ecf6f7;
+    display: grid;
+    place-items: center;
+}
+
+.uploading-item-check-icon span{
+    color: rgb(31, 32, 49);
+    font-size: 50px;
+}
+
+.uploading-item-close-icon{
+    display: grid;
+    place-items: center;
+    right: 10px;
+    top: 8px;
+    position: absolute;
+}
+
+.uploading-item-success{
+    font-size: 20px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+.upload-image{
+    margin-top: 10px;
+}
+
+.upload-image input[type="file"] {
+    position: relative;
+    width: 300px;
+    /* border: 1px solid #b5b5b5; */
+    /* border-radius: 4px; */   
+    color: white;
+    outline: none;
+}
+
+.upload-image input[type="file"]::file-selector-button {
+    width: 175px;
+    color: transparent;
+}
+
+/* Faked label styles and icon */
+.upload-image input[type="file"]::before {
+    position: absolute;
+    pointer-events: none;
+    top: 10px;
+    left: 16px;
+    height: 20px;
+    width: 20px;
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+}
+
+.upload-image input[type="file"]::after {
+    position: absolute;
+    pointer-events: none;
+    top: 11px;
+    left: 40px;
+    color: #0964b0;
+    content: "Choose an Image File";
+}
+
+/* ------- From Step 1 ------- */
+
+/* file upload button */
+.upload-image input[type="file"]::file-selector-button {
+    border-radius: 4px;
+    padding: 0 16px;
+    height: 40px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+    margin-right: 16px;
+    transition: background-color 200ms;
+}
+
+/* file upload button hover state */
+.upload-image input[type="file"]::file-selector-button:hover {
+    background-color: #f3f4f6;
+}
+
+/* file upload button active state */
+.upload-image input[type="file"]::file-selector-button:active {
+    background-color: #e5e7eb;
+}
+
+.uploading-item-close-transaction{
+    margin-top: 20px;
+}
+
+.uploading-item-close-transaction button {
+    padding: 15px 25px;
+    border: unset;
+    border-radius: 15px;
+    color: #212121;
+    z-index: 1;
+    background: #e8e8e8;
+    position: relative;
+    font-weight: 1000;
+    font-size: 17px;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    transition: all 250ms;
+    overflow: hidden;
+}
+
+.uploading-item-close-transaction button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 15px;
+    background-color: #212121;
+    z-index: -1;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    transition: all 250ms
+}
+
+.uploading-item-close-transaction button:hover {
+    color: #e8e8e8;
+   }
+   
+.uploading-item-close-transaction button:hover::before {
+    width: 100%;
+}
+
+/* End of Redemption Period */
+
+.user-info{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.user-info-content{
+    margin-bottom: 9px;
+}
+.user-element{
+    width: 300px;
+    text-align: center;
+}
+
+.user-element label{
+    text-align: left;
+    padding-left: 25px;
+    display: block;
+    font-size: 15px;
+}
+
+.user-element input{
+    min-width: 260px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #c1c0c0;
+    text-align: center;
+    font-size: 15px;
+    outline: none;
+    padding: 0 10px;
+}
+
+.user-element select{
+    display: block;
+    min-width: 260px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid #c1c0c0;
+    text-align: center;
+    font-size: 15px;
+    margin-left: 20px;
+    
+}
+
+.user-element select:disabled{
+    background-color: #eeeeee;
+    opacity: 1;
+}
+
+.user-element input[readonly]{
+    background-color: #eeeeee;
+}
+
+.required{
+    color: red;
+}
+
+.redeem-btn{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.redeem-btn > * {
+    margin: 3px;
+}
+
+.redeem-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: none;
+    outline: none;
+    background-color: #3C8DBC;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 5px;
+    transition: all ease 0.1s;
+    box-shadow: 0px 5px 0px 0px #243962;
+    min-width: 210px;
+  }
+
+.redeem-code:active{
+    transform: translateY(5px);
+    box-shadow: 0px 0px 0px 0px #a29bfe;
+}
+
+.redeem-code:hover{
+    opacity: 0.9;
+}
+
+.redeem-code:disabled{
+    opacity: 0.7;
+}
+
+.redeem-code i{
+    /* vertical-align: middle; */
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+
+/* Upload GC List Section */
+
+.csv-instructions p{
+    text-indent: 30px;
+}
+
+.file-upload-content label{
+    font-size: 15px;
+}
+
+.file-upload-content input[type="file"] {
+    position: relative;
+    min-width: 400px;
+    /* border: 1px solid #b5b5b5; */
+    /* border-radius: 4px; */
+    outline: none;
+}
+
+.file-upload-content input[type="file"]::file-selector-button {
+    width: 175px;
+    color: transparent;
+}
+
+/* Faked label styles and icon */
+.file-upload-content input[type="file"]::before {
+    position: absolute;
+    pointer-events: none;
+    top: 10px;
+    left: 16px;
+    height: 20px;
+    width: 20px;
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+}
+
+.file-upload-content input[type="file"]::after {
+    position: absolute;
+    pointer-events: none;
+    top: 11px;
+    left: 40px;
+    color: #0964b0;
+    content: "Choose an Excel File";
+}
+
+/* ------- From Step 1 ------- */
+
+/* file upload button */
+.file-upload-content input[type="file"]::file-selector-button {
+    border-radius: 4px;
+    padding: 0 16px;
+    height: 40px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+    margin-right: 16px;
+    transition: background-color 200ms;
+}
+
+/* file upload button hover state */
+.file-upload-content input[type="file"]::file-selector-button:hover {
+    background-color: #f3f4f6;
+}
+
+/* file upload button active state */
+.file-upload-content input[type="file"]::file-selector-button:active {
+    background-color: #e5e7eb;
+}
+
+.excel_file_btn_submit{
+    padding: 10px 24px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, .2));
+}
+
+.export-import-section{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: -20px;
+}
+
+.download-template{
+    width: 300px;
+    margin-bottom: 25px;
+}
+
+.file-upload-content{
+    width: 420px;
+}
+
+
+
+.download-template label{
+    font-size: 15px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.export-template-section{
+    margin-top: 14px;
+}
+
+.download-template a{
+    padding: 11px 24px;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(228, 228, 228);
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .2));
+}
+
+.download-template a:hover{
+    background-color: #f3f4f6;
+    color: #0964b0;
+
+}
+
+.email-template-section{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.email-template-section select{
+    display: grid;
+    place-items: center;
+    outline: none;
+    width: 190px;
+    height: 41px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(228, 228, 228);
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, .2));
+    border-radius: 5px;
+    margin-bottom: 13px;
+    padding: 0 5px;
+}
+
+/* .email-subject p{
+    margin-top: 10px;
+} */
+
+/* Loading Animation */
+.sk-chase-position{
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+    background-color: #21212172;
+}
+
+.sk-chase {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    animation: sk-chase 2.5s infinite linear both;
+}
+
+.sk-chase-text{
+    position: absolute;
+    top: 60%;
+    color: white;
+}
+
+.sk-chase-text{
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.sk-chase-dot {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0; 
+    animation: sk-chase-dot 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:before {
+    content: '';
+    display: block;
+    width: 25%;
+    height: 25%;
+    background-color: #fff;
+    border-radius: 100%;
+    animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2) { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3) { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4) { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5) { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6) { animation-delay: -0.6s; }
+.sk-chase-dot:nth-child(1):before { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2):before { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3):before { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4):before { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5):before { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
+
+@keyframes sk-chase {
+100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot {
+80%, 100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot-before {
+50% {
+    transform: scale(0.4); 
+} 100%, 0% {
+    transform: scale(1.0); 
+} 
+}
+
+.campaign-row-1{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.campaign-id-info{
+    width: 300px;
+}
+
+.campaign-id-info label{
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.campaign-id-info p{
+    width: 230px;
+    font-size: 14px;
+}
+
+/* End of Upload GC List Section */
+.add_email_header{
+    font-size: 15px;
+}
+
+.code-box{
+    /* height: 100px; */
+    width: 100%;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+
+    padding: 15px;
+}
