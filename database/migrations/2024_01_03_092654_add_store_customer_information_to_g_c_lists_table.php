@@ -14,7 +14,8 @@ class AddStoreCustomerInformationToGCListsTable extends Migration
     public function up()
     {
         Schema::table('g_c_lists', function (Blueprint $table) {
-            $table->integer('generated_from_id')->nullable()->after('email_template_id');
+            $table->integer('store_status')->nullable()->after('email_template_id');
+            $table->integer('generated_from_id')->nullable()->after('store_status');
             $table->string('first_name')->nullable()->after('generated_from_id');
             $table->string('last_name')->nullable()->after('first_name');
         });
@@ -28,6 +29,7 @@ class AddStoreCustomerInformationToGCListsTable extends Migration
     public function down()
     {
         Schema::table('g_c_lists', function (Blueprint $table) {
+            $table->dropColumn('store_status');
             $table->dropColumn('generated_from_id');
             $table->dropColumn('first_name');
             $table->dropColumn('last_name');
