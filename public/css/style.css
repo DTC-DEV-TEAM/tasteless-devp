@@ -962,3 +962,88 @@ video{
 .table-responsive::-webkit-scrollbar{
     height: 5px;
 }
+
+
+
+.custom_sm_normal_table{
+    /* width: 100%; */
+    border-collapse: collapse;
+}
+
+.custom_sm_normal_table th, .custom_sm_normal_table td {
+    text-align: left;
+    width: 235px;
+    font-size: 14px;
+}
+
+.custom_sm_normal_table td{
+    padding: 10px;
+}
+
+.custom_sm_normal_table tr td:nth-child(odd){
+    font-weight: bold;
+    color: #4d4b4b !important;
+}
+
+.custom_normal_table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom_normal_table th, .custom_normal_table td {
+    text-align: left;
+    width: 300px;
+    font-size: 14px;
+}
+
+.custom_normal_table td{
+    padding: 10px;
+}
+
+.custom_normal_table tr td:nth-child(odd){
+    font-weight: bold;
+    color: #4d4b4b !important;
+}
+
+.custom_table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    border-radius: 5px !important;
+}
+
+.custom_table th, .custom_table td {
+    border: 1px solid #ddd;
+    text-align: left;
+    width: 300px;
+    font-size: 14px;
+}
+
+.custom_table tr td:nth-child(odd){
+    font-weight: bold;
+    color: #4d4b4b !important;
+}
+
+.custom_table td{
+    padding: 10px;
+}
+
+/* Use a media query to apply styles for smaller screens */
+@media only screen and (max-width: 600px) {
+    /* Set the table row (tr) to be displayed as a block */
+    .custom_table tr, .custom_normal_table tr, .custom_sm_normal_table tr {
+        display: block;
+    }
+
+    /* Hide table headers on smaller screens */
+    .custom_table th, .custom_normal_table th, .custom_sm_normal_table th{
+        display: none;
+    }
+
+    /* Style table data (td) for smaller screens */
+    .custom_table td, .custom_normal_table td, .custom_sm_normal_table{
+        display: block;
+        text-align: left;
+        width: 100%;
+    }
+}

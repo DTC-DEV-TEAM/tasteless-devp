@@ -48,7 +48,8 @@ class CustomerRegistrationController extends Controller
             'phone' => $customer['contact_number'],
             'email' => $customer['email'],
             'store_concept' => $customer['concept'],
-            'qr_reference_number' => $generated_qr_code
+            'qr_reference_number' => $generated_qr_code,
+            'store_status' => 1
         ]);
 
         $gc_list->save();
