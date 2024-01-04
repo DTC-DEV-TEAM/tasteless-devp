@@ -45,7 +45,26 @@ body, html{
     height: 100%;
     padding: 50px;
 }
+.customer-box-header-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.customer-box-header-select{
+    margin-left: 20px;
+    position: relative;
+}
+.search-select{
+    width: 300px;
 
+}
+#select-note{
+    position: absolute;
+    top: -25px;
+    left: 50px;
+    font-style: italic;
+    margin-bottom: 10px;
+}
 .customer-box-header{
     color: #202226;
     font-weight: 600;
@@ -242,6 +261,21 @@ body, html{
     font-size: 1rem;
 }
 
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+    padding-left: 12px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+
 /* Use a media query to apply styles for smaller screens */
 @media only screen and (max-width: 500px) {
     /* Set the table row (tr) to be displayed as a block */
@@ -259,5 +293,10 @@ body, html{
         display: block;
         text-align: left;
         width: 100%;
+    }
+
+    .customer-box-header-container{
+        flex-direction: column;
+        gap: 30px;
     }
 }

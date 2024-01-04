@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('css/customer_registration.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <style>
         body.swal2-height-auto {
             height: 100% !important;
@@ -109,7 +110,13 @@
                     @endif
                 </div>
                 <div class="customer-box-content">
-                    <div class="customer-box-header">Customer Form</div>
+                    <div class="customer-box-header-container">                    
+                        <div class="customer-box-header">Customer Form</div>
+                        <div class="customer-box-header-select"><select class="search-select" id="existing-customer">
+                        </select>
+                        <p id="select-note">Search For Existing Customer:</p>
+                        </div>
+                    </div>
                     <br>
                     <hr>
                     <table class="custom_normal_table" >
@@ -117,21 +124,21 @@
                             <tr>
                                 <td>
                                     <p>First name</p>
-                                    <input class="inputs validate" type="text" name="first_name" required placeholder="Enter your first name">
+                                    <input class="inputs validate" type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
                                 </td>
                                 <td>
                                     <p>Last Name</p>
-                                    <input class="inputs validate" type="text" name="last_name" required placeholder="Enter your last name">
+                                    <input class="inputs validate" type="text"  id="last_name" name="last_name" required placeholder="Enter your last name">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <p>Email</p>
-                                    <input class="inputs validate" type="email" name="email" required placeholder="Enter your email">
+                                    <input class="inputs validate" type="email" id="email" name="email" required placeholder="Enter your email">
                                 </td>
                                 <td>
                                     <p>Contact Number</p>
-                                    <input class="inputs validate" type="text" name="contact_number" required placeholder="Enter your contact number">
+                                    <input class="inputs validate" type="text" id="contact_number" name="contact_number" required placeholder="Enter your contact number">
                                 </td>
                             </tr>
                             <tr>
@@ -193,7 +200,29 @@
                     });                
                 } 
             });
+
+            $('#existing-customer').select2({
+                ajax: {
+                    url: "{{ route('suggest_existing_customer') }}",
+                    dataType: 'json',
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                    cache: true
+                },
+                templateResult: formatResult,
+                templateSelection: formatSelection, 
+            });
+
+            $('#existing-customer').on('change',function(){
+                const selectedValue = $(this).val();
+                getInfo(selectedValue);
+            });
+
         });
+
 
         function convertToTitleCase(str) {
             // Split the string into an array of words
@@ -227,6 +256,43 @@
             
             $('.customer-box-logos').css('background', bgColor);
             $('#concept').val(concept);
+        }
+
+        function formatResult(result) {
+            return result.text;
+        }
+        function formatSelection(selection) {
+            return selection.text.length > 20 ? selection.text.substring(0, 20) + '...' : selection.text;
+        }
+
+        function getInfo(selectedValue){
+            console.log(selectedValue);
+            $.ajax({
+                url:"{{ route('viewCustomerInfo')}}",
+                type:'POST',
+                dataType:'json',
+                data:{
+                    _token:"{{ csrf_token()}}",
+                    customerEmail: selectedValue,
+                },
+                success:function(res){
+                    // console.log(res);
+                    populateCustomerInfo(res);
+                },
+                error:function(res){
+                    alert('Failed')
+                },
+            });
+        }
+
+        function populateCustomerInfo (res){
+            const customerInformation = res.customer_information;
+            console.log(customerInformation);
+            $('#first_name').val(customerInformation.first_name || '');
+            $('#last_name').val(customerInformation.last_name || '');
+            $('#email').val(customerInformation.email || '');
+            $('#contact_number').val(customerInformation.phone || '');
+            $('#concept').val(customerInformation.store_concept || '');
         }
 
     </script>

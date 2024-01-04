@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Session;
+use Illuminate\Support\Facades\Request as Input;
+use DB;
 use App\GCList;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -54,6 +57,27 @@ class CustomerRegistrationController extends Controller
         $gc_list->save();
 
         return redirect()->back()->with('success', $gc_list->toArray());
+    }
+    public function suggestExistingCustomer(Request $request){
+        $term = $request->input('term');
+        $suggestions = DB ::table('g_c_lists')
+            ->whereNotNull('g_c_lists.name')
+            ->where('g_c_lists.name', 'like', '%' . $term . '%')
+            ->select('g_c_lists.name as text', 'g_c_lists.email as id')
+            ->distinct('g_c_lists.email')
+            ->orderBy('g_c_lists.name', 'desc')
+            ->get();
+
+        return response()->json($suggestions);
+    }
+
+    public function viewCustomerInfo(Request $request){
+        $user_request = $request->all();
+        $user_customer_email = $user_request['customerEmail'];
+        $customer_information = GCList::where('email',$user_customer_email)
+            ->first();
+
+        return response()->json(['customer_information' => $customer_information]);
     }
 
     /**
