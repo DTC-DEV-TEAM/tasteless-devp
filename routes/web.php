@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminGCListsController;
 use App\Http\Controllers\AdminQrCreationsController;
+use App\Http\Controllers\CustomerRegistrationController;
 use Illuminate\Support\Facades\Route;
 use App\EmailTesting;
 
@@ -50,6 +51,15 @@ Route::post('admin/qr_creations/getStores', [AdminQrCreationsController::class, 
 Route::get('admin/g_c_lists/email', function(){
     return view('/redeem_qr.sendemail');
 });
+
+// Customer Information
+Route::get('/customer_registration/beyond_the_box', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/digital_walker', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/btb_x_open_source', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/open_source', [CustomerRegistrationController::class, 'index']);
+// Add Customer
+Route::post('/customer_registration/store', [CustomerRegistrationController::class, 'store'])->name('store_ui');
+
 
 // Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
