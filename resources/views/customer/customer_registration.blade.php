@@ -143,6 +143,15 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <p>Store Branch</p>
+                                    <select name="store_concepts_id" id="store_concepts_id" class="search-select" required>
+                                        <option value="" disabled selected>None selected...</option>
+                                        @foreach ($store_branches as $store_branch)
+                                            <option value="{{$store_branch->id}}">{{$store_branch->beach_name}}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
                                     <p>Concept</p>
                                     <input class="inputs" id="concept" name="concept" type="text" readonly>
                                 </td>
@@ -165,12 +174,18 @@
                 
         $(document).ready(function() {
 
+            $('#store_concepts_id').select2({});
+
             if ("{{ (session('success') && is_array(session('success'))) }}"){
                 $('.modal-success').css('visibility', 'visible');
+                $('.select2-selection').hide();
+                $('.customer-box-header-select').hide();
             }
 
             $('#modal-close').on('click', function(){
                 $('.modal-success').css('display', 'none');
+                $('.select2-selection').show();
+                $('.customer-box-header-select').show();
             })
 
             $("#registration-form").submit(function(event) {
@@ -273,7 +288,7 @@
                 dataType:'json',
                 data:{
                     _token:"{{ csrf_token()}}",
-                    customerEmail: selectedValue,
+                    customerID: selectedValue,
                 },
                 success:function(res){
                     // console.log(res);

@@ -18,7 +18,17 @@ class CustomerRegistrationController extends Controller
      */
     public function index()
     {
-        return view('customer.customer_registration');
+
+        $data = [];
+        $data['store_branches'] = DB::table('store_concepts')
+            ->where('store_concepts.status', 'ACTIVE')
+            ->orderBY('beach_name', 'asc')
+            ->get()
+            ->toArray();
+
+
+
+        return view('customer.customer_registration', $data);
     }
 
     /**
@@ -51,6 +61,7 @@ class CustomerRegistrationController extends Controller
             'phone' => $customer['contact_number'],
             'email' => $customer['email'],
             'store_concept' => $customer['concept'],
+            'store_concepts_id' => $customer['store_concepts_id'],
             'qr_reference_number' => $generated_qr_code,
             'store_status' => 1
         ]);
@@ -61,21 +72,21 @@ class CustomerRegistrationController extends Controller
     }
     public function suggestExistingCustomer(Request $request){
         $term = $request->input('term');
-        $suggestions = DB ::table('g_c_lists')
-            ->whereNotNull('g_c_lists.name')
-            ->where('g_c_lists.name', 'like', '%' . $term . '%')
-            ->select('g_c_lists.name as text', 'g_c_lists.email as id')
-            ->distinct('g_c_lists.email')
-            ->orderBy('g_c_lists.name', 'desc')
+        $suggestions = DB::table('g_c_lists')
+            ->whereNotNull('g_c_lists.email')
+            ->where('g_c_lists.email', 'like', '%' . $term . '%')
+            ->select('g_c_lists.email as text', DB::raw('MAX(g_c_lists.id) as id'))
+            ->groupBy('g_c_lists.email')
+            ->orderBy('id', 'desc')
             ->get();
-
+    
         return response()->json($suggestions);
     }
 
     public function viewCustomerInfo(Request $request){
         $user_request = $request->all();
-        $user_customer_email = $user_request['customerEmail'];
-        $customer_information = GCList::where('email',$user_customer_email)
+        $user_customer_id = $user_request['customerID'];
+        $customer_information = GCList::where('id',$user_customer_id)
             ->first();
 
         return response()->json(['customer_information' => $customer_information]);
