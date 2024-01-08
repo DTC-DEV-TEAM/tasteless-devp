@@ -147,7 +147,7 @@
                                     <select name="store_concepts_id" id="store_concepts_id" class="search-select" required>
                                         <option value="" disabled selected>None selected...</option>
                                         @foreach ($store_branches as $store_branch)
-                                            <option value="{{$store_branch->id}}">{{$store_branch->beach_name}}</option>
+                                            <option value="{{$store_branch->id}}">{{$store_branch->name}}</option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -174,7 +174,9 @@
                 
         $(document).ready(function() {
 
-            $('#store_concepts_id').select2({});
+            $('#store_concepts_id').select2({
+                width: '100%'
+            });
 
             if ("{{ (session('success') && is_array(session('success'))) }}"){
                 $('.modal-success').css('visibility', 'visible');

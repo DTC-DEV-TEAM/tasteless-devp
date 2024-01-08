@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\g_c_lists_devp;
 use Session;
 use Illuminate\Support\Facades\Request as Input;
 use DB;
@@ -54,7 +55,7 @@ class CustomerRegistrationController extends Controller
             $generated_qr_code = Str::random(10);
         } while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
 
-        $gc_list = new GCList([
+        $gc_list = new g_c_lists_devp([
             'first_name' => $customer['first_name'],
             'last_name' => $customer['last_name'],
             'name' => $customer['first_name'].' '.$customer['last_name'],

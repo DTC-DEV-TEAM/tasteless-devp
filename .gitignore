@@ -13,3 +13,6 @@ yarn-error.log
 /public/uploaded_item/img
 /public/uploaded_po/file
 /public/uploaded_memo/file
+/public/email_template_img/img
+/public/uploaded_item/send_test_images
+/public/e_gift_card
