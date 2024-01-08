@@ -14,7 +14,6 @@ class CreateGCListsSummaryView extends Migration
     public function up()
     {
         DB::statement("DROP VIEW IF EXISTS g_c_lists_summary_view;");
-    
         DB::statement("
             CREATE VIEW g_c_lists_summary_view AS
             SELECT
@@ -31,7 +30,12 @@ class CreateGCListsSummaryView extends Migration
                     `campaign_id`,
                     ' - ',
                     `qr_reference_number`
-                ) AS `gclists`
+                ) AS `gclists`,
+                CASE
+                    WHEN `combined_tables`.`source_table` = 'g_c_lists_devps' THEN '3'
+                    WHEN `combined_tables`.`source_table` = 'g_c_lists' THEN `combined_tables`.`qr_campaign`
+                    ELSE `combined_tables`.`campaign_id`
+                END AS `campaign_types_id`
             FROM
                 (
                     SELECT
@@ -43,14 +47,16 @@ class CreateGCListsSummaryView extends Migration
                         `qr_creations`.`gc_description`,
                         `qr_creations`.`gc_value`,
                         `g_c_lists`.`invoice_number`,
-                        `g_c_lists`.`qr_reference_number`
+                        `g_c_lists`.`qr_reference_number`,
+                        'g_c_lists' AS `source_table`,
+                        `qr_creations`.`campaign_type_id` AS 'qr_campaign'
                     FROM
                         `g_c_lists`
                     LEFT JOIN
                         `qr_creations` ON `g_c_lists`.`campaign_id` = `qr_creations`.`id`
-    
+
                     UNION
-    
+
                     SELECT
                         `g_c_lists_devps`.`uploaded_img`,
                         `g_c_lists_devps`.`name`,
@@ -60,14 +66,19 @@ class CreateGCListsSummaryView extends Migration
                         `qr_creations`.`gc_description`,
                         `qr_creations`.`gc_value`,
                         `g_c_lists_devps`.`invoice_number`,
-                        `g_c_lists_devps`.`qr_reference_number`
+                        `g_c_lists_devps`.`qr_reference_number`,
+                        'g_c_lists_devps' AS `source_table`,
+                        `qr_creations`.`campaign_type_id` AS 'qr_campaign'
+
                     FROM
                         `g_c_lists_devps`
                     LEFT JOIN
                         `qr_creations` ON `g_c_lists_devps`.`campaign_id` = `qr_creations`.`id`
                 ) AS combined_tables
-        ");
+                    ");
     }
+    
+
     
 
     /**
