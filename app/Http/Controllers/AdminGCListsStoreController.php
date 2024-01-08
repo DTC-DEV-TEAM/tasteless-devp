@@ -1,11 +1,21 @@
 <?php namespace App\Http\Controllers;
 
-use App\EgcValueType;
-use App\GCList;
-use Session;
+	use App\EgcValueType;
+	use App\EmailTesting;
+	use App\GCList;
+	use App\Jobs\SendEmailJob;
+	use App\Mail\QrEmail;
+	use Session;
 	use Illuminate\Http\Request;
 	use DB;
 	use CRUDBooster;
+	use Spatie\ImageOptimizer\OptimizerChainFactory;
+	use Intervention\Image\Facades\Image;
+	use Illuminate\Support\Str;
+	use Illuminate\Support\Facades\Storage;
+	use Illuminate\Support\Facades\File;
+	use App\EmailTemplateImg;
+
 
 	class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -28,7 +38,7 @@ use Session;
 			$this->button_bulk_action = true;
 			$this->button_action_style = "button_icon";
 			$this->button_add = false;
-			$this->button_edit = true;
+			$this->button_edit = false;
 			$this->button_delete = false;
 			$this->button_detail = true;
 			$this->button_show = true;
@@ -87,6 +97,12 @@ use Session;
 	        | 
 	        */
 	        $this->addaction = array();
+			if(CRUDBooster::isSuperAdmin()){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
+			}else{
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1, 2, 5])'];
+
+			}
 
 
 	        /* 
@@ -262,10 +278,16 @@ use Session;
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Pending Invoice</span>';
 				}
 				else if($column_value == 'OIC Approval'){
-					$column_value = '<span class="label" style="background-color: rgb(251 146 60); color: white; font-size: 12px;">OIC Approval</span>';
+					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">OIC Approval</span>';
 				}
 				else if($column_value == 'Email Sent'){
 					$column_value = '<span class="label" style="background-color: rgb(74 222 128); color: white; font-size: 12px;">Email Sent</span>';
+				}
+				else if($column_value == 'Email Failed'){
+					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Email Failed</span>';
+				}
+				else if($column_value == 'Email Dispatched'){
+					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Email Dispatched</span>';
 				}
 			}
 	    }
@@ -354,11 +376,26 @@ use Session;
 				->first();
 			
 			$egc_value = DB::table('egc_value_types')->get();
+			$email_testings = new EmailTesting();
+
+			$store_logos_id = 0;
+
+			if($gc_list->store_concept == 'Digital Walker'){
+				$store_logos_id = 1;
+			}else if($gc_list->store_concept == 'Beyond the Box'){
+				$store_logos_id = 2;
+			}else if($gc_list->store_concept == 'BTB x open_source'){
+				$store_logos_id = 3;
+			}else if($gc_list->store_concept == 'open_source'){
+				$store_logos_id = 4;
+			}
 
 			$data = [];
 			$data['page_title'] = $gc_list->store_status == 1 ? 'Pending Invoice' : 'OIC Approval';
 			$data['customer'] = $gc_list;
 			$data['egcs'] = $egc_value;
+			$data['email_testing'] = $email_testings->where('store_logos_id', $store_logos_id)->where('status','ACTIVE')->first();
+			
 
 			return $this->view('customer.customer_edit',$data);
 			
@@ -409,18 +446,74 @@ use Session;
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
-			$gc_list = GCList::where('id', $customer['id'])
-				->update([
-					'store_status' => 2,
-					'egc_value_id' => $egc_value->id,
-					'invoice_number' => $customer['invoice_number'],
-					'st_oic_id' => CRUDBooster::myId(),
-					'st_oic_date_transact' => date('Y-m-d H:i:s')
-				]);
+			GCList::where('id', $customer['id'])
+			->update([
+				'store_status' => 4,
+				'egc_value_id' => $egc_value->id,
+				'invoice_number' => $customer['invoice_number'],
+				'st_oic_id' => CRUDBooster::myId(),
+				'st_oic_date_transact' => date('Y-m-d H:i:s')
+			]);
+
+			
+			$email_testings = new EmailTesting();
+			$customer_data = DB::table('g_c_lists')->where('g_c_lists.id', $customer['id'])
+			->get()
+			->first();
+
+			$url = "/g_c_lists/edit/$customer_data->id?value=$customer_data->qr_reference_number";
+			$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
+			$qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
+			
+			$store_logos_id = 0;
+
+			if($customer_data->store_concept == 'Digital Walker'){
+				$store_logos_id = 1;
+			}else if($customer_data->store_concept == 'Beyond the Box'){
+				$store_logos_id = 2;
+			}else if($customer_data->store_concept == 'BTB x open_source'){
+				$store_logos_id = 3;
+			}else if($customer_data->store_concept == 'open_source'){
+				$store_logos_id = 4;
+			}
+
+			$emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
+			->where('status','ACTIVE')
+			->first();
+			$emailTestingImg = EmailTemplateImg::where('header_id', $emailTesting->id)
+				->get();
+
+			$html_email_img = [];
+
+			foreach($emailTestingImg as $file){
+				$filename = $file->file_name;
+				$html_email_img[]= $filename;
+			}
+
+			$html_email = str_replace(
+				['[name]'],
+				[$customer_data->name],
+				$emailTesting->html_email
+			);
+
+			$data = array(
+				'id' => $customer_data->id,
+				'html_email' => $html_email,
+				'email_subject' => $emailTesting->subject_of_the_email,
+				'html_email_img' => $html_email_img,
+				'email' => $customer_data->email,
+				'qrCodeApiUrl' => $qrCodeApiUrl,
+				'qr_code' => $qr_code,
+				'gc_value' => $egc_value->value,
+				'store_logo' => $store_logos_id,
+				'qr_reference_number'=> $customer_data->qr_reference_number,
+			);
+
+			SendEmailJob::dispatch($data);
 
 			return CRUDBooster::redirect(
 				CRUDBooster::mainpath(),
-				"QR codes have been sent to their email.",
+				"The e-gift card is being sent to their email.",
 				'success'
 			)->send();
 

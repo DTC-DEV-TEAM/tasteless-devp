@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminGCListsController;
 use App\Http\Controllers\AdminGCListsStoreController;
 use App\Http\Controllers\AdminQrCreationsController;
 use App\Http\Controllers\CustomerRegistrationController;
+use App\Http\Controllers\AdminEmailTestingsController;
 use Illuminate\Support\Facades\Route;
 use App\EmailTesting;
 
@@ -74,6 +75,7 @@ Route::post(config('crudbooster.ADMIN_PATH').'/selectedHeader',[AdminEmailTestin
 //Send Email testing
 Route::post(config('crudbooster.ADMIN_PATH').'send-email-testing', [AdminEmailTestingsController::class, 'sendEmailTesting'])->name('send-email-testing');
 
+Route::post('/admin/qr_creations/email_testing', [AdminQrCreationsController::class, 'EmailTesting'])->name('emailtesting');
 // Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
 //     $data['pos_sale'] = DB::connection('mysql_tunnel')

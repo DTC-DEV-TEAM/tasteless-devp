@@ -4,8 +4,6 @@
 @push('head')
     {{-- Summernote --}}
     <link rel="stylesheet" type="text/css" href="{{asset('vendor/crudbooster/assets/summernote/summernote.css')}}">
-    {{-- Jquery --}}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     {{-- Css --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     {{-- Swal --}}
@@ -61,6 +59,7 @@
         <div class='panel-heading'>Edit Form</div>
         <form method='post' action='{{CRUDBooster::mainpath('edit-save/'.$email_template->id)}}' autocomplete="off" enctype='multipart/form-data'>
         @csrf
+        <input class="hidden" type="text" id="btn-selected" name="btn_selected">
         <div class='panel-body'>
                 <br>
                 <div class="row">
@@ -169,8 +168,10 @@
             </div>
             <div class='panel-footer'>
                 <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
-                <input class='btn btn-success pull-right' id='create_email' value='Edit Email Template' name="selected_button" style="margin-left: 10px; width: 160px;" readonly/>
-                {{-- <input class='btn btn-primary pull-right' id='testing' value='Send Test Email' name="selected_button" readonly/> --}}
+                <input class='btn btn-primary pull-right' id='create_email' value='Edit Email Template' style="margin-left: 10px; width: 160px;" readonly/>
+                @if ($email_template->status == 'INACTIVE')
+                <button class="btn btn-success pull-right" id="set-active" type="button">Set as Email Template</button>
+                @endif
                 <button class="hide" id="hidden-submit" type="submit">submit</button>
             </div>
         </form>
@@ -227,6 +228,7 @@
         });
 
         $('#create_email').click(function(event){
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -236,6 +238,31 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, update it!',
                 returnFocus: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#test_email').removeAttr('required');
+                    $('#testing').removeAttr('name');
+                    clicked_btn = null;
+                    $('#hidden-submit').click();
+                }
+            })
+        })
+
+        $('#set-active').on('click', function(){
+
+            $('#btn-selected').val($(this).text());
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, update it!',
+                returnFocus: false,
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#test_email').removeAttr('required');
@@ -247,6 +274,7 @@
         })
 
         $('#testing').click(function(event){
+
             alert('test');
             Swal.fire({
                 title: 'Are you sure?',
@@ -257,6 +285,7 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, Send test email!',
                 returnFocus: false,
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $('#test_email').attr('required', true);

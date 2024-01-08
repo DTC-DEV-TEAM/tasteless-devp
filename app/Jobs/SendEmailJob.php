@@ -11,6 +11,8 @@ use Illuminate\Queue\SerializesModels;
 use App\Mail\QrEmail;
 use Illuminate\Support\Facades\Mail;
 use App\GCList;
+use Illuminate\Queue\MaxAttemptsExceededException;
+use App\Http\Controllers\AdminQrCreationsController;
 
 class SendEmailJob 
 {
@@ -35,12 +37,18 @@ class SendEmailJob
      */
     public function handle()
     {
+        try{
+            $path = (new AdminQrCreationsController)->manipulate_image($this->details['gc_value'], $this->details['qrCodeApiUrl'], $this->details['store_logo']);
 
-        $email = new QrEmail($this->details);
-        
-        Mail::to($this->details['email'])->send($email);
+            $this->details['qr_code_generated'] = $path;
 
-        GCList::find($this->details['id'])->update(['email_is_sent'=>1]);      
+            $email = new QrEmail($this->details);
+            
+            Mail::to($this->details['email'])->send($email);
+            
+        }catch(MaxAttemptsExceededException $e){
+            $this->retryUntil(now()->addSeconds(pow(2, $this->attempts())));
+        }      
     }
     
 }

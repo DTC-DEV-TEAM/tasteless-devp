@@ -2,8 +2,10 @@
 @extends('crudbooster::admin_template')
 
 @push('head')
+    {{-- Summernote --}}
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/crudbooster/assets/summernote/summernote.css')}}">
     {{-- Jquery --}}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
     {{-- Css --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     {{-- Swal --}}
@@ -33,7 +35,7 @@
     <div class='panel panel-default'>
         <div class='panel-heading'>Edit Form</div>
         <form method='post' action='{{ $customer->store_status == 1 ? route('pending_invoice') : route('pending_oic') }} ' autocomplete="off">
-        @csrf
+        <input type="hidden" value="{{csrf_token()}}" name="_token" id="token">
         <input class="hide" type="text" name="id" value="{{ $customer->id }}">
         <div class='panel-body'>
             <div class="cb-header">
@@ -88,6 +90,12 @@
                 </tr>
             </tbody>
         </table>
+        <hr>
+        <div class="cb-header">
+            Email Content
+        </div>
+        <div class="email-content" id="email-content">
+        </div>
         <button class="hide" id="btn-submit" type="submit">submit</button>
     </div>
     <div class='panel-footer'>
@@ -96,7 +104,37 @@
     </div>
 
     <script>
+        
+    storeBrandEmail();
+
+    function storeBrandEmail(){
+
+        const email_testing = {!! json_encode($email_testing) !!}
+
+        const token = $("#token").val();
+        const campaignId = email_testing.store_logos_id;
+        const selected_header = email_testing.id;
+
+        $.ajax({
+            type: 'POST',
+            url: ADMIN_PATH + "/selectedHeader",
+            data: {
+                "_token": token,
+                "id": selected_header,
+                "campaign_id": campaignId,
+            },
+            success: function(data) {
+                $('.email-content').empty().append(data.emailContent);
+            },
+            error: function(e) {
+                alert(e);
+                console.log(e);
+            }
+        });
+    }
+
     $(document).ready(function() {
+
 
         if("{{ $customer->store_status == 2 }}"){
             $('input').attr('readonly', false);
@@ -121,7 +159,8 @@
                 }
             });  
         })
-        
+
+
     });
 
 
@@ -129,5 +168,5 @@
 @endsection
 
 @push('bottom')
-    {{-- <script type="text/javascript" src="{{asset('vendor/crudbooster/assets/summernote/summernote.min.js')}}"></script> --}}
+    <script type="text/javascript" src="{{asset('vendor/crudbooster/assets/summernote/summernote.min.js')}}"></script>
 @endpush

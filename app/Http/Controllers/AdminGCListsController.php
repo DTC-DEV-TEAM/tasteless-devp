@@ -383,9 +383,9 @@ use DateTime;
 			return $this->view('redeem_qr.scan_qr',$data);
 		}
 
-		public function getIndex(){
-			return redirect(CRUDBooster::mainpath('scan_qr'));
-		}
+		// public function getIndex(){
+		// 	return redirect(CRUDBooster::mainpath('scan_qr'));
+		// }
 
 		public function getEdit($id) {
 			
@@ -399,7 +399,7 @@ use DateTime;
 			$campaign_id = QrCreation::find($user->campaign_id);
 			$participating_stores = explode(",",$campaign_id->number_of_gcs);
 			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
-						
+			dd($campaign_id);
 			if(($campaign_id->campaign_type_id == 2)){
 				// if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
 					if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){

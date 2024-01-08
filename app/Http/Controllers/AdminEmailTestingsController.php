@@ -5,8 +5,24 @@
 	use Illuminate\Support\Facades\Request as Input;
 	use DB;
 	use CRUDBooster;
+	use URL;
+	use Mail;
+	use Intervention\Image\Facades\Image;
+	use File;
+	use App\EmailTesting;
+	use App\EmailTemplateImg;
+	use App\QrCreation;
+use App\StoreLogo;
 
 	class AdminEmailTestingsController extends \crocodicstudio\crudbooster\controllers\CBController {
+
+		public function __construct() {
+
+			date_default_timezone_set("Asia/Manila");
+			date_default_timezone_get();
+			DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping("enum", "string");
+
+		}
 
 	    public function cbInit() {
 
@@ -37,12 +53,14 @@
 			$this->col[] = ["label"=>"Created at","name"=>"created_at"];
 			$this->col[] = ["label"=>"Updated by","name"=>"updated_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Updated at","name"=>"updated_at"];
+			$this->col[] = ["label"=>"Status","name"=>"status"];
+			$this->col[] = ["label"=>"Concept","name"=>"store_logos_id","join"=>"store_logos,name"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Html Email','name'=>'html_email','type'=>'wysiwyg','validation'=>'required|string','width'=>'col-sm-8'];
-			# END FORM DO NOT REMOVE THIS LINE
+			$this->form[] = ['label'=>'Email Subject','name'=>'subject_of_the_email','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-3'];
+			$this->form[] = ['label'=>'Html Email','name'=>'html_email','type'=>'wysiwyg','validation'=>'required|string','width'=>'col-sm-8'];			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
@@ -236,7 +254,7 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-	            
+			$query->orderBy('status', 'ASC');
 	    }
 
 	    /*
@@ -247,6 +265,15 @@
 	    */    
 	    public function hook_row_index($column_index,&$column_value) {	        
 	    	//Your code here
+			if($column_index == 8){
+				if($column_value == 'ACTIVE'){
+					$column_value = '<span class="label" style="background-color: rgb(74 222 128);
+					color: white; font-size: 12px;">ACTIVE</span>';
+				}else{
+					$column_value = '<span class="label" style="background-color: rgb(239 68 68);
+					color: white; font-size: 12px;">INACTIVE</span>';
+				}
+			}
 	    }
 
 	    /*
@@ -259,11 +286,25 @@
 	    public function hook_before_add(&$postdata) {        
 	        //Your code here
 			$email = Input::all();
+			
+			$email_testings = new EmailTesting();
+			$store_logo = StoreLogo::get();
+
+			$store_concepts = $email_testings->where('store_logos_id', $email['store_logo'])->get()->isEmpty();
+			$status = '';
+			if($store_concepts){
+				$status = 'ACTIVE';
+			}else{
+				$status = 'INACTIVE';
+			}
 
 			$postdata['title_of_the_email'] = $email['title_of_the_email'];
 			$postdata['subject_of_the_email'] = $email['subject_of_the_email'];
 			$postdata['html_email'] = $email['email_content'];
 			$postdata['created_by'] = CRUDBooster::myId();
+			$postdata['store_logos_id'] = $email['store_logo'];
+			$postdata['status'] = $status;
+
 			
 	    }
 
@@ -274,12 +315,15 @@
 	    | @id = last insert id
 	    | 
 	    */
-	    public function hook_after_add($id) {        
+	    public function hook_after_add($id) {       
+			
 			$fields = Input::all();
+
 			$header = EmailTesting::where(['created_by' => CRUDBooster::myId()])->orderBy('id','desc')->first();
 
 			$files 	= $fields['mail_img'];
 			$images = [];
+
 			if (!empty($files)) {
 				$counter = 0;
 				foreach($files as $file){
@@ -308,7 +352,28 @@
 	    | 
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
+
 			$email = Input::all();
+
+			if($email['btn_selected'] == 'Set as Email Template'){
+				
+				$email_testing = new EmailTesting();
+				$email_testing_data = $email_testing->where('id', $id)->first();
+	
+				$list_email_template = $email_testing->where('store_logos_id', $email_testing_data->store_logos_id)
+					->where('id', '!=', $id)
+					->get();
+	
+				foreach($list_email_template as $email_template){
+					$email_testing->where('id', $email_template->id)
+						->update([
+							'status' => 'INACTIVE'
+						]);
+				}
+
+				$postdata['status'] = 'ACTIVE';
+			}
+
 			$postdata['title_of_the_email'] = $email['title_of_the_email'];
 			$postdata['subject_of_the_email'] = $email['subject_of_the_email'];
 			$postdata['html_email'] = $email['email_content'];
@@ -396,6 +461,7 @@
 
 			$data['email_template'] = EmailTesting::datas($id);
 			$data['email_template_imgs'] = EmailTemplateImg::images($id);
+
 			return $this->view('email_testing.edit-email',$data);
 		}
 
@@ -433,7 +499,7 @@
 			$data['EmailHeaderImgs'] = EmailTemplateImg::where('header_id',$id)->get();
 		
 			$data['emailContent'] .= '
-			    <div style="border: 1px solid black; padding: 10px; border-radius:5px">
+			    <div style="border: 1px solid #ddd; padding: 30px 15px; border-radius:5px">
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -570,6 +636,7 @@
 		public function sendEmailTesting(Request $request){
 
 			$fields = $request->all();
+
 			$store_logo_id = $fields['store_logo_id'];
 			$subject_of_the_email = $fields['subject_of_the_email'];
 			$myEmail = DB::table('cms_users')->where('id',CRUDBooster::myId())->first();
@@ -577,9 +644,11 @@
 			$email_content = $fields['email_content'];
 			$email_option = $fields['email_option'];
 			$qr_creation_id = $fields['qr_creation_id'];
+
 			$files 	= $fields['mail_img'];
 			$counter = 0;
 			$html_email_img = [];
+			
 			foreach($files as $file){
 				$counter++;
 				$name = $file->getClientOriginalName().'.'.$file->getClientOriginalExtension();

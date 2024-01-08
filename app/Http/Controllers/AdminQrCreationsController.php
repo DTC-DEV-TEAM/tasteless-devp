@@ -25,6 +25,13 @@ use App\StoreLogo;
 use App\Stores;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use App\EmailTemplateImg;
+
 
 
 
@@ -725,6 +732,130 @@ use Illuminate\Support\Facades\Validator;
 						
 			return response()->json($results);
 
+		}
+
+		public function manipulate_image($amount, $qr_api, $store_logo){
+
+			$dw_path = 'store_logo/img/digital_walker';
+			$btb_path = 'store_logo/img/beyond_the_box';
+			$dw_btb_path = 'store_logo/img/btb_and_dw';
+			$os_path = 'store_logo/img/os';
+			$dyanamic_img_path = 'email_template_img/img/';
+			
+			$dw_image = Image::make(public_path($dw_path.'.jpg'));
+			$btb_image = Image::make(public_path($btb_path.'.jpg'));
+			$dw_btb_image = Image::make(public_path($dw_btb_path.'.png'));
+			$os_path = Image::make(public_path($os_path.'.jpg'));
+			// $dynamic_image = Image::make(public_path($dyanamic_img_path.$qr_img));
+
+			$save_path = 'e_gift_card/img/';
+
+			if($store_logo == 1){
+
+				$logo_path = $dw_image;
+				$filename = $save_path.Str::random(10).'.jpg';
+				$value_width = 510;
+				$qr_x_position = 85;
+				$qr_y_position = 35;
+				$color = '#d85a5f';
+				$shadow = '#000000';
+
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+			}
+
+			elseif($store_logo == 2){
+
+				$logo_path = $btb_image;
+				$filename = $save_path.Str::random(10).'.jpg';
+				$value_width = 510;
+				$qr_x_position = 89;
+				$qr_y_position = 35;
+				$color = '#1a1a1a';
+				$shadow = null;
+
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+			}
+
+			elseif($store_logo == 3){
+
+				$logo_path = $dw_btb_image;
+				$filename = $save_path.Str::random(10).'.png';
+				$value_width = 510;
+				$qr_x_position = 89;
+				$qr_y_position = 35;
+				$color = '#1a1a1a';
+				$shadow = null;
+
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+			}
+
+			if($store_logo == 4){
+
+				$logo_path = $os_path;
+				$filename = $save_path.Str::random(10).'.jpg';
+				$value_width = 510;
+				$qr_x_position = 89;
+				$qr_y_position = 35;
+				$color = '#1a1a1a';
+				$shadow = null;
+
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+			}
+
+			return $filename;
+		}
+
+		public function saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow){
+
+			$text_width = 0; // Initialize outside the closure
+	
+			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width) {
+				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
+				$font->size(55);
+				
+				$textSize = $font->getBoxSize()['width'];
+				
+				$calculate_position = ($value_width - $textSize) / 2;
+				$text_width = $calculate_position; // Modify the value inside the closure
+			});
+
+			if($shadow){
+				$real_image = $logo_path->text('P'.$amount, $text_width, 240, function($font) use ($color, $shadow){
+					$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
+					$font->size(55);
+					$font->color($shadow);
+				});
+			}
+
+			$real_image = $logo_path->text('P'.$amount, $text_width, 237, function($font) use ($color, $shadow){
+				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
+				$font->size(55);
+				$font->color($color);
+			});
+
+			$rectangleImage = Image::canvas(210, 210, 'rgba(255, 255, 255, 1)');
+			$rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
+				$draw->border(1, '#000');
+			});
+
+			$real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
+
+			// $qrCodeApiLink = $qr_api;
+			// $content = file_get_contents($qrCodeApiLink);
+			$qrCodeApiLink = $qr_api;
+			$arrContextOptions = [
+				"ssl" => [
+					"verify_peer" => false,
+					"verify_peer_name" => false,
+				],
+			];
+			$content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
+
+			$qrCodeImage = Image::make($content);
+
+			// Overlay the QR code onto the main image as a watermark
+			$real_image->insert($qrCodeImage, 'bottom-right', $qr_x_position, $qr_y_position)
+				->save(public_path($filename));
 		}
 
 	}
