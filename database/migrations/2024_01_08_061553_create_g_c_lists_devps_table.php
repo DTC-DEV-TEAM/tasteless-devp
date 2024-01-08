@@ -42,6 +42,7 @@ class CreateGCListsDevpsTable extends Migration
             $table->timestamp('cashier_date_transact')->nullable();
             $table->string('accounting_id_transact')->nullable();
             $table->timestamp('accounting_date_transact')->nullable();
+            $table->integer('accounting_is_audit')->nullable()->nullable();
             $table->integer('st_cashier_id')->nullable()->nullable();
             $table->timestamp('st_cashier_date_transact')->nullable();
             $table->integer('st_oic_id')->nullable();
