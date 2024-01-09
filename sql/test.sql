@@ -16,7 +16,7 @@ SELECT
     ) AS `gclists`,
     CASE
         WHEN `combined_tables`.`source_table` = 'g_c_lists_devps' THEN '3'
-        WHEN `combined_tables`.`qr_campaign` is not null then `combined_tables`.`qr_campaign`
+        WHEN `combined_tables`.`source_table` = 'g_c_lists' THEN `combined_tables`.`qr_campaign`
         ELSE `combined_tables`.`campaign_id`
     END AS `campaign_types_id`
 FROM
@@ -51,7 +51,8 @@ FROM
             `g_c_lists_devps`.`invoice_number`,
             `g_c_lists_devps`.`qr_reference_number`,
             'g_c_lists_devps' AS `source_table`,
-            null as qr_campaign
+            `qr_creations`.`campaign_type_id` AS 'qr_campaign'
+
         FROM
             `g_c_lists_devps`
         LEFT JOIN
