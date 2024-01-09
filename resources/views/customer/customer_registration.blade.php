@@ -105,7 +105,7 @@
                         <img src="{{ asset('img/digital_walker1.png') }}" alt="">
                     @elseif (Request::segment(2) == 'beyond_the_box')
                         <img src="{{ asset('img/btb1.png') }}" alt="">
-                    @elseif (Request::segment(2) == 'btb_x_open_source' || Request::segment(2) == 'open_source')
+                    @elseif (Request::segment(2) == 'dw_and_btb' || Request::segment(2) == 'open_source')
                         <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
                     @endif
                 </div>
@@ -263,11 +263,11 @@
             }else if (url == 'digital_walker'){
                 bgColor = '#FED440';
                 concept = convertToTitleCase(url)
-            }else if (url == 'btb_x_open_source'){
-                concept = 'BTB x open_source';
+            }else if (url == 'dw_and_btb'){
+                concept = 'Digital Walker and Beyond the Box';
                 bgColor = '#359D9D';
             }else if (url == 'open_source'){
-                concept = url;
+                concept = convertToTitleCase(url);
                 bgColor = '#359D9D';
             }
             

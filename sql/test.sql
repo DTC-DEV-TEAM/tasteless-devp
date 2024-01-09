@@ -9,8 +9,10 @@ SELECT
     `gc_description`,
     `gc_value`,
     `invoice_number`,
+    `pos_terminal`,
+    `status`,
     CONCAT(
-        `campaign_id`,
+        `campaign_name`,
         ' - ',
         `qr_reference_number`
     ) AS `gclists`,
@@ -32,7 +34,10 @@ FROM
             `g_c_lists`.`invoice_number`,
             `g_c_lists`.`qr_reference_number`,
             'g_c_lists' AS `source_table`,
-            `qr_creations`.`campaign_type_id` AS 'qr_campaign'
+            `qr_creations`.`campaign_type_id` AS 'qr_campaign',
+            `qr_creations`.`campaign_id` AS 'campaign_name',
+            `g_c_lists`.`status`,
+            `g_c_lists`.`pos_terminal`
         FROM
             `g_c_lists`
         LEFT JOIN
@@ -51,7 +56,11 @@ FROM
             `g_c_lists_devps`.`invoice_number`,
             `g_c_lists_devps`.`qr_reference_number`,
             'g_c_lists_devps' AS `source_table`,
-            `qr_creations`.`campaign_type_id` AS 'qr_campaign'
+            `qr_creations`.`campaign_type_id` AS 'qr_campaign',
+            `qr_creations`.`campaign_id` AS 'campaign_name',
+            `g_c_lists_devps`.`status`,
+            `g_c_lists_devps`.`pos_terminal`
+
 
         FROM
             `g_c_lists_devps`

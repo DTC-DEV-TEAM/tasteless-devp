@@ -22,6 +22,7 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\EmailTesting;
 use App\Jobs\GCListFetchJob;
 use App\StoreConcept;
+use App\StoreLogo;
 use DateTime;
 
 
@@ -383,9 +384,9 @@ use DateTime;
 			return $this->view('redeem_qr.scan_qr',$data);
 		}
 
-		// public function getIndex(){
-		// 	return redirect(CRUDBooster::mainpath('scan_qr'));
-		// }
+		public function getIndex(){
+			return redirect(CRUDBooster::mainpath('scan_qr'));
+		}
 
 		public function getEdit($id) {
 			
@@ -393,13 +394,29 @@ use DateTime;
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 
-			$slug = Request::all()['value'];
+			$url = Request::all();
+			$slug = $url['value'];
 			$user_store = DB::table('cms_users')->where('id', CRUDBooster::myId())->get()->first();
-			$user = GCList::find($id);
-			$campaign_id = QrCreation::find($user->campaign_id);
-			$participating_stores = explode(",",$campaign_id->number_of_gcs);
-			$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
-			dd($campaign_id);
+
+			$store_concept = new StoreConcept();
+			$store_logo = new StoreLogo();
+
+			// Store
+			if($url['campaign_id'] == 3){
+				$user = DB::table('g_c_lists_devps')->where('id', $id)->first();
+				$gc_list_devp = DB::table('g_c_lists_devps')->where('id', $id)->first();
+				$gc_list_devp_store = $store_logo->where('name', $gc_list_devp->store_concept)->first();
+				$user_concept = $user_store->id_store_concept;
+				$validate_user_store_privilege = $gc_list_devp_store->concept == $store_concept->where('id', $user_concept)->first()->concept;
+			}
+			// EGC
+			else{
+				$user = GCList::find($id);
+				$campaign_id = QrCreation::find($user->campaign_id);
+				$participating_stores = explode(",",$campaign_id->number_of_gcs);
+				$validate_user_store = in_array($user_store->id_store_concept, $participating_stores);
+			}
+
 			if(($campaign_id->campaign_type_id == 2)){
 				// if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
 					if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
@@ -432,27 +449,23 @@ use DateTime;
 				// 	CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 				// }
 			}else{
-				if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
+				
+				if ($user->qr_reference_number == $slug && $slug && $validate_user_store_privilege || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 					$data = [];
 					$data['page_title'] = 'Redeem QR';
-					$data['row'] = DB::table('g_c_lists')
-					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-					->select('g_c_lists.*',
-					'qr.campaign_id',
-					'qr.gc_description',
-					'qr.gc_value',
-					'qr.number_of_gcs',
-					'qr.batch_group',
-					'qr.batch_number',
-					'qr.campaign_type_id',
-					'id_name.valid_ids')
-					->where('g_c_lists.id',$id)
+					$data['row'] = DB::table('g_c_lists_devps')
+					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+					->leftJoin('egc_value_types as egc', 'egc.id' ,'=', 'g_c_lists_devps.egc_value_id')
+					->select('g_c_lists_devps.*',
+					'id_name.valid_ids',
+					'egc.value as gc_value'
+					)
+					->where('g_c_lists_devps.id',$id)
 					->first();
-					
+
 					$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
 					
-					return $this->view('redeem_qr.qr_redeem_section',$data);
+					return $this->view('redeem_qr.qr_redeem_section_store',$data);
 					
 				}else{
 	
@@ -468,31 +481,56 @@ use DateTime;
 			$id_number = $return_inputs['id_number'];
 			$id_type = $return_inputs['id_type'];
 			$my_id = $return_inputs['my_id'];
+			$campaign_type_id = $return_inputs['campaign_type_id'];
+			
+			if($campaign_type_id){
 
-			GCList::where('id', $id)->update([
+				GCList::where('id', $id)->update([
+	
+					'redeem' => 1,
+					'cashier_name' => CRUDBooster::myId(),
+					'cashier_date_transact' => date('Y-m-d H:i:s'),
+					'id_number' => $id_number,
+					'id_type' => $id_type,
+					'status' => 'CLAIMED',
+					'pos_terminal' => StoreConcept::find((DB::table('cms_users')->where('id', CRUDBooster::myId())->first()->id_store_concept))->ftermid
+				]);
+	
+				$user_information = DB::table('g_c_lists')
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+				->select('g_c_lists.*',
+					'qr.campaign_id',
+					'qr.gc_description',
+					'qr.gc_value',
+					'qr.number_of_gcs',
+					'qr.batch_group',
+					'qr.batch_number',
+					'id_name.valid_ids')
+				->where('g_c_lists.id',$id)
+				->first();
+			}
+			else{
 
-				'redeem' => 1,
-				'cashier_name' => CRUDBooster::myId(),
-				'cashier_date_transact' => date('Y-m-d H:i:s'),
-				'id_number' => $id_number,
-				'id_type' => $id_type,
-				'status' => 'CLAIMED',
-				'pos_terminal' => StoreConcept::find((DB::table('cms_users')->where('id', CRUDBooster::myId())->first()->id_store_concept))->ftermid
-			]);
+				DB::table('g_c_lists_devps')->where('id', $id)->update([
 
-			$user_information = DB::table('g_c_lists')
-			->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-			->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-			->select('g_c_lists.*',
-				'qr.campaign_id',
-				'qr.gc_description',
-				'qr.gc_value',
-				'qr.number_of_gcs',
-				'qr.batch_group',
-				'qr.batch_number',
-				'id_name.valid_ids')
-			->where('g_c_lists.id',$id)
-			->first();
+					'redeem' => 1,
+					'cashier_name' => CRUDBooster::myId(),
+					'cashier_date_transact' => date('Y-m-d H:i:s'),
+					'id_number' => $id_number,
+					'id_type' => $id_type,
+					'status' => 'CLAIMED',
+					'pos_terminal' => StoreConcept::find((DB::table('cms_users')->where('id', CRUDBooster::myId())->first()->id_store_concept))->ftermid
+				]);
+	
+				$user_information = DB::table('g_c_lists_devps')
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+				->select('g_c_lists_devps.*',
+					'id_name.valid_ids')
+				->where('g_c_lists_devps.id',$id)
+				->first();
+			}
+
 
 			return response()->json(['test'=>$user_information]);
 		}
@@ -501,16 +539,20 @@ use DateTime;
 
 			$return_inputs = $request->all();
 			$crudbooster_my_id = CRUDBooster::myId();
+			$campaign_type_id = $return_inputs['campaign_type_id'];
 
 			$cms_user = DB::table('cms_users')->where('id', $crudbooster_my_id)->first();
 
 			$id = $return_inputs['userId'];
 			$invoice_number = $return_inputs['posInvoiceNumber'];
 
-			$user_information = GCList::find($id);
+			$user_information = $campaign_type_id ? GCList::find($id) : DB::table('g_c_lists_devps')->where('id', $id);
 			
 			// For testing 
-// 			$invoice_number_exists = GCList::where('id', $invoice_number)->exists();
+			$user_information->update(
+				['invoice_number'=>$invoice_number]
+			);
+			$invoice_number_exists = $campaign_type_id ? GCList::where('invoice_number', $invoice_number)->exists() : DB::table('g_c_lists_devps')->where('invoice_number', $invoice_number)->exists();
 			
 			$store_name = StoreConcept::find($cms_user->id_store_concept);
 			
@@ -518,14 +560,14 @@ use DateTime;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
-			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
-			->where('fdocument_no',$invoice_number)
-			->where('ftermid', $store_name->ftermid) //need setup user management
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			// ->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
+			// ->where('fdocument_no',$invoice_number)
+			// ->where('ftermid', $store_name->ftermid) //need setup user management
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 // 			$invoice_number_exists = DB::connection('mysql_tunnel')
 // 			->table('pos_sale')
@@ -558,22 +600,39 @@ use DateTime;
 
 			$img_file = $request->all()['item_image'];
 			$id = $request->all()['user_id'];
+			$campaign_type_id = $request->all()['campaign_type_id'];
 
 			$data = [];
-			$data['row'] = DB::table('g_c_lists')
-			->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-			->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-			->select('g_c_lists.*',
-				'qr.campaign_id',
-				'qr.gc_description',
-				'qr.gc_value',
-				'qr.number_of_gcs',
-				'qr.batch_group',
-				'qr.batch_number',
-				'id_name.valid_ids')
-			->where('g_c_lists.id',$id)
-			->first();
-			
+
+			if($campaign_type_id){
+
+				$data['row'] = DB::table('g_c_lists')
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+				->select('g_c_lists.*',
+					'qr.campaign_id',
+					'qr.gc_description',
+					'qr.gc_value',
+					'qr.number_of_gcs',
+					'qr.batch_group',
+					'qr.batch_number',
+					'id_name.valid_ids')
+				->where('g_c_lists.id',$id)
+				->first();
+
+				$gc_list = DB::table('g_c_lists');
+			}else{
+
+				$data['row'] = DB::table('g_c_lists_devps')
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+				->select('g_c_lists_devps.*',
+					'id_name.valid_ids')
+				->where('g_c_lists_devps.id',$id)
+				->first();
+
+				$gc_list = DB::table('g_c_lists_devps');
+			}
+
 			$filename = 'redeemed_item_'.'id'."$id".'_'.bin2hex(random_bytes(3)).'.'.$img_file->getClientOriginalExtension();
 			$image = Image::make($img_file);
 			
@@ -588,7 +647,7 @@ use DateTime;
 			$optimizerChain = OptimizerChainFactory::create();
 			$optimizerChain->optimize(public_path('uploaded_item/img/' . $filename));
 
-			GCList::find($id)->update([
+			$gc_list->where('id', $id)->update([
 				'uploaded_img'=>$filename,
 				'cashier_date_transact' => date('Y-m-d H:i:s'),
 				'cashier_name' => CRUDBooster::myId()

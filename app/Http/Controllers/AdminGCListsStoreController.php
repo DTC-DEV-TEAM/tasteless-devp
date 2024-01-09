@@ -45,7 +45,7 @@
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = true;
-			$this->table = "g_c_lists";
+			$this->table = "g_c_lists_devps";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
@@ -55,9 +55,6 @@
 			$this->col[] = ["label"=>"Email","name"=>"email"];
 			$this->col[] = ["label"=>"Phone","name"=>"phone"];
 			$this->col[] = ["label"=>"Concept","name"=>"store_concept"];
-
-
-			
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -69,6 +66,14 @@
 			$this->form[] = ['label'=>'Email','name'=>'email','type'=>'email','validation'=>'required|min:1|max:255|email|unique:g_c_lists','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
+			# OLD START FORM
+			//$this->form = [];
+			//$this->form[] = ['label'=>'First Name','name'=>'first_name','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Last Name','name'=>'last_name','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Name','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Phone','name'=>'phone','type'=>'number','validation'=>'required|numeric','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Email','name'=>'email','type'=>'email','validation'=>'required|min:1|max:255|email|unique:g_c_lists','width'=>'col-sm-10'];
+			# OLD END FORM
 
 			/* 
 	        | ---------------------------------------------------------------------- 
@@ -371,7 +376,7 @@
 
 		public function getEdit($id) {
 			
-			$gc_list = DB::table('g_c_lists')->where('g_c_lists.id', $id)
+			$gc_list = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $id)
 				->get()
 				->first();
 			
@@ -384,9 +389,9 @@
 				$store_logos_id = 1;
 			}else if($gc_list->store_concept == 'Beyond the Box'){
 				$store_logos_id = 2;
-			}else if($gc_list->store_concept == 'BTB x open_source'){
+			}else if($gc_list->store_concept == 'Digital Walker and Beyond the Box'){
 				$store_logos_id = 3;
-			}else if($gc_list->store_concept == 'open_source'){
+			}else if($gc_list->store_concept == 'Open Source'){
 				$store_logos_id = 4;
 			}
 
@@ -396,14 +401,13 @@
 			$data['egcs'] = $egc_value;
 			$data['email_testing'] = $email_testings->where('store_logos_id', $store_logos_id)->where('status','ACTIVE')->first();
 			
-
 			return $this->view('customer.customer_edit',$data);
 			
 		}
 
 		public function getDetail($id) {
 			
-			$gc_list = DB::table('g_c_lists')->where('g_c_lists.id', $id)
+			$gc_list = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $id)
 				->get()
 				->first();
 			
@@ -424,7 +428,7 @@
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
-			$gc_list = GCList::where('id', $customer['id'])
+			$gc_list = DB::table('g_c_lists_devps')->where('id', $customer['id'])
 				->update([
 					'store_status' => 2,
 					'egc_value_id' => $egc_value->id,
@@ -446,7 +450,7 @@
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
-			GCList::where('id', $customer['id'])
+			DB::table('g_c_lists_devps')->where('id', $customer['id'])
 			->update([
 				'store_status' => 4,
 				'egc_value_id' => $egc_value->id,
@@ -455,13 +459,12 @@
 				'st_oic_date_transact' => date('Y-m-d H:i:s')
 			]);
 
-			
 			$email_testings = new EmailTesting();
-			$customer_data = DB::table('g_c_lists')->where('g_c_lists.id', $customer['id'])
+			$customer_data = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $customer['id'])
 			->get()
 			->first();
 
-			$url = "/g_c_lists/edit/$customer_data->id?value=$customer_data->qr_reference_number";
+			$url = "/g_c_lists/edit/$customer_data->id?value=$customer_data->qr_reference_number&campaign_id=3";
 			$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
 			$qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
 			

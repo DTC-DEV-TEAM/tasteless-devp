@@ -90,12 +90,14 @@
                 </tr>
             </tbody>
         </table>
+        @if ($customer->store_status > 1)
         <hr>
         <div class="cb-header">
             Email Content
         </div>
         <div class="email-content" id="email-content">
         </div>
+        @endif
         <button class="hide" id="btn-submit" type="submit">submit</button>
     </div>
     <div class='panel-footer'>

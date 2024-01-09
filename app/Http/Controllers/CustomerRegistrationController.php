@@ -73,11 +73,11 @@ class CustomerRegistrationController extends Controller
     }
     public function suggestExistingCustomer(Request $request){
         $term = $request->input('term');
-        $suggestions = DB::table('g_c_lists')
-            ->whereNotNull('g_c_lists.email')
-            ->where('g_c_lists.email', 'like', '%' . $term . '%')
-            ->select('g_c_lists.email as text', DB::raw('MAX(g_c_lists.id) as id'))
-            ->groupBy('g_c_lists.email')
+        $suggestions = DB::table('g_c_lists_devps')
+            ->whereNotNull('g_c_lists_devps.email')
+            ->where('g_c_lists_devps.email', 'like', '%' . $term . '%')
+            ->select('g_c_lists_devps.email as text', DB::raw('MAX(g_c_lists_devps.id) as id'))
+            ->groupBy('g_c_lists_devps.email')
             ->orderBy('id', 'desc')
             ->get();
     

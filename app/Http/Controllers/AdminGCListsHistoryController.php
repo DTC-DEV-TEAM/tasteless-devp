@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
-use App\GCList;
-use App\IdType;
-use Session;
+	use App\GCList;
+	use App\IdType;
+	use Session;
 	use Request;
 	use DB;
 	use CRUDBooster;
@@ -359,6 +359,19 @@ use Session;
 
 
 	    //By the way, you can still create your own method in here... :) 
+
+		public function getIndex() {
+			//First, Add an auth
+			if(!CRUDBooster::isView()) CRUDBooster::redirect(CRUDBooster::adminPath(),trans('crudbooster.denied_access'));
+			
+			//Create your own query 
+			$data = [];
+			$data['page_title'] = ' Redemption Code History';
+			$data['customers'] = DB::table('g_c_lists_summary_view')->orderBy('id', 'desc')->get();
+			// dd($data['customers']);
+			//Create a view. Please use `cbView` method instead of view method from laravel.
+			return $this->view('redeem_qr.custom_egc_list',$data);
+		}
 
 		public function getDetail($id) {
 			//Create an Auth

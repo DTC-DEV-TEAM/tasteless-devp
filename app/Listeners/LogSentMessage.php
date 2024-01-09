@@ -7,6 +7,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Mail\Events\MessageSent;
 use App\GCList;
 use Illuminate\Support\Facades\Log;
+use DB;
+
 
 class LogSentMessage
 {
@@ -32,7 +34,7 @@ class LogSentMessage
         $decoded = json_decode($json);
         $id = $decoded->data->id;
 
-        GCList::find($id)->update([
+        DB::table('g_c_lists_devps')->where('id', $id)->update([
             'email_is_sent' => 1,
             'store_status' => 3
         ]);

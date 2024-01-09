@@ -82,7 +82,7 @@
         @csrf
         <input class="hidden" type="text" name="user_id" id="user_id" value="{{ $row->id }}" >
         <input class="hidden" type="text" name="my_id" id="my_id" value="{{ CRUDBooster::myId() }}" >
-        <input class="hidden" type="text" name="campaign_type_id" id="campaign_type_id" value="{{ $row->campaign_type_id }}" >
+
         <div class="redeem_layout">
           <div class="qr-reference-card" style="display: none;">
             <div class="close-icon">
@@ -108,7 +108,7 @@
               <span>CAMPAIGN ID REFERENCE #</span>
             </div>
             <div class="qr-reference-content">
-              <span id="qr-reference-number">{{ $row->campaign_id }} - {{ $row->qr_reference_number }}</span>
+              <span id="qr-reference-number">In-store EGC - {{ $row->qr_reference_number }}</span>
               <span id="copy-clipboard" class="clipboard-tooltip" onclick="copyToClipboard('#qr-reference-number')"><i class='fa fa-clipboard'></i></span>
             </div>
             <div class="input-invoice-notes">
@@ -198,10 +198,6 @@
                 <label for="">Batch Group: </label>
                 <input id="redemption_start_date" type="text" value="{{ $row->batch_group }}" readonly>
               </div>
-              <div class="user-element">
-                <label for="">Batch Number: </label>
-                <input id="redemption_end_date" type="text" value="{{ $row->batch_number }}" readonly>
-              </div>
             </div>
           </div>
           <div class="user-info-content">
@@ -252,7 +248,7 @@
               </div>
               <div class="user-element">
                 <label for="">GC Description: </label>
-                <input type="text" value="{{ $row->gc_description }}" readonly>
+                <input type="text" value="EGC Purchased in the store" readonly>
               </div>
             </div>
           </div>
@@ -261,10 +257,6 @@
               <div class="user-element">
                 <label for="">GC Value: </label>
                 <input type="text" value="{{ $row->gc_value }}" readonly>
-              </div>
-              <div class="user-element">
-                <label for="">Batch Number: </label>
-                <input id="redemption_end_date" type="text" value="{{ $row->batch_number }}" readonly>
               </div>
             </div>
           </div>
@@ -394,7 +386,6 @@
         const id_number = $('#id_number').val();
         const user_id = $('#user_id').val();
         const my_id = $('#my_id').val();
-        const campaign_type_id = $('#campaign_type_id').val();
         
         event.preventDefault();
 
@@ -431,7 +422,6 @@
             id_number: id_number,
             user_id: user_id,
             my_id: my_id,
-            campaign_type_id: campaign_type_id,
           },
           success: function(response){
 
@@ -484,7 +474,6 @@
 
         const posInvoiceNumber = parseInt($('#pos-invoice-number').val());
         const user_id = $('#user_id').val();
-        const campaign_type_id = $('#campaign_type_id').val();
 
         event.preventDefault();
 
@@ -501,7 +490,6 @@
             data: {
               posInvoiceNumber: posInvoiceNumber,
               userId: user_id,
-              campaign_type_id: campaign_type_id,
             },
             success: function(response){
               console.log(response.success);

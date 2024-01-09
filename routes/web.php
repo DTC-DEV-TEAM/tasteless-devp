@@ -57,7 +57,7 @@ Route::get('admin/g_c_lists/email', function(){
 // Customer Information
 Route::get('/customer_registration/beyond_the_box', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/digital_walker', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/btb_x_open_source', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/dw_and_btb', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/open_source', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/suggest-existing-customer', [CustomerRegistrationController::class, 'suggestExistingCustomer'])->name('suggest_existing_customer');
 Route::post('/customer_registration/view-existing-customer', [CustomerRegistrationController::class, 'viewCustomerInfo'])->name('viewCustomerInfo');

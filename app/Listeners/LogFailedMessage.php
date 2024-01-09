@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Log;
 use App\GCList;
-
+use DB;
 
 class LogFailedMessage
 {
@@ -33,7 +33,7 @@ class LogFailedMessage
         $decoded = json_decode($json);
         $id = $decoded->data->id;
 
-        GCList::find($id)->update([
+        DB::table('g_c_lists_devps')->where('id', $id)->update([
             'store_status' => 5
         ]);
     }
