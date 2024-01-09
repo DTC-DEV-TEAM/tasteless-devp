@@ -42,10 +42,10 @@ class StoreStatusSeeder extends Seeder
             ]);
 
         DB::table('store_statuses')->updateOrInsert([
-            'name' => 'Email Dispatched',
+            'name' => 'Approved',
             ],
             [
-                'name' => 'Email Dispatched',
+                'name' => 'Approved',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')

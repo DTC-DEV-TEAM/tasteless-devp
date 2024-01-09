@@ -37,6 +37,8 @@
         <div class='panel-body'>
             <form method='post' action='{{CRUDBooster::mainpath('edit-save/'.$row->id)}}'>
                 @csrf
+                <input class="hidden" type="text" name="uploaded_img" value="{{ $row->uploaded_img }}">
+                <input class="hidden" type="text" name="campaign_id" value="{{ $row->campaign_id }}">
                 @if ($row->accounting_is_audit)
                 <div class="qr_status" style="background-color: rgb(31,114,183);">Closed</div>
                 @else
@@ -63,7 +65,7 @@
                                 </td>
                                 <td class="text-center table-label"> GC Description:</td>
                                 <td style="width: 200px;">
-                                    <input class="input" type="text" value="{{ $row->gc_description }}" disabled>
+                                    <input class="input" type="text" value="{{ $row->gc_description ? $row->gc_description : 'EGC Purchased in the store' }}" disabled>
                                 </td>
                             </tr>
                             <tr>
@@ -72,9 +74,11 @@
                                 <td style="width: 200px;">
                                     <input class="input" type="text" value="{{ $row->gc_value }}" disabled>
                                 </td>
-                                <td class="text-center table-label"> Batch Number:</td>
+                                <td class="text-center table-label">{{ $row->batch_number ? 'Batch Number:' : '' }}</td>
                                 <td style="width: 200px;">
+                                    @if ($row->batch_number)
                                     <input class="input" type="text" value="{{ $row->batch_number }}" disabled>
+                                    @endif
                                 </td>
                             </tr>
                             <tr>
@@ -97,7 +101,7 @@
                                 {{-- <label for=""> Campaign ID:</label> --}}
                                 <td class="text-center table-label"> QR Reference #:</td>
                                 <td style="width: 200px;">
-                                    <input class="input" type="text" value="{{ $row->campaign_id." - ".$row->qr_reference_number }}" disabled>
+                                    <input class="input" type="text" value="{{ $row->campaign_id ? $row->campaign_id : 'In-store EGC' ." - ".$row->qr_reference_number }}" disabled>
                                 </td>
                                 <td class="text-center table-label"> POS Invoice #:</td>
                                 <td style="width: 200px;">

@@ -55,6 +55,14 @@
             }
         }
 
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #b1b0b0 !important;
+
+        }
+
+
+
+
     </style>
 </head>
 <body>
@@ -144,10 +152,14 @@
                             <tr>
                                 <td>
                                     <p>Store Branch</p>
-                                    <select name="store_concepts_id" id="store_concepts_id" class="search-select" required>
+                                    <select name="store_concepts_id" id="store_concepts_id" class="search-select" disabled required>
                                         <option value="" disabled selected>None selected...</option>
                                         @foreach ($store_branches as $store_branch)
-                                            <option value="{{$store_branch->id}}">{{$store_branch->name}}</option>
+                                            @if (str_replace('_',' ',Request::segment(3)) == $store_branch->name)
+                                                <option value="{{$store_branch->id}}" selected>{{$store_branch->name}}</option>
+                                                @else
+                                                <option value="{{$store_branch->id}}">{{$store_branch->name}}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </td>
@@ -190,6 +202,7 @@
                 $('.customer-box-header-select').show();
             })
 
+            
             $("#registration-form").submit(function(event) {
 
                 event.preventDefault();
@@ -197,7 +210,7 @@
                 const btnSubmit = $('#btn-submit');
 
                 // Check if all required fields are valid
-                if ($(this).find('.validate:invalid').length === 0) {
+                if ($(this).find('.validate:invalid').length === 0 && $(this).find('#store_concepts_id').val()) {
                     
                     const form = this;
 
@@ -215,7 +228,13 @@
                             form.submit();
                         }
                     });                
-                } 
+                }else{
+                    Swal.fire({
+                        title: "Error",
+                        text: "Make sure you are on the correct page, and that all inputs are filled in!",
+                        icon: "error"
+                    });
+                }
             });
 
             $('#existing-customer').select2({

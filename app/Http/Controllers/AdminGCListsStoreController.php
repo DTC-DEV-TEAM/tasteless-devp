@@ -15,7 +15,7 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\File;
 	use App\EmailTemplateImg;
-
+use App\StoreConcept;
 
 	class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -267,7 +267,8 @@
 	    public function hook_query_index(&$query) {
 	        //Your code here
 	        
-			$query->where('store_concept', '!=', null);
+			$query->where('store_concept', '!=', null)
+				->orderBy('id', 'desc');
 	    }
 
 	    /*
@@ -291,8 +292,8 @@
 				else if($column_value == 'Email Failed'){
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Email Failed</span>';
 				}
-				else if($column_value == 'Email Dispatched'){
-					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Email Dispatched</span>';
+				else if($column_value == 'Approved'){
+					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Approved</span>';
 				}
 			}
 	    }
@@ -425,14 +426,40 @@
 		public function pendingInvoice(Request $request){
 
 			$customer = $request->all();
+			$customer_id = $customer['id'];
+			$crudbooster_my_id = CRUDBooster::myId();
+			$cms_user = DB::table('cms_users')->where('id', $crudbooster_my_id)->first();
+			$store_name = StoreConcept::find($cms_user->id_store_concept);
+			$store_invoice_number = $customer['store_invoice_number'];
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+
+			// For Testing
+			$invoice_number_exists = DB::table('g_c_lists_devps')->where('id', $store_invoice_number)->exists();
+			
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no',$invoice_number)
+			// ->where('ftermid', $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
+
+			if(!$invoice_number_exists){
+				return CRUDBooster::redirect(
+					CRUDBooster::mainpath('edit'."/$customer_id"),
+					"Invoice number does not match to the system, please try again or contact BPG for assistance.",
+					'danger'
+				)->send();
+			}
+
 
 			$gc_list = DB::table('g_c_lists_devps')->where('id', $customer['id'])
 				->update([
 					'store_status' => 2,
 					'egc_value_id' => $egc_value->id,
-					'invoice_number' => $customer['invoice_number'],
+					'store_invoice_number' => $customer['store_invoice_number'],
 					'st_cashier_id' => CRUDBooster::myId(),
 					'st_cashier_date_transact' => date('Y-m-d H:i:s')
 				]);
@@ -447,14 +474,23 @@
 		public function pendingOIC(Request $request){
 
 			$customer = $request->all();
-
+			
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
-			DB::table('g_c_lists_devps')->where('id', $customer['id'])
-			->update([
+			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
+
+			if($gclists_devps->store_status != 2 && !CRUDBooster::isSuperAdmin()){
+				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
+			}
+			
+			$gclists_devps->update([
+				'first_name' => $customer['first_name'],
+				'last_name' => $customer['last_name'],
+				'email' => $customer['email'],
+				'phone' => $customer['contact_number'],
 				'store_status' => 4,
 				'egc_value_id' => $egc_value->id,
-				'invoice_number' => $customer['invoice_number'],
+				// 'invoice_number' => $customer['store_invoice_number'],
 				'st_oic_id' => CRUDBooster::myId(),
 				'st_oic_date_transact' => date('Y-m-d H:i:s')
 			]);

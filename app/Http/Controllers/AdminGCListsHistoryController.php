@@ -1,13 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 	use App\GCList;
+	use App\GcListSummaryView;
 	use App\IdType;
 	use Session;
 	use Request;
 	use DB;
 	use CRUDBooster;
+	use Yajra\DataTables\Facades\DataTables;
+
 
 	class AdminGCListsHistoryController extends \crocodicstudio\crudbooster\controllers\CBController {
+
+		function __construct(){
+			
+			date_default_timezone_set("Asia/Manila");
+			date_default_timezone_get();	
+		}
 
 	    public function cbInit() {
 
@@ -256,7 +265,7 @@
 			// 	->where(function($sub_query){
 			// 		$sub_query->where('invoice_number', '!=', null)->where('status', '!=', 'EXPIRED');
 			// 	});
-			$query->where('g_c_lists.uploaded_img', '!=', null);
+			// $query->where('g_c_lists.uploaded_img', '!=', null);
 	    }
 
 	    /*
@@ -312,12 +321,26 @@
 	    | 
 	    */
 	    public function hook_before_edit(&$postdata,$id) {        
-	        //Your code here
-			GCList::find($id)->update([
-				'accounting_id_transact'=>CRUDBooster::myId(),
-				'accounting_date_transact'=>date('Y-m-d H:i:s'),
-				'accounting_is_audit'=>1
-			]);
+
+			$return_input = Request::all();
+
+			$campaign_id = $return_input['campaign_id'];
+			$uploaded_img = $return_input['uploaded_img'];
+
+			if($campaign_id){
+				DB::table('g_c_lists')->where('uploaded_img', $uploaded_img)->update([
+					'accounting_id_transact'=>CRUDBooster::myId(),
+					'accounting_date_transact'=>date('Y-m-d H:i:s'),
+					'accounting_is_audit'=>1
+				]);
+			}
+			else{
+				DB::table('g_c_lists_devps')->where('uploaded_img', $uploaded_img)->update([
+					'accounting_id_transact'=>CRUDBooster::myId(),
+					'accounting_date_transact'=>date('Y-m-d H:i:s'),
+					'accounting_is_audit'=>1
+				]);
+			}
 	    }
 
 	    /* 
@@ -362,12 +385,14 @@
 
 		public function getIndex() {
 			//First, Add an auth
-			if(!CRUDBooster::isView()) CRUDBooster::redirect(CRUDBooster::adminPath(),trans('crudbooster.denied_access'));
+			// if(!CRUDBooster::isView()) CRUDBooster::redirect(CRUDBooster::adminPath(),trans('crudbooster.denied_access'));
 			
 			//Create your own query 
 			$data = [];
 			$data['page_title'] = ' Redemption Code History';
-			$data['customers'] = DB::table('g_c_lists_summary_view')->orderBy('id', 'desc')->get();
+			$data['customers'] = DB::table('g_c_lists_summary_view')
+				->where('uploaded_img', '!=', null)
+				->orderBy('id', 'asc')->get();
 			// dd($data['customers']);
 			//Create a view. Please use `cbView` method instead of view method from laravel.
 			return $this->view('redeem_qr.custom_egc_list',$data);
@@ -379,35 +404,47 @@
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 			
-			if(GCList::find($id)->uploaded_img == null){
-				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
-			}else{
+			$data['page_title'] = 'Redeem QR Details';
+			$data = [];
 
-				$data = [];
-				$data['page_title'] = 'Redeem QR Details';
-				$data['row'] = DB::table('g_c_lists')
-					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-					->select('g_c_lists.*',
-						'qr.campaign_id',
-						'qr.gc_description',
-						'qr.gc_value',
-						'qr.number_of_gcs',
-						'qr.batch_group',
-						'qr.batch_number',
+			$campaign_types_id = Request::all()['campaign_types_id'];
+			$uploaded_img = Request::all()['uploaded_img'];
+
+			if((int) $campaign_types_id == 3){
+				$data['row'] = DB::table('g_c_lists_devps')
+					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+					->select('g_c_lists_devps.*',
 						'id_name.valid_ids')
-					->where('g_c_lists.id',$id)
+					->where('g_c_lists_devps.uploaded_img',$uploaded_img)
 					->first();
-	
-				$data['valid_ids'] = IdType::get();
+				
+			}else{
+				$data['row'] = DB::table('g_c_lists')
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+				->select('g_c_lists.*',
+					'qr.campaign_id',
+					'qr.gc_description',
+					'qr.gc_value',
+					'qr.number_of_gcs',
+					'qr.batch_group',
+					'qr.batch_number',
+					'id_name.valid_ids')
+				->where('g_c_lists.uploaded_img',$uploaded_img)
+				->first();
+			}
 
-				// Generate QR Code
-				$qrCodeData = $data['row']->email.'|'.$data['row']->id;
+			if(!$data['row']->uploaded_img){
+				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
+
+			}
+
+			$data['valid_ids'] = IdType::get();
 	
-				//Please use view method instead view method from laravel
-				// return $this->view('redeem_qr.qr_redeem_section',$data);
-				return $this->view('redeem_qr.qr_redeem_section_view',$data);
-			};
+			// Generate QR Code
+			$qrCodeData = $data['row']->email.'|'.$data['row']->id;
+
+			return $this->view('redeem_qr.qr_redeem_section_view',$data);
 
 		}
 
@@ -417,35 +454,57 @@
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 			
-			if(GCList::find($id)->uploaded_img == null){
-				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
+			$data['page_title'] = 'Redeem QR Edit';
+			$data = [];
+
+			$campaign_types_id = Request::all()['campaign_types_id'];
+			$uploaded_img = Request::all()['uploaded_img'];
+
+			if((int) $campaign_types_id == 3){
+
+				$data['row'] = DB::table('g_c_lists_devps')
+					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+					->leftJoin('egc_value_types as egc', 'egc.id' ,'=', 'g_c_lists_devps.egc_value_id')
+					->select('g_c_lists_devps.*',
+						'id_name.valid_ids',
+						'egc.value as gc_value')
+					->where('g_c_lists_devps.uploaded_img',$uploaded_img)
+					->first();
 			}else{
 
-				$data = [];
-				$data['page_title'] = 'Redeem QR Edit';
 				$data['row'] = DB::table('g_c_lists')
-					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-					->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
-					->select('g_c_lists.*',
-						'qr.campaign_id',
-						'qr.gc_description',
-						'qr.gc_value',
-						'qr.number_of_gcs',
-						'qr.batch_group',
-						'qr.batch_number',
-						'id_name.valid_ids')
-					->where('g_c_lists.id',$id)
-					->first();
-	
-				$data['valid_ids'] = IdType::get();
-	
-				// Generate QR Code
-				$qrCodeData = $data['row']->email.'|'.$data['row']->id;
-	
-				//Please use view method instead view method from laravel
-				return $this->view('redeem_qr.qr_redeem_section_history_edit',$data);
-			};
+				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
+				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+				->select('g_c_lists.*',
+					'qr.campaign_id',
+					'qr.gc_description',
+					'qr.gc_value',
+					'qr.number_of_gcs',
+					'qr.batch_group',
+					'qr.batch_number',
+					'id_name.valid_ids')
+				->where('g_c_lists.uploaded_img',$uploaded_img)
+				->first();
+			}
 
+			if(!$data['row']->uploaded_img){
+				CRUDBooster::redirect(CRUDBooster::mainpath(), "You don't have access to this area", 'warning');
+
+			}
+
+			$data['valid_ids'] = IdType::get();
+	
+			// Generate QR Code
+			$qrCodeData = $data['row']->email.'|'.$data['row']->id;
+
+			//Please use view method instead view method from laravel
+			return $this->view('redeem_qr.qr_redeem_section_history_edit',$data);
+
+		}
+
+		public function getGCList(){
+
+			return DataTables::of(GcListSummaryView::query()->where('uploaded_img', '!=', null))->make(true);
 		}
 
 	}

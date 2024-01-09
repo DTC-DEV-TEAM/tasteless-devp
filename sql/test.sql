@@ -5,14 +5,14 @@ SELECT
     `name`,
     `phone`,
     `email`,
-    `campaign_id`,
+    `campaign_name` as `campaign_id`,
     `gc_description`,
     `gc_value`,
     `invoice_number`,
     `pos_terminal`,
-    `status`,
+    `accounting_is_audit`,
     CONCAT(
-        `campaign_name`,
+        COALESCE(`campaign_name`, 'In-store EGC '),
         ' - ',
         `qr_reference_number`
     ) AS `gclists`,
@@ -36,7 +36,7 @@ FROM
             'g_c_lists' AS `source_table`,
             `qr_creations`.`campaign_type_id` AS 'qr_campaign',
             `qr_creations`.`campaign_id` AS 'campaign_name',
-            `g_c_lists`.`status`,
+            `g_c_lists`.`accounting_is_audit`,
             `g_c_lists`.`pos_terminal`
         FROM
             `g_c_lists`
@@ -52,13 +52,13 @@ FROM
             `g_c_lists_devps`.`email`,
             `g_c_lists_devps`.`campaign_id`,
             `qr_creations`.`gc_description`,
-            `qr_creations`.`gc_value`,
+            `egc_value_types`.`value`,
             `g_c_lists_devps`.`invoice_number`,
             `g_c_lists_devps`.`qr_reference_number`,
             'g_c_lists_devps' AS `source_table`,
             `qr_creations`.`campaign_type_id` AS 'qr_campaign',
             `qr_creations`.`campaign_id` AS 'campaign_name',
-            `g_c_lists_devps`.`status`,
+            `g_c_lists_devps`.`accounting_is_audit`,
             `g_c_lists_devps`.`pos_terminal`
 
 
@@ -66,4 +66,6 @@ FROM
             `g_c_lists_devps`
         LEFT JOIN
             `qr_creations` ON `g_c_lists_devps`.`campaign_id` = `qr_creations`.`id`
+        LEFT JOIN
+            `egc_value_types` ON `g_c_lists_devps`.`egc_value_id` = `egc_value_types`.`id`
     ) AS combined_tables

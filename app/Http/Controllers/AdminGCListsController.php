@@ -450,7 +450,7 @@ use DateTime;
 				// }
 			}else{
 				
-				if ($user->qr_reference_number == $slug && $slug && $validate_user_store_privilege || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
+				if ($user->qr_reference_number == $slug && $slug || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 					$data = [];
 					$data['page_title'] = 'Redeem QR';
 					$data['row'] = DB::table('g_c_lists_devps')

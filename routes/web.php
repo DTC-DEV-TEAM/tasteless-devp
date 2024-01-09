@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerRegistrationController;
 use App\Http\Controllers\AdminEmailTestingsController;
 use Illuminate\Support\Facades\Route;
 use App\EmailTesting;
+use App\Http\Controllers\AdminGCListsHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,10 +56,10 @@ Route::get('admin/g_c_lists/email', function(){
 });
 
 // Customer Information
-Route::get('/customer_registration/beyond_the_box', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/digital_walker', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/dw_and_btb', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/open_source', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/beyond_the_box/{store_branch}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/digital_walker/{store_branch}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/dw_and_btb/{store_branch}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/open_source/{store_branch}', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/suggest-existing-customer', [CustomerRegistrationController::class, 'suggestExistingCustomer'])->name('suggest_existing_customer');
 Route::post('/customer_registration/view-existing-customer', [CustomerRegistrationController::class, 'viewCustomerInfo'])->name('viewCustomerInfo');
 // Add Customer
@@ -76,6 +77,9 @@ Route::post(config('crudbooster.ADMIN_PATH').'/selectedHeader',[AdminEmailTestin
 Route::post(config('crudbooster.ADMIN_PATH').'send-email-testing', [AdminEmailTestingsController::class, 'sendEmailTesting'])->name('send-email-testing');
 
 Route::post('/admin/qr_creations/email_testing', [AdminQrCreationsController::class, 'EmailTesting'])->name('emailtesting');
+
+// Yajra Table
+Route::get('gc_list_data', [AdminGCListsHistoryController::class, 'getGCList'])->name('get_gc_list');
 // Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
 //     $data['pos_sale'] = DB::connection('mysql_tunnel')

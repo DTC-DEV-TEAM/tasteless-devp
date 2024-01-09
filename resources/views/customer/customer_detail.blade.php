@@ -82,7 +82,7 @@
                 </tr>
                 <tr>
                     <td>Invoice Number:</td>
-                    <td><input class="form-control" type="text" name="invoice_number" value="{{ $customer->invoice_number }}" required></td>
+                    <td><input class="form-control" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required></td>
                     <td></td>
                     <td></td>
                 </tr>

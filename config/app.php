@@ -164,6 +164,8 @@ return [
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         Spatie\LaravelImageOptimizer\ImageOptimizerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -232,6 +234,7 @@ return [
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'ImageOptimizer' => Spatie\LaravelImageOptimizer\Facades\ImageOptimizer::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
     ],
 
 ];

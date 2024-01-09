@@ -84,12 +84,23 @@
                 </tr>
                 <tr>
                     <td>Invoice Number:</td>
-                    <td><input class="form-control" type="text" name="invoice_number" value="{{ $customer->invoice_number }}" required></td>
+                    <td><input class="form-control" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required></td>
                     <td></td>
                     <td></td>
                 </tr>
             </tbody>
         </table>
+
+        @if(!$email_testing)
+        <table class="custom_normal_table">
+            <tbody>
+                <tr>
+                    <td style="color: red !important;">Please create email template first</td>
+                </tr>
+            </tbody>
+        </table>
+        @endif
+
         @if ($customer->store_status > 1)
         <hr>
         <div class="cb-header">
@@ -113,9 +124,14 @@
 
         const email_testing = {!! json_encode($email_testing) !!}
 
+        if(!email_testing){
+            $('#btn-fake').attr('disabled', true);
+        }
+        
         const token = $("#token").val();
         const campaignId = email_testing.store_logos_id;
         const selected_header = email_testing.id;
+
 
         $.ajax({
             type: 'POST',
@@ -139,9 +155,13 @@
 
 
         if("{{ $customer->store_status == 2 }}"){
-            $('input').attr('readonly', false);
+            $('input[name="store_invoice_number"]').attr('readonly', true);
+            $('.inputs').attr('readonly', false);
         }
-        
+        else if ("{{ $customer->store_status > 2 && !CRUDBooster::isSuperAdmin() }}"){
+            $('input,select').attr('disabled', true);
+        }
+
         $('#btn-fake').on('click', function(){
             const btnText = $(this).val();
             console.log(btnText)
