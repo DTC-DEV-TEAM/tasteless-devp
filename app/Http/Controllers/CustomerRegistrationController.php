@@ -87,7 +87,7 @@ class CustomerRegistrationController extends Controller
     public function viewCustomerInfo(Request $request){
         $user_request = $request->all();
         $user_customer_id = $user_request['customerID'];
-        $customer_information = GCList::where('id',$user_customer_id)
+        $customer_information = g_c_lists_devp::where('id',$user_customer_id)
             ->first();
 
         return response()->json(['customer_information' => $customer_information]);
