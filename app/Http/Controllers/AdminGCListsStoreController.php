@@ -518,7 +518,7 @@ use App\StoreConcept;
 
 			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
 
-			if($gclists_devps->store_status != 2 && !CRUDBooster::isSuperAdmin()){
+			if($gclists_devps->store_status > 2 && !CRUDBooster::isSuperAdmin()){
 				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
 			}
 			
