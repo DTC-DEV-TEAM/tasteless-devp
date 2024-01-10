@@ -155,7 +155,7 @@
                     }
                 },
                 { data: 'gc_value', name: 'gc_value' },
-                { data: 'gclists', name: 'gclis ts' },
+                { data: 'gclists', name: 'gclists' },
                 { data: 'invoice_number', name: 'invoice_number' },
                 { data: 'pos_terminal', name: 'pos_terminal' },
                 {

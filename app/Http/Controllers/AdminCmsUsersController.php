@@ -46,7 +46,7 @@ class AdminCmsUsersController extends CBController {
 			$this->form[] = array("label"=>"Privilege","name"=>"id_cms_privileges","type"=>"select","datatable"=>"cms_privileges,name",'required'=>true,'width'=>'col-sm-6','datatable_where'=>'name="Store QR"');			
 		}
 		$this->form[] = array('label'=>'Store','name'=>'id_store_concept','type'=>'select','validation'=>'required|min:1|max:255',"datatable"=>"store_concepts,name",'width'=>'col-sm-6');		
-		$this->form[] = ['label'=>'Status','name'=>'status','type'=>'select','validation'=>'required','width'=>'col-sm-6','dataenum'=>'ACTIVE;INACTIVE'];			
+		$this->form[] = ['label'=>'Status','name'=>'status','type'=>'select','validation'=>'required','width'=>'col-sm-6','dataenum'=>'ACTIVE;INACTIVE','value' => 'ACTIVE'];			
 		// $this->form[] = array("label"=>"Company Name","name"=>"company_id","type"=>"select","datatable"=>"company_ids,company_name",'required'=>true,'width'=>'col-sm-6');						
 		$this->form[] = array("label"=>"Password","name"=>"password","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');
 		$this->form[] = array("label"=>"Password Confirmation","name"=>"password_confirmation","type"=>"password","help"=>"Please leave empty if not change",'width'=>'col-sm-6');
@@ -63,7 +63,7 @@ class AdminCmsUsersController extends CBController {
 				$('#company_id').attr('required', false);
 				$('#id_store_concept').attr('required', false);
 				
-				if(check_privilege_id == 3){
+				if(check_privilege_id == 3 || check_privilege_id == 7){
 					$('#form-group-company_id').show();
 					$('#form-group-id_store_concept').show();
 					$('#company_id').attr('required', true);

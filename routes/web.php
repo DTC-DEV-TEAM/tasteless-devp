@@ -56,6 +56,7 @@ Route::get('admin/g_c_lists/email', function(){
 });
 
 // Customer Information
+Route::get('/qr_link/{store_concept}/{store_branch}', [CustomerRegistrationController::class, 'qrLink']);
 Route::get('/customer_registration/beyond_the_box/{store_branch}', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/digital_walker/{store_branch}', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/dw_and_btb/{store_branch}', [CustomerRegistrationController::class, 'index']);

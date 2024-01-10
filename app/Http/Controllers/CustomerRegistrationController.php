@@ -27,9 +27,12 @@ class CustomerRegistrationController extends Controller
             ->get()
             ->toArray();
 
-
-
         return view('customer.customer_registration', $data);
+    }
+
+    public function qrLink()
+    {
+        return view('customer.customer_qr_link');
     }
 
     /**
@@ -50,7 +53,7 @@ class CustomerRegistrationController extends Controller
     public function store(Request $request)
     {
         $customer = $request->all();
-
+        
         do {
             $generated_qr_code = Str::random(10);
         } while (GCList::where('qr_reference_number', $generated_qr_code)->exists());

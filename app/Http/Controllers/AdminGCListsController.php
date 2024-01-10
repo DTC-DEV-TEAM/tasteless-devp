@@ -24,6 +24,7 @@ use App\Jobs\GCListFetchJob;
 use App\StoreConcept;
 use App\StoreLogo;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {

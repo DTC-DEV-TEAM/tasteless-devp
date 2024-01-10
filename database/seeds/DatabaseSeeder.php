@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EgcValueTypeSeeder::class);
         $this->call(StoreBrandTypeSeeder::class);
         $this->call(StoreStatusSeeder::class);
+        $this->call(StoreLogosSeeder::class);
     }
 }

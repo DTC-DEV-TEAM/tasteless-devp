@@ -225,6 +225,7 @@
                         reverseButtons: true
                         }).then((result) => {
                         if (result.isConfirmed) {
+                            $('#store_concepts_id').attr('disabled', false);
                             form.submit();
                         }
                     });                

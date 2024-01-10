@@ -104,9 +104,10 @@ use App\StoreConcept;
 	        $this->addaction = array();
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
-			}else{
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1, 2, 5])'];
-
+			}else if(CRUDBooster::myPrivilegeId() == 7 ){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 5])'];
+			}else if(CRUDBooster::myPrivilegeId() == 3){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1])'];
 			}
 
 
@@ -145,6 +146,19 @@ use App\StoreConcept;
 	        | 
 	        */
 	        $this->index_button = array();
+			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
+				$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
+				$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
+				$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
+				
+				if($store_logos->name == 'Digital Walker and Beyond the Box'){
+					$user_store_logo = 'dw_and_btb';
+				}else{
+					$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
+				}
+
+				$this->index_button[] = ['label'=>'Generate QR Link','url'=>url("qr_link/$user_store_logo/$store_concept->name"),"icon"=>"fa fa-qrcode", 'color'=>'success'];
+			}
 
 
 
@@ -266,9 +280,34 @@ use App\StoreConcept;
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
+
+			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
 	        
-			$query->where('store_concept', '!=', null)
-				->orderBy('id', 'desc');
+			if(CRUDBooster::isSuperAdmin()){
+				$query->where('store_concept', '!=', null)
+					->orderByRaw(
+						"CASE
+							WHEN store_status = 1 THEN 1
+							WHEN store_status = 2 THEN 2
+							WHEN store_status = 3 THEN 4
+							WHEN store_status = 4 THEN 3
+							WHEN store_status = 5 THEN 5
+						END"
+					);
+			}else{
+				$query->where('store_concept', '!=', null)
+					->where('store_concepts_id', $cms_user->id_store_concept)
+					->orderByRaw(
+						"CASE
+							WHEN store_status = 1 THEN 1
+							WHEN store_status = 2 THEN 2
+							WHEN store_status = 3 THEN 4
+							WHEN store_status = 4 THEN 3
+							WHEN store_status = 5 THEN 5
+						END"
+					);
+			}
+
 	    }
 
 	    /*

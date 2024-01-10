@@ -33,8 +33,13 @@ class LogFailedMessage
         $decoded = json_decode($json);
         $id = $decoded->data->id;
 
-        DB::table('g_c_lists_devps')->where('id', $id)->update([
-            'store_status' => 5
-        ]);
+        $gc_lists_devps = DB::table('g_c_lists_devps')->where('id', $id);
+
+        if(in_array($gc_lists_devps->first()->store_status, [2,4,5])){
+
+            $gc_lists_devps->update([
+                'store_status' => 5
+            ]);
+        }
     }
 }
