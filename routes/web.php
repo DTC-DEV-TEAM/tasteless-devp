@@ -66,9 +66,11 @@ Route::post('/customer_registration/view-existing-customer', [CustomerRegistrati
 // Add Customer
 Route::post('/customer_registration/store', [CustomerRegistrationController::class, 'store'])->name('store_ui');
 // Peding Invoice
-Route::post('admin/store/edit/pendingInvoice', [AdminGCListsStoreController::class, 'pendingInvoice'])->name('pending_invoice');
+Route::post('admin/store_devps/edit/pendingInvoice', [AdminGCListsStoreController::class, 'pendingInvoice'])->name('pending_invoice');
 // OIC Approval
-Route::post('admin/store/edit/pendingOIC', [AdminGCListsStoreController::class, 'pendingOIC'])->name('pending_oic');
+Route::post('admin/store_devps/edit/pendingOIC', [AdminGCListsStoreController::class, 'pendingOIC'])->name('pending_oic');
+// Void Request
+Route::get('admin/store_devps/void/{id}', [AdminGCListsStoreController::class, 'voidRequest'])->name('egc_void');
 
 // Email Template
 Route::get(config('crudbooster.ADMIN_PATH').'email_testings/add-template', [AdminEmailTestingsController::class, 'getAddTemplate'])->name('add-template');

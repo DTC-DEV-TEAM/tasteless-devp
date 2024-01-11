@@ -50,11 +50,15 @@ use App\StoreConcept;
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
+			$this->col[] = ["label"=>"Reference Number","name"=>"reference_number"];
 			$this->col[] = ["label"=>"Status","name"=>"store_status","join"=>"store_statuses,name"];
-			$this->col[] = ["label"=>"Name","name"=>"name"];
-			$this->col[] = ["label"=>"Email","name"=>"email"];
-			$this->col[] = ["label"=>"Phone","name"=>"phone"];
+			$this->col[] = ["label"=>"Name","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,name"];
+			$this->col[] = ["label"=>"Email","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,email"];
+			$this->col[] = ["label"=>"Phone","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,phone"];
+			$this->col[] = ["label"=>"Invoice#","name"=>"store_invoice_number"];
+			$this->col[] = ["label"=>"Branch","name"=>"store_concepts_id","join"=>"store_concepts,name"];
 			$this->col[] = ["label"=>"Concept","name"=>"store_concept"];
+			$this->col[] = ["label"=>"Created at","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,created_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -105,7 +109,7 @@ use App\StoreConcept;
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
 			}else if(CRUDBooster::myPrivilegeId() == 7 ){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 5])'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1, 2, 5])'];
 			}else if(CRUDBooster::myPrivilegeId() == 3){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1])'];
 			}
@@ -292,6 +296,7 @@ use App\StoreConcept;
 							WHEN store_status = 3 THEN 4
 							WHEN store_status = 4 THEN 3
 							WHEN store_status = 5 THEN 5
+							ELSE 6
 						END"
 					);
 			}else{
@@ -304,6 +309,7 @@ use App\StoreConcept;
 							WHEN store_status = 3 THEN 4
 							WHEN store_status = 4 THEN 3
 							WHEN store_status = 5 THEN 5
+							ELSE 6
 						END"
 					);
 			}
@@ -318,7 +324,7 @@ use App\StoreConcept;
 	    */    
 	    public function hook_row_index($column_index,&$column_value) {
 			
-			if($column_index == 2){
+			if($column_index == 3){
 				if($column_value == 'Pending Invoice'){
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Pending Invoice</span>';
 				}
@@ -333,6 +339,8 @@ use App\StoreConcept;
 				}
 				else if($column_value == 'Approved'){
 					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Approved</span>';
+				}else if($column_value == 'Voided'){
+					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Voided</span>';
 				}
 			}
 	    }
@@ -417,6 +425,16 @@ use App\StoreConcept;
 		public function getEdit($id) {
 			
 			$gc_list = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $id)
+				->leftJoin('store_concepts', 'store_concepts.id', 'g_c_lists_devps.store_concepts_id')
+				->leftJoin('g_c_lists_devps_customers', 'g_c_lists_devps_customers.id', 'g_c_lists_devps.id')
+				->select('g_c_lists_devps.*',
+				'store_concepts.name as store_branch',
+				'g_c_lists_devps_customers.name as cus_name',
+				'g_c_lists_devps_customers.first_name as cus_first_name',
+				'g_c_lists_devps_customers.last_name as cus_last_name',
+				'g_c_lists_devps_customers.email as cus_email',
+				'g_c_lists_devps_customers.phone as cus_phone',
+				)
 				->get()
 				->first();
 			
@@ -448,6 +466,16 @@ use App\StoreConcept;
 		public function getDetail($id) {
 			
 			$gc_list = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $id)
+				->leftJoin('store_concepts', 'store_concepts.id', 'g_c_lists_devps.store_concepts_id')
+				->leftJoin('g_c_lists_devps_customers', 'g_c_lists_devps_customers.id', 'g_c_lists_devps.id')
+				->select('g_c_lists_devps.*',
+				'store_concepts.name as store_branch',
+				'g_c_lists_devps_customers.name as cus_name',
+				'g_c_lists_devps_customers.first_name as cus_first_name',
+				'g_c_lists_devps_customers.last_name as cus_last_name',
+				'g_c_lists_devps_customers.email as cus_email',
+				'g_c_lists_devps_customers.phone as cus_phone',
+				)
 				->get()
 				->first();
 			
@@ -517,22 +545,58 @@ use App\StoreConcept;
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
 			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
+			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
 
 			if($gclists_devps->store_status > 2 && !CRUDBooster::isSuperAdmin()){
 				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
 			}
-			
-			$gclists_devps->update([
-				'first_name' => $customer['first_name'],
-				'last_name' => $customer['last_name'],
-				'email' => $customer['email'],
-				'phone' => $customer['contact_number'],
-				'store_status' => 4,
-				'egc_value_id' => $egc_value->id,
-				// 'invoice_number' => $customer['store_invoice_number'],
-				'st_oic_id' => CRUDBooster::myId(),
-				'st_oic_date_transact' => date('Y-m-d H:i:s')
-			]);
+
+			// No recipient = same person
+			if(!$customer['first_name']){
+				$gclists_devps->update([
+					'first_name' => $customer['cus_first_name'],
+					'last_name' => $customer['cus_last_name'],
+					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+					'email' => $customer['cus_email'],
+					'phone' => $customer['cus_contact_number'],
+					'store_status' => 4,
+					'egc_value_id' => $egc_value->id,
+					'st_oic_id' => CRUDBooster::myId(),
+					'st_oic_date_transact' => date('Y-m-d H:i:s')
+				]);
+	
+				$gclists_devps_customer->update([
+					'first_name' => $customer['cus_first_name'],
+					'last_name' => $customer['cus_last_name'],
+					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+					'email' => $customer['cus_email'],
+					'phone' => $customer['cus_contact_number'],
+					'updated_by' => CRUDBooster::myId(),
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
+			}else{
+				$gclists_devps->update([
+					'first_name' => $customer['first_name'],
+					'last_name' => $customer['last_name'],
+					'name' => $customer['first_name'].' '.$customer['last_name'],
+					'email' => $customer['email'],
+					'phone' => $customer['contact_number'],
+					'store_status' => 4,
+					'egc_value_id' => $egc_value->id,
+					'st_oic_id' => CRUDBooster::myId(),
+					'st_oic_date_transact' => date('Y-m-d H:i:s')
+				]);
+	
+				$gclists_devps_customer->update([
+					'first_name' => $customer['cus_first_name'],
+					'last_name' => $customer['cus_last_name'],
+					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+					'email' => $customer['cus_email'],
+					'phone' => $customer['cus_contact_number'],
+					'updated_by' => CRUDBooster::myId(),
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
+			}
 
 			$email_testings = new EmailTesting();
 			$customer_data = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $customer['id'])
@@ -595,6 +659,23 @@ use App\StoreConcept;
 				'success'
 			)->send();
 
+		}
+
+		public function voidRequest(int $id){
+
+			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $id);
+			$reference_number = $gclists_devps->first()->reference_number;
+
+			$gclists_devps->update([
+				'store_status' => 6
+			]);
+
+
+			return CRUDBooster::redirect(
+				CRUDBooster::mainpath(),
+				"Reference#: $reference_number successfully voided",
+				'success'
+			)->send();
 		}
 
 	}

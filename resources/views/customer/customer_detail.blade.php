@@ -2,8 +2,10 @@
 @extends('crudbooster::admin_template')
 
 @push('head')
+    {{-- Summernote --}}
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/crudbooster/assets/summernote/summernote.css')}}">
     {{-- Jquery --}}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
     {{-- Css --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     {{-- Swal --}}
@@ -33,11 +35,32 @@
     <div class='panel panel-default'>
         <div class='panel-heading'>Edit Form</div>
         <form method='post' action='{{ $customer->store_status == 1 ? route('pending_invoice') : route('pending_oic') }} ' autocomplete="off">
-        @csrf
+        <input type="hidden" value="{{csrf_token()}}" name="_token" id="token">
         <input class="hide" type="text" name="id" value="{{ $customer->id }}">
         <div class='panel-body'>
             <div class="cb-header">
                 Customer Information
+            </div>
+            <table class="custom_table">
+                <tbody>
+                    <tr>
+                        <td>First Name:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_first_name" value="{{ $customer->cus_first_name }}" readonly></td>
+                        <td>Last Name:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_last_name" value="{{ $customer->cus_last_name }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_email" value="{{ $customer->cus_email }}" readonly></td>
+                        <td>Contact:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_contact_number" value="{{ $customer->cus_phone }}" readonly></td>
+                    </tr>
+                </tbody>
+            </table>
+            @if(!($customer->name == $customer->cus_name && $customer->email == $customer->cus_email))
+            <br>
+            <div class="cb-header">
+                EGC Recipient
             </div>
             <table class="custom_table">
                 <tbody>
@@ -55,15 +78,15 @@
                     </tr>
                 </tbody>
             </table>
-        </form>
+            @endif
         <br>
         <table class="custom_normal_table">
             <tbody>
                 <tr>
+                    <td>Branch</td>
+                    <td>{{ $customer->store_branch }}</td>
                     <td>Concept:</td>
                     <td>{{ $customer->store_concept }}</td>
-                    <td></td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td>EGC Value:</td>
@@ -88,47 +111,20 @@
                 </tr>
             </tbody>
         </table>
-        <button class="hide" id="btn-submit" type="submit">submit</button>
+
     </div>
+    </form>
     <div class='panel-footer'>
         <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
     </div>
 
     <script>
-    $(document).ready(function() {
-
+        
         $('input,select').attr('disabled', true);
-
-        if("{{ $customer->store_status == 2 }}"){
-            $('input').attr('readonly', false);
-        }
-        
-        $('#btn-fake').on('click', function(){
-            const btnText = $(this).val();
-            console.log(btnText)
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: `Yes, ${btnText.toLowerCase()} it!`,
-                reverseButtons: true,
-                returnFocus: false
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#btn-submit').click();
-                }
-            });  
-        })
-        
-    });
-
 
     </script>
 @endsection
 
 @push('bottom')
-    {{-- <script type="text/javascript" src="{{asset('vendor/crudbooster/assets/summernote/summernote.min.js')}}"></script> --}}
+    <script type="text/javascript" src="{{asset('vendor/crudbooster/assets/summernote/summernote.min.js')}}"></script>
 @endpush

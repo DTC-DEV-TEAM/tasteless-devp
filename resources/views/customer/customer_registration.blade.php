@@ -120,10 +120,10 @@
                 <div class="customer-box-content">
                     <div class="customer-box-header-container">                    
                         <div class="customer-box-header">Customer Form</div>
-                        <div class="customer-box-header-select"><select class="search-select" id="existing-customer">
+                        {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
                         </select>
                         <p id="select-note">Search For Existing Customer:</p>
-                        </div>
+                        </div> --}}
                     </div>
                     <br>
                     <hr>
@@ -168,6 +168,50 @@
                                     <input class="inputs" id="concept" name="concept" type="text" readonly>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <div class="egc-checkbox-content">
+                                        <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
+                                        <label for="egc-checkbox">EGC Recipient</label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="customer-box-content1">
+                    <div class="customer-box-header-container">                    
+                        <div class="customer-box-header">EGC Recipient</div>
+                        {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
+                        </select>
+                        <p id="select-note">Search For Existing Customer:</p>
+                        </div> --}}
+                    </div>
+                    <br>
+                    <hr>
+                    <table class="custom_normal_table" >
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <p>First name</p>
+                                    <input class="inputs validate" type="text" id="egc_first_name" name="egc_first_name" placeholder="Enter first name">
+                                </td>
+                                <td>
+                                    <p>Last Name</p>
+                                    <input class="inputs validate" type="text"  id="egc_last_name" name="egc_last_name" placeholder="Enter last name">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Email</p>
+                                    <input class="inputs validate" type="email" id="egc_email" name="egc_email" placeholder="Enter email">
+                                </td>
+                                <td>
+                                    <p>Contact Number</p>
+                                    <input class="inputs validate" type="text" id="egc_contact_number" name="egc_contact_number" placeholder="Enter contact number">
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -200,6 +244,18 @@
                 $('.modal-success').css('display', 'none');
                 $('.select2-selection').show();
                 $('.customer-box-header-select').show();
+            })
+            
+            // Checkbox
+            $('#egc-checkbox').on('change', function(){
+                if($(this).is(":checked")){
+                    $('input[name^="egc"]').attr('required', true);
+                    $('.customer-box-content1').show();
+                }else{
+                    $('.customer-box-content1').hide();
+                    $('input[name^="egc"]').val('');
+                    $('input[name^="egc"]').attr('required', false);
+                }
             })
 
             

@@ -125,14 +125,23 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return `
-                            <a class="btn btn-xs btn-primary" href='{{ CRUDBooster::mainpath("edit") }}/${full.id}?campaign_types_id=${full.campaign_types_id}&uploaded_img=${full.uploaded_img}'>
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                            <a class="btn btn-xs btn-warning" href='{{ CRUDBooster::mainpath("detail") }}/${full.id}?campaign_types_id=${full.campaign_types_id}&uploaded_img=${full.uploaded_img}'>
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        `;
+                        if("{{ in_array(CRUDBooster::myPrivilegeId(), [1,2,4,5,6]) }}"){
+                            return `
+                                <a class="btn btn-xs btn-primary" href='{{ CRUDBooster::mainpath("edit") }}/${full.id}?campaign_types_id=${full.campaign_types_id}&uploaded_img=${full.uploaded_img}'>
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a class="btn btn-xs btn-warning" href='{{ CRUDBooster::mainpath("detail") }}/${full.id}?campaign_types_id=${full.campaign_types_id}&uploaded_img=${full.uploaded_img}'>
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            `;
+                        }else{
+                            return `
+                                <a class="btn btn-xs btn-warning" href='{{ CRUDBooster::mainpath("detail") }}/${full.id}?campaign_types_id=${full.campaign_types_id}&uploaded_img=${full.uploaded_img}'>
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            `
+                        }
+
                     }
                 },
                 { 

@@ -15,6 +15,8 @@ class AddColumnStoreInvoiceNumberToGCListsDevps extends Migration
     {
         Schema::table('g_c_lists_devps', function (Blueprint $table) {
             $table->string('store_invoice_number')->nullable()->after('store_concept');
+            $table->string('reference_number')->nullable()->after('email_template_id');
+            $table->string('g_c_lists_devps_customer_id')->nullable()->after('reference_number');
         });
     }
 
@@ -27,6 +29,8 @@ class AddColumnStoreInvoiceNumberToGCListsDevps extends Migration
     {
         Schema::table('g_c_lists_devps', function (Blueprint $table) {
             $table->dropColumn('store_invoice_number');
+            $table->dropColumn('reference_number');
+            $table->dropColumn('g_c_lists_devps_customer_id');
         });
     }
 }

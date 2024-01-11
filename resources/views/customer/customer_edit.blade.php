@@ -45,6 +45,27 @@
                 <tbody>
                     <tr>
                         <td>First Name:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_first_name" value="{{ $customer->cus_first_name }}" readonly></td>
+                        <td>Last Name:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_last_name" value="{{ $customer->cus_last_name }}" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_email" value="{{ $customer->cus_email }}" readonly></td>
+                        <td>Contact:</td>
+                        <td><input class="form-control inputs" type="text" name="cus_contact_number" value="{{ $customer->cus_phone }}" readonly></td>
+                    </tr>
+                </tbody>
+            </table>
+            @if(!($customer->name == $customer->cus_name && $customer->email == $customer->cus_email))
+            <br>
+            <div class="cb-header">
+                EGC Recipient
+            </div>
+            <table class="custom_table">
+                <tbody>
+                    <tr>
+                        <td>First Name:</td>
                         <td><input class="form-control inputs" type="text" name="first_name" value="{{ $customer->first_name }}" readonly></td>
                         <td>Last Name:</td>
                         <td><input class="form-control inputs" type="text" name="last_name" value="{{ $customer->last_name }}" readonly></td>
@@ -57,15 +78,15 @@
                     </tr>
                 </tbody>
             </table>
-        </form>
+            @endif
         <br>
         <table class="custom_normal_table">
             <tbody>
                 <tr>
+                    <td>Branch</td>
+                    <td>{{ $customer->store_branch }}</td>
                     <td>Concept:</td>
                     <td>{{ $customer->store_concept }}</td>
-                    <td></td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td>EGC Value:</td>
@@ -111,9 +132,11 @@
         @endif
         <button class="hide" id="btn-submit" type="submit">submit</button>
     </div>
+    </form>
     <div class='panel-footer'>
         <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
         <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 1 ? 'Submit' : 'Approve' }}"/>
+        <a class="btn btn-danger pull-right" id="void" style="margin-right: 5px;">Void</a>
     </div>
 
     <script>
@@ -164,7 +187,6 @@
 
         $('#btn-fake').on('click', function(){
             const btnText = $(this).val();
-            console.log(btnText)
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -178,6 +200,27 @@
                 }).then((result) => {
                 if (result.isConfirmed) {
                     $('#btn-submit').click();
+                }
+            });  
+        })
+
+        $('#void').on('click', function(event){
+            event.preventDefault();
+            const btnText = $(this).text();
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: `Yes, ${btnText.toLowerCase()} it!`,
+                reverseButtons: true,
+                returnFocus: false
+                }).then((result) => {
+                if (result.isConfirmed) {
+
+                    window.location.href = "{{ route('egc_void', ['id' => ':id']) }}".replace(':id', '{{ $customer->id }}');
                 }
             });  
         })
