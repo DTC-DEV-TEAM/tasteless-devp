@@ -25,7 +25,7 @@
         }
 
         .prohibited-box{
-            min-height: 400px;
+            min-height: auto;
             width: 100%;
             max-width: 600px;
             background-color: #fff;
@@ -124,6 +124,7 @@
         }
 
         .inputs{
+            margin-top: 5px;
             height: 37px;
             width: 100%;
             border: 1px solid #b1b0b0;
@@ -132,6 +133,7 @@
             border-radius: 5px;
             color: #3c3b3b;
             font-size: .9rem;
+            font-weight: bold;
         }
 
     </style>

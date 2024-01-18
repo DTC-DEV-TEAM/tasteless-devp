@@ -565,9 +565,9 @@ use Illuminate\Support\Facades\Mail;
 			if($gclists_devps->first()->store_status > 3 && !CRUDBooster::isSuperAdmin()){
 				return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
 			}
-			// else if($gclists_devps->first()->email_is_sent == 1){
-			// 	return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("Email is already sent"),"danger");
-			// }
+			else if($gclists_devps->first()->email_is_sent == 1){
+				return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("Email is already sent"),"danger");
+			}
 
 			$gclists_devps->update([
 				'first_name' => $customer['first_name'],
@@ -660,7 +660,7 @@ use Illuminate\Support\Facades\Mail;
 			$reference_number = $gclists_devps->first()->reference_number;
 
 			$gclists_devps->update([
-				'store_status' => 6
+				'store_status' => 7
 			]);
 
 
