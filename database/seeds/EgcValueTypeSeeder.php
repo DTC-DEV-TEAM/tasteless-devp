@@ -12,10 +12,10 @@ class EgcValueTypeSeeder extends Seeder
     public function run()
     {
         DB::table('egc_value_types')->updateOrInsert([
-            'name' => 'P1000',
+            'name' => '₱ 1000',
             ],
             [
-                'name' => 'P1000',
+                'name' => '₱ 1000',
                 'value' => '1000',
                 'status' => 'ACTIVE',
                 'created_by' => '7',
@@ -23,10 +23,10 @@ class EgcValueTypeSeeder extends Seeder
             ]);
 
         DB::table('egc_value_types')->updateOrInsert([
-            'name' => 'P5000',
+            'name' => '₱ 5000',
             ],
             [
-                'name' => 'P5000',
+                'name' => '₱ 5000',
                 'value' => '5000',
                 'status' => 'ACTIVE',
                 'created_by' => '7',

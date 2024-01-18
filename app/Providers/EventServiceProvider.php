@@ -28,6 +28,9 @@ class EventServiceProvider extends ServiceProvider
         MessageSending::class => [
             LogFailedMessage::class,
         ],
+        'Illuminate\Mail\Events\MessageFailed' => [
+            'App\Listeners\LogFailedMessage',
+        ],
     ];
 
     /**

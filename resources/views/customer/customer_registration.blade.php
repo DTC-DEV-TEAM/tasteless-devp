@@ -108,18 +108,21 @@
         <div class="customer-box">
             <form action="{{ route('store_ui') }}" method="POST" autocomplete="off" id="registration-form">
                 @csrf
+                <input style="display: none" name="qr_reference_number" value="{{ Request::segment(4) }}" type="text">
                 <div class="customer-box-logos">
                     @if (Request::segment(2) == 'digital_walker')
-                        <img src="{{ asset('img/digital_walker1.png') }}" alt="">
+                        {{-- <img src="{{ asset('img/digital_walker1.png') }}" alt=""> --}}
+                        <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
                     @elseif (Request::segment(2) == 'beyond_the_box')
-                        <img src="{{ asset('img/btb1.png') }}" alt="">
+                        {{-- <img src="{{ asset('img/btb1.png') }}" alt=""> --}}
+                        <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
                     @elseif (Request::segment(2) == 'dw_and_btb' || Request::segment(2) == 'open_source')
                         <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
                     @endif
                 </div>
                 <div class="customer-box-content">
                     <div class="customer-box-header-container">                    
-                        <div class="customer-box-header">Customer Form</div>
+                        <div class="customer-box-header">Customer Information</div>
                         {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
                         </select>
                         <p id="select-note">Search For Existing Customer:</p>
@@ -132,21 +135,21 @@
                             <tr>
                                 <td>
                                     <p>First name</p>
-                                    <input class="inputs validate" type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
+                                    <input class="inputs validate c-info" type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
                                 </td>
                                 <td>
                                     <p>Last Name</p>
-                                    <input class="inputs validate" type="text"  id="last_name" name="last_name" required placeholder="Enter your last name">
+                                    <input class="inputs validate c-info" type="text"  id="last_name" name="last_name" required placeholder="Enter your last name">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <p>Email</p>
-                                    <input class="inputs validate" type="email" id="email" name="email" required placeholder="Enter your email">
+                                    <input class="inputs validate c-info" type="email" id="email" name="email" required placeholder="Enter your email">
                                 </td>
                                 <td>
                                     <p>Contact Number</p>
-                                    <input class="inputs validate" type="text" id="contact_number" name="contact_number" required placeholder="Enter your contact number">
+                                    <input class="inputs validate c-info" type="text" id="contact_number" name="contact_number" required placeholder="Enter your contact number">
                                 </td>
                             </tr>
                             <tr>
@@ -168,21 +171,12 @@
                                     <input class="inputs" id="concept" name="concept" type="text" readonly>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="egc-checkbox-content">
-                                        <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
-                                        <label for="egc-checkbox">EGC Recipient</label>
-                                    </div>
-                                </td>
-                                <td></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="customer-box-content1">
                     <div class="customer-box-header-container">                    
-                        <div class="customer-box-header">EGC Recipient</div>
+                        <div class="customer-box-header">GC Recipient</div>
                         {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
                         </select>
                         <p id="select-note">Search For Existing Customer:</p>
@@ -194,22 +188,31 @@
                         <tbody>
                             <tr>
                                 <td>
+                                    <div class="egc-checkbox-content">
+                                        <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
+                                        <label for="egc-checkbox">Same as above</label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
                                     <p>First name</p>
-                                    <input class="inputs validate" type="text" id="egc_first_name" name="egc_first_name" placeholder="Enter first name">
+                                    <input class="inputs validate" type="text" id="egc_first_name" name="egc_first_name" placeholder="Enter first name" required>
                                 </td>
                                 <td>
                                     <p>Last Name</p>
-                                    <input class="inputs validate" type="text"  id="egc_last_name" name="egc_last_name" placeholder="Enter last name">
+                                    <input class="inputs validate" type="text"  id="egc_last_name" name="egc_last_name" placeholder="Enter last name" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <p>Email</p>
-                                    <input class="inputs validate" type="email" id="egc_email" name="egc_email" placeholder="Enter email">
+                                    <input class="inputs validate" type="email" id="egc_email" name="egc_email" placeholder="Enter email" required>
                                 </td>
                                 <td>
                                     <p>Contact Number</p>
-                                    <input class="inputs validate" type="text" id="egc_contact_number" name="egc_contact_number" placeholder="Enter contact number">
+                                    <input class="inputs validate" type="text" id="egc_contact_number" name="egc_contact_number" placeholder="Enter contact number" required>
                                 </td>
                             </tr>
                         </tbody>
@@ -247,16 +250,8 @@
             })
             
             // Checkbox
-            $('#egc-checkbox').on('change', function(){
-                if($(this).is(":checked")){
-                    $('input[name^="egc"]').attr('required', true);
-                    $('.customer-box-content1').show();
-                }else{
-                    $('.customer-box-content1').hide();
-                    $('input[name^="egc"]').val('');
-                    $('input[name^="egc"]').attr('required', false);
-                }
-            })
+            $('#egc-checkbox').on('change', egcCheckBox);
+            $('.c-info').on('input', egcCheckBox);
 
             
             $("#registration-form").submit(function(event) {
@@ -337,14 +332,17 @@
                 concept = convertToTitleCase(url);
                 bgColor = '#D0D2D4';
             }else if (url == 'digital_walker'){
-                bgColor = '#FED440';
+                // bgColor = '#FED440';
+                bgColor = '#D0D2D4';
                 concept = convertToTitleCase(url)
             }else if (url == 'dw_and_btb'){
                 concept = 'Digital Walker and Beyond the Box';
-                bgColor = '#359D9D';
+                // bgColor = '#359D9D';
+                bgColor = '#D0D2D4';
             }else if (url == 'open_source'){
                 concept = convertToTitleCase(url);
-                bgColor = '#359D9D';
+                // bgColor = '#359D9D';
+                bgColor = '#D0D2D4';
             }
             
             $('.customer-box-logos').css('background', bgColor);
@@ -386,6 +384,23 @@
             $('#email').val(customerInformation.email || '');
             $('#contact_number').val(customerInformation.phone || '');
             $('#concept').val(customerInformation.store_concept || '');
+        }
+
+        function egcCheckBox(){
+            
+            const firstName = $('#first_name').val();
+            const lastName = $('#last_name').val();
+            const email = $('#email').val();
+            const contact = $('#contact_number').val();
+
+            if($('#egc-checkbox').is(":checked")){
+                $('#egc_first_name').val(firstName).attr('readonly', true);
+                $('#egc_last_name').val(lastName).attr('readonly', true);
+                $('#egc_email').val(email).attr('readonly', true);
+                $('#egc_contact_number').val(contact).attr('readonly', true);
+            }else{
+                $('input[name^="egc"]').val('').attr('readonly',false);
+            }
         }
 
     </script>

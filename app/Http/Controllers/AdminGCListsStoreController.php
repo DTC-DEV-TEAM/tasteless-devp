@@ -15,7 +15,10 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\File;
 	use App\EmailTemplateImg;
+use App\g_c_lists_devp;
+use App\GCListsDevpsCustomer;
 use App\StoreConcept;
+use Illuminate\Support\Facades\Mail;
 
 	class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -56,7 +59,7 @@ use App\StoreConcept;
 			$this->col[] = ["label"=>"Email","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,email"];
 			$this->col[] = ["label"=>"Phone","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,phone"];
 			$this->col[] = ["label"=>"Invoice#","name"=>"store_invoice_number"];
-			$this->col[] = ["label"=>"Branch","name"=>"store_concepts_id","join"=>"store_concepts,name"];
+			$this->col[] = ["label"=>"Branch","name"=>"g_c_lists_devps.store_concepts_id","join"=>"store_concepts,name"];
 			$this->col[] = ["label"=>"Concept","name"=>"store_concept"];
 			$this->col[] = ["label"=>"Created at","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,created_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
@@ -106,12 +109,13 @@ use App\StoreConcept;
 	        | 
 	        */
 	        $this->addaction = array();
+			$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [qr_link]','target'=>'_blank'];
 			if(CRUDBooster::isSuperAdmin()){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
 			}else if(CRUDBooster::myPrivilegeId() == 7 ){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1, 2, 5])'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3])'];
 			}else if(CRUDBooster::myPrivilegeId() == 3){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1])'];
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2])'];
 			}
 
 
@@ -160,8 +164,8 @@ use App\StoreConcept;
 				}else{
 					$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
 				}
-
-				$this->index_button[] = ['label'=>'Generate QR Link','url'=>url("qr_link/$user_store_logo/$store_concept->name"),"icon"=>"fa fa-qrcode", 'color'=>'success'];
+				
+				$this->index_button[] = ['label'=>'Create GC','url'=>url("qr_link/$user_store_logo/$store_concept->name"),"icon"=>"fa fa-qrcode", 'color'=>'success'];
 			}
 
 
@@ -196,8 +200,10 @@ use App\StoreConcept;
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = NULL;
-
+			$admin_path = CRUDBooster::adminPath();
+	        $this->script_js = "
+		
+			";
 
             /*
 	        | ---------------------------------------------------------------------- 
@@ -220,7 +226,7 @@ use App\StoreConcept;
 	        |
 	        */
 	        $this->post_index_html = null;
-	        
+	        $this->post_index_html = view('module_modal.store_create_qr')->render();
 	        
 	        
 	        /*
@@ -232,6 +238,7 @@ use App\StoreConcept;
 	        |
 	        */
 	        $this->load_js = array();
+	        // $this->load_js[] = '//cdn.jsdelivr.net/npm/sweetalert2@11';
 	        
 	        
 	        
@@ -244,7 +251,7 @@ use App\StoreConcept;
 	        |
 	        */
 	        $this->style_css = NULL;
-	        
+
 	        
 	        
 	        /*
@@ -256,6 +263,7 @@ use App\StoreConcept;
 	        |
 	        */
 	        $this->load_css = array();
+	    	$this->load_css[] = asset('css/store_modal.css');
 	        
 	        
 	    }
@@ -286,30 +294,34 @@ use App\StoreConcept;
 	        //Your code here
 
 			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
+
+			$query->addSelect('g_c_lists_devps.qr_link');
 	        
 			if(CRUDBooster::isSuperAdmin()){
-				$query->where('store_concept', '!=', null)
+				$query->where('g_c_lists_devps.store_concept', '!=', null)
 					->orderByRaw(
 						"CASE
-							WHEN store_status = 1 THEN 1
-							WHEN store_status = 2 THEN 2
-							WHEN store_status = 3 THEN 4
-							WHEN store_status = 4 THEN 3
-							WHEN store_status = 5 THEN 5
-							ELSE 6
+							WHEN store_status = 1 THEN 3
+							WHEN store_status = 2 THEN 1
+							WHEN store_status = 3 THEN 2
+							WHEN store_status = 4 THEN 5
+							WHEN store_status = 5 THEN 4
+							WHEN store_status = 6 THEN 6
+							ELSE 7
 						END"
 					);
 			}else{
-				$query->where('store_concept', '!=', null)
-					->where('store_concepts_id', $cms_user->id_store_concept)
+				$query->where('g_c_lists_devps.store_concept', '!=', null)
+					->where('g_c_lists_devps.store_concepts_id', $cms_user->id_store_concept)
 					->orderByRaw(
 						"CASE
-							WHEN store_status = 1 THEN 1
-							WHEN store_status = 2 THEN 2
-							WHEN store_status = 3 THEN 4
-							WHEN store_status = 4 THEN 3
-							WHEN store_status = 5 THEN 5
-							ELSE 6
+							WHEN store_status = 1 THEN 3
+							WHEN store_status = 2 THEN 1
+							WHEN store_status = 3 THEN 2
+							WHEN store_status = 4 THEN 5
+							WHEN store_status = 5 THEN 4
+							WHEN store_status = 6 THEN 6
+							ELSE 7
 						END"
 					);
 			}
@@ -325,8 +337,11 @@ use App\StoreConcept;
 	    public function hook_row_index($column_index,&$column_value) {
 			
 			if($column_index == 3){
-				if($column_value == 'Pending Invoice'){
-					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Pending Invoice</span>';
+				if($column_value == 'Pending Customer'){
+					$column_value = '<span class="label" style="background-color: #233329; color: white; font-size: 12px;">Pending Customer</span>';
+				}
+				if($column_value == 'Pending Cashier'){
+					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Pending Cashier</span>';
 				}
 				else if($column_value == 'OIC Approval'){
 					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">OIC Approval</span>';
@@ -502,7 +517,7 @@ use App\StoreConcept;
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
 
 			// For Testing
-			$invoice_number_exists = DB::table('g_c_lists_devps')->where('id', $store_invoice_number)->exists();
+			// $invoice_number_exists = DB::table('g_c_lists_devps')->where('id', $store_invoice_number)->exists();
 			
 			// $invoice_number_exists = DB::connection('mysql_tunnel')
 			// ->table('pos_sale')
@@ -513,27 +528,27 @@ use App\StoreConcept;
 			// ->where('fdoctype',6000)
 			// ->exists();
 
-			if(!$invoice_number_exists){
-				return CRUDBooster::redirect(
-					CRUDBooster::mainpath('edit'."/$customer_id"),
-					"Invoice number does not match to the system, please try again or contact BPG for assistance.",
-					'danger'
-				)->send();
-			}
+			// if(!$invoice_number_exists){
+			// 	return CRUDBooster::redirect(
+			// 		CRUDBooster::mainpath('edit'."/$customer_id"),
+			// 		"Invoice number does not match to the system, please try again or contact BPG for assistance.",
+			// 		'danger'
+			// 	)->send();
+			// }
 
 
 			$gc_list = DB::table('g_c_lists_devps')->where('id', $customer['id'])
 				->update([
-					'store_status' => 2,
+					'store_status' => 3,
 					'egc_value_id' => $egc_value->id,
-					'store_invoice_number' => $customer['store_invoice_number'],
+					// 'store_invoice_number' => $customer['store_invoice_number'],
 					'st_cashier_id' => CRUDBooster::myId(),
 					'st_cashier_date_transact' => date('Y-m-d H:i:s')
 				]);
 
 			return CRUDBooster::redirect(
 				CRUDBooster::mainpath(),
-				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['invoice_number']}.",
+				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['store_invoice_number']}.",
 				'success'
 			)->send();
 		}
@@ -546,57 +561,35 @@ use App\StoreConcept;
 
 			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
 			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
-
-			if($gclists_devps->store_status > 2 && !CRUDBooster::isSuperAdmin()){
-				CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
+			
+			if($gclists_devps->first()->store_status > 3 && !CRUDBooster::isSuperAdmin()){
+				return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
 			}
+			// else if($gclists_devps->first()->email_is_sent == 1){
+			// 	return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("Email is already sent"),"danger");
+			// }
 
-			// No recipient = same person
-			if(!$customer['first_name']){
-				$gclists_devps->update([
-					'first_name' => $customer['cus_first_name'],
-					'last_name' => $customer['cus_last_name'],
-					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
-					'email' => $customer['cus_email'],
-					'phone' => $customer['cus_contact_number'],
-					'store_status' => 4,
-					'egc_value_id' => $egc_value->id,
-					'st_oic_id' => CRUDBooster::myId(),
-					'st_oic_date_transact' => date('Y-m-d H:i:s')
-				]);
-	
-				$gclists_devps_customer->update([
-					'first_name' => $customer['cus_first_name'],
-					'last_name' => $customer['cus_last_name'],
-					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
-					'email' => $customer['cus_email'],
-					'phone' => $customer['cus_contact_number'],
-					'updated_by' => CRUDBooster::myId(),
-					'updated_at' => date('Y-m-d H:i:s')
-				]);
-			}else{
-				$gclists_devps->update([
-					'first_name' => $customer['first_name'],
-					'last_name' => $customer['last_name'],
-					'name' => $customer['first_name'].' '.$customer['last_name'],
-					'email' => $customer['email'],
-					'phone' => $customer['contact_number'],
-					'store_status' => 4,
-					'egc_value_id' => $egc_value->id,
-					'st_oic_id' => CRUDBooster::myId(),
-					'st_oic_date_transact' => date('Y-m-d H:i:s')
-				]);
-	
-				$gclists_devps_customer->update([
-					'first_name' => $customer['cus_first_name'],
-					'last_name' => $customer['cus_last_name'],
-					'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
-					'email' => $customer['cus_email'],
-					'phone' => $customer['cus_contact_number'],
-					'updated_by' => CRUDBooster::myId(),
-					'updated_at' => date('Y-m-d H:i:s')
-				]);
-			}
+			$gclists_devps->update([
+				'first_name' => $customer['first_name'],
+				'last_name' => $customer['last_name'],
+				'name' => $customer['first_name'].' '.$customer['last_name'],
+				'email' => $customer['email'],
+				'phone' => $customer['contact_number'],
+				'store_status' => 5,
+				'egc_value_id' => $egc_value->id,
+				'st_oic_id' => CRUDBooster::myId(),
+				'st_oic_date_transact' => date('Y-m-d H:i:s')
+			]);
+
+			$gclists_devps_customer->update([
+				'first_name' => $customer['cus_first_name'],
+				'last_name' => $customer['cus_last_name'],
+				'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+				'email' => $customer['cus_email'],
+				'phone' => $customer['cus_contact_number'],
+				'updated_by' => CRUDBooster::myId(),
+				'updated_at' => date('Y-m-d H:i:s')
+			]);
 
 			$email_testings = new EmailTesting();
 			$customer_data = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $customer['id'])
@@ -676,6 +669,79 @@ use App\StoreConcept;
 				"Reference#: $reference_number successfully voided",
 				'success'
 			)->send();
+		}
+
+		public function createEGC(Request $request){
+
+			$egc = $request->all();
+
+			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
+			$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
+			$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
+			
+			if($store_logos->name == 'Digital Walker and Beyond the Box'){
+				$user_store_logo = 'dw_and_btb';
+			}else{
+				$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
+			}
+
+			$invoice_number_exists = true;
+			
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no',$invoice_number)
+			// ->where('ftermid', $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
+
+			if(!$invoice_number_exists){
+				return CRUDBooster::redirect(
+					CRUDBooster::mainpath(),
+					"Invoice number does not match to the system, please try again or contact BPG for assistance.",
+					'danger'
+				)->send();
+			}
+
+			do {
+				$generated_qr_code = Str::random(10);
+			} while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
+
+			$gclist_devp_customer = new GCListsDevpsCustomer([
+				'created_by' => CRUDBooster::myId(),
+				'store_concept' => $store_logos->name
+			]);
+			$gclist_devp_customer->save();
+
+			$gclist_devp = new g_c_lists_devp([
+				'store_status' => 1,
+				'store_concept' => $store_logos->name,
+				'store_concepts_id' => $store_concept->id,
+				'reference_number' => sprintf("CUS-%06d", $gclist_devp_customer->id),
+				'g_c_lists_devps_customer_id' => $gclist_devp_customer->id,
+				'egc_value_id' => $egc['egc_value'],
+				'store_invoice_number' => $egc['invoice_number'],
+				'qr_reference_number' => $generated_qr_code,
+				'created_by' => CRUDBooster::myId()
+			]);
+
+			$gclist_devp->save();
+
+			$url = url("qr_link/$user_store_logo/$store_concept->name/$gclist_devp->qr_reference_number");
+
+			$gclist_devp->qr_link = $url;
+			$gclist_devp->save();
+
+			return redirect()->back()->with('success', $url);
+		}
+
+		public function egcValue(){
+
+			$data = [];
+			$data['egc_value'] = EgcValueType::get();
+
+			return $data;
 		}
 
 	}

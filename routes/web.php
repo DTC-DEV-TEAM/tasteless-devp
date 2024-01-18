@@ -56,11 +56,11 @@ Route::get('admin/g_c_lists/email', function(){
 });
 
 // Customer Information
-Route::get('/qr_link/{store_concept}/{store_branch}', [CustomerRegistrationController::class, 'qrLink']);
-Route::get('/customer_registration/beyond_the_box/{store_branch}', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/digital_walker/{store_branch}', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/dw_and_btb/{store_branch}', [CustomerRegistrationController::class, 'index']);
-Route::get('/customer_registration/open_source/{store_branch}', [CustomerRegistrationController::class, 'index']);
+Route::get('/qr_link/{store_concept}/{store_branch}/{qr_reference_number}', [CustomerRegistrationController::class, 'qrLink']);
+Route::get('/customer_registration/beyond_the_box/{store_branch}/{qr_reference_number}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/digital_walker/{store_branch}/{qr_reference_number}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/dw_and_btb/{store_branch}/{qr_reference_number}', [CustomerRegistrationController::class, 'index']);
+Route::get('/customer_registration/open_source/{store_branch}/{qr_reference_number}', [CustomerRegistrationController::class, 'index']);
 Route::get('/customer_registration/suggest-existing-customer', [CustomerRegistrationController::class, 'suggestExistingCustomer'])->name('suggest_existing_customer');
 Route::post('/customer_registration/view-existing-customer', [CustomerRegistrationController::class, 'viewCustomerInfo'])->name('viewCustomerInfo');
 // Add Customer
@@ -71,6 +71,11 @@ Route::post('admin/store_devps/edit/pendingInvoice', [AdminGCListsStoreControlle
 Route::post('admin/store_devps/edit/pendingOIC', [AdminGCListsStoreController::class, 'pendingOIC'])->name('pending_oic');
 // Void Request
 Route::get('admin/store_devps/void/{id}', [AdminGCListsStoreController::class, 'voidRequest'])->name('egc_void');
+// EGC Value
+Route::get('admin/store_devps/egc_value', [AdminGCListsStoreController::class, 'egcValue'])->name('egc_value');
+// createEGC Store
+Route::post('admin/store_devps/create_egc', [AdminGCListsStoreController::class, 'createEGC'])->name('create_egc');
+
 
 // Email Template
 Route::get(config('crudbooster.ADMIN_PATH').'email_testings/add-template', [AdminEmailTestingsController::class, 'getAddTemplate'])->name('add-template');

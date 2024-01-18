@@ -12,18 +12,18 @@
             margin-top: 20px;
         }
 
-        th, td {
+        /* th, td {
             padding: 10px;
             border: 1px solid #bbbbbb;
             text-align: center;
             font-size: 12px;
-        }
+        } */
 
         .sorting{
             text-align: center !important;
         }
 
-        th {
+        /* th {
             background-color: #f2f2f2;
         }
 
@@ -33,7 +33,7 @@
 
         tbody tr:hover {
             background-color: #e0e0e0;
-        }
+        } */
 
         .responsive-table {
             overflow: auto;
@@ -45,14 +45,55 @@
             border-collapse: collapse;
         }
 
-  
+        table.dataTable {
+            border-collapse: collapse !important;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            clear: both;
+            border: 1px solid #ddd;
+            color: #333;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        table.dataTable thead th {
+            font-weight: bold;
+            background-color: #605CA8;
+            color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 1px;
+        }
+
+        table.dataTable tbody td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+
+        table.dataTable tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table.dataTable tbody tr:hover{
+            background-color: #e0e0e0;
+        }
+
+        table.dataTable tfoot th {
+            font-weight: bold;
+            background-color: #f2f2f2;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
     </style>
 @endpush
 @section('content')
 
 <div class='panel panel-default'>
-    <div class='panel-heading'>EGC List</div>
+    {{-- <div class='panel-heading'>EGC List</div> --}}
     <div class='panel-body'>
         <div class="responsive-table">
             <table id="myTable" class="">
@@ -178,7 +219,7 @@
                         }
                     }
                 }
-            ]
+            ],
         });
     });
 

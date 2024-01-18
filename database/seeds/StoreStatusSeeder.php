@@ -12,10 +12,20 @@ class StoreStatusSeeder extends Seeder
     public function run()
     {
         DB::table('store_statuses')->updateOrInsert([
-            'name' => 'Pending Invoice',
+            'name' => 'Pending Customer',
             ],
             [
-                'name' => 'Pending Invoice',
+                'name' => 'Pending Customer',
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+        DB::table('store_statuses')->updateOrInsert([
+            'name' => 'Pending Cashier',
+            ],
+            [
+                'name' => 'Pending Cashier',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')

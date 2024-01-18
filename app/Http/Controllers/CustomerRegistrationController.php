@@ -18,8 +18,13 @@ class CustomerRegistrationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($store_branch, $qr_reference_number)
     {
+        $gclist_devp = g_c_lists_devp::where('qr_reference_number', $qr_reference_number)->first();
+
+        if($gclist_devp->store_status >= 2 || !$gclist_devp){
+            return view('customer.prohibited');
+        }
 
         $data = [];
         $data['store_branches'] = DB::table('store_concepts')
@@ -27,7 +32,7 @@ class CustomerRegistrationController extends Controller
             ->orderBY('beach_name', 'asc')
             ->get()
             ->toArray();
-
+        
         return view('customer.customer_registration', $data);
     }
 
@@ -54,66 +59,28 @@ class CustomerRegistrationController extends Controller
     public function store(Request $request)
     {
         $customer = $request->all();
+
+        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
         
-        // if()
-        // dd($customer);
+        $devp =  $gc_list_devp->update([
+            'first_name' => $customer['egc_first_name'],
+            'last_name' => $customer['egc_last_name'],
+            'name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
+            'phone' => $customer['egc_contact_number'],
+            'email' => $customer['egc_email'],
+            'store_status' => 2
+        ]);
 
-        do {
-            $generated_qr_code = Str::random(10);
-        } while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
+        $customer = $gc_list_devp_customer->update([
+            'first_name' => $customer['first_name'],
+            'last_name' => $customer['last_name'],
+            'name' => $customer['first_name'].' '.$customer['last_name'],
+            'phone' => $customer['contact_number'],
+            'email' => $customer['email'],
+        ]);
 
-        if($customer['egc_checkbox'] == 'checked'){
-
-            $gc_list_devp_customer = new GCListsDevpsCustomer([
-                'first_name' => $customer['first_name'],
-                'last_name' => $customer['last_name'],
-                'name' => $customer['first_name'].' '.$customer['last_name'],
-                'phone' => $customer['contact_number'],
-                'email' => $customer['email']
-            ]);
-
-            $gc_list_devp = new g_c_lists_devp([
-                'first_name' => $customer['egc_first_name'],
-                'last_name' => $customer['egc_last_name'],
-                'name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
-                'phone' => $customer['egc_contact_number'],
-                'email' => $customer['egc_email'],
-                'store_concept' => $customer['concept'],
-                'store_concepts_id' => $customer['store_concepts_id'],
-                'qr_reference_number' => $generated_qr_code,
-                'store_status' => 1
-            ]);
-        }else{
-            $gc_list_devp_customer = new GCListsDevpsCustomer([
-                'first_name' => $customer['first_name'],
-                'last_name' => $customer['last_name'],
-                'name' => $customer['first_name'].' '.$customer['last_name'],
-                'phone' => $customer['contact_number'],
-                'email' => $customer['email'],
-                'store_concept' => $customer['concept']
-            ]);
-
-            $gc_list_devp = new g_c_lists_devp([
-                'first_name' => $customer['first_name'],
-                'last_name' => $customer['last_name'],
-                'name' => $customer['first_name'].' '.$customer['last_name'],
-                'phone' => $customer['contact_number'],
-                'email' => $customer['email'],
-                'store_concept' => $customer['concept'],
-                'store_concepts_id' => $customer['store_concepts_id'],
-                'qr_reference_number' => $generated_qr_code,
-                'store_status' => 1
-            ]);
-        }
-
-        $gc_list_devp_customer->save();
-        $gc_list_devp->save();
-
-        $gc_list_devp->g_c_lists_devps_customer_id = $gc_list_devp_customer->id;
-        $gc_list_devp->reference_number = sprintf("CUS-%06d", $gc_list_devp->g_c_lists_devps_customer_id);
-        $gc_list_devp->save();
-
-        return redirect()->back()->with('success', $gc_list_devp_customer->toArray());
+        return redirect()->back()->with('success', $gc_list_devp_customer->first()->toArray());
     }
 
     public function suggestExistingCustomer(Request $request){

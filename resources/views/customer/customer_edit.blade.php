@@ -26,6 +26,35 @@
         body.swal2-height-auto{
             height: 100% !important;
         }
+
+        .inputs:read-only{
+            background-color: #fff !important;
+        }
+
+        #swal_table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #swal_table th,
+        #swal_table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        @media (max-width: 767px) {
+            #swal_table {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            #swal_table th,
+            #swal_table td {
+                white-space: nowrap;
+            }
+        }
     </style>
 @endpush
 
@@ -34,7 +63,7 @@
     <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Home</a></p>
     <div class='panel panel-default'>
         <div class='panel-heading'>Edit Form</div>
-        <form method='post' action='{{ $customer->store_status == 1 ? route('pending_invoice') : route('pending_oic') }} ' autocomplete="off">
+        <form method='post' action='{{ $customer->store_status == 2 ? route('pending_invoice') : route('pending_oic') }} ' autocomplete="off">
         <input type="hidden" value="{{csrf_token()}}" name="_token" id="token">
         <input class="hide" type="text" name="id" value="{{ $customer->id }}">
         <div class='panel-body'>
@@ -57,7 +86,7 @@
                     </tr>
                 </tbody>
             </table>
-            @if(!($customer->name == $customer->cus_name && $customer->email == $customer->cus_email))
+            {{-- @if(!($customer->name == $customer->cus_name && $customer->email == $customer->cus_email)) --}}
             <br>
             <div class="cb-header">
                 EGC Recipient
@@ -78,16 +107,21 @@
                     </tr>
                 </tbody>
             </table>
-            @endif
+            {{-- @endif --}}
+        <br>
+        <table class="custom_table">
+            <tbody>
+                <tr>
+                    <td>Concept:</td>
+                    <td><input class="form-control inputs branch" type="text" value="{{ $customer->store_concept }}" readonly></td>
+                    <td>Branch</td>
+                    <td><input class="form-control inputs branch" type="text" value="{{ $customer->store_branch }}" readonly></td>
+                </tr>
+            </tbody>
+        </table>
         <br>
         <table class="custom_normal_table">
             <tbody>
-                <tr>
-                    <td>Branch</td>
-                    <td>{{ $customer->store_branch }}</td>
-                    <td>Concept:</td>
-                    <td>{{ $customer->store_concept }}</td>
-                </tr>
                 <tr>
                     <td>EGC Value:</td>
                     <td>
@@ -105,7 +139,7 @@
                 </tr>
                 <tr>
                     <td>Invoice Number:</td>
-                    <td><input class="form-control" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required></td>
+                    <td><input class="form-control" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required readonly></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -122,7 +156,7 @@
         </table>
         @endif
 
-        @if ($customer->store_status > 1)
+        @if ($customer->store_status > 2)
         <hr>
         <div class="cb-header">
             Email Content
@@ -135,12 +169,28 @@
     </form>
     <div class='panel-footer'>
         <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
-        <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 1 ? 'Submit' : 'Approve' }}"/>
+        <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 2 ? 'Submit' : 'Approve' }}"/>
+        @if (in_array(CRUDBooster::myPrivilegeId(),[1,7]))
         <a class="btn btn-danger pull-right" id="void" style="margin-right: 5px;">Void</a>
+        @endif
     </div>
 
     <script>
-        
+
+    // window.onpageshow = function(event) {
+    //     if (event.persisted) {
+    //         location.reload();
+    //     }
+    // };
+
+    function preventBack() {
+        window.history.forward();
+    }
+    window.onunload = function() {
+        null;
+    };
+    setTimeout("preventBack()",0);
+
     storeBrandEmail();
 
     function storeBrandEmail(){
@@ -149,12 +199,12 @@
 
         if(!email_testing){
             $('#btn-fake').attr('disabled', true);
+            return;
         }
         
         const token = $("#token").val();
         const campaignId = email_testing.store_logos_id;
         const selected_header = email_testing.id;
-
 
         $.ajax({
             type: 'POST',
@@ -177,9 +227,10 @@
     $(document).ready(function() {
 
 
-        if("{{ $customer->store_status == 2 }}"){
+        if("{{ $customer->store_status == 3 }}"){
             $('input[name="store_invoice_number"]').attr('readonly', true);
             $('.inputs').attr('readonly', false);
+            $('.branch').attr('readonly', true);
         }
         else if ("{{ $customer->store_status > 2 && !CRUDBooster::isSuperAdmin() }}"){
             $('input,select').attr('disabled', true);
@@ -187,9 +238,35 @@
 
         $('#btn-fake').on('click', function(){
             const btnText = $(this).val();
+
+            const firstName = $('input[name="cus_first_name"]').val();
+            const lastName = $('input[name="cus_last_name"]').val();
+            const invoiceNumber = $('input[name="store_invoice_number"]').val();
+            const egcValue = $('select[name="egc_value"]').val();
+            let name = `${firstName} ${lastName}`
+
+            const wrapper = $('<div>');
+            const table = $('<table id="swal_table">');
+            const thead = $('<thead>');
+            const tbody = $('<tbody>');
+            const tr = $('<tr>'); // Create a table row
+
+            // Use th (table header) for the headers
+            tr.append($('<th>').text('Name'), $('<th>').text('EGC Value'), $('<th>').text('Invoice Number'));
+
+            thead.append(tr);
+
+            // Create another row for the data
+            const dataRow = $('<tr style="color: #2C78C1; font-weight: 600;">').append($('<td>').text(name), $('<td>').text(egcValue), $('<td>').text(invoiceNumber));
+            tbody.append(dataRow);
+
+            table.append(thead, tbody);
+
+            wrapper.append(table);
+
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
+                html: wrapper,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
