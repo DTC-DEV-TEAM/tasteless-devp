@@ -8,7 +8,9 @@
 	use DB;
 	use CRUDBooster;
 	use Yajra\DataTables\Facades\DataTables;
-
+	use App\Exports\GcListExport;
+	use Maatwebsite\Excel\Facades\Excel;
+	use App\Http\Controllers\Controller;
 
 	class AdminGCListsHistoryController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -116,7 +118,6 @@
 	        | 
 	        */
 	        $this->button_selected = array();
-
 	                
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -140,7 +141,11 @@
 	        | 
 	        */
 	        $this->index_button = array();
+			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
 
+				$this->index_button[] = ['label'=>'Export','url'=>CRUDBooster::mainpath("gclist_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				// $this->index_button[] = ['label'=>'Upload GC List','url'=>CRUDBooster::mainpath("upload_gc_list"),"icon"=>"fa fa-plus", 'color'=>'primary'];
+			}
 
 
 	        /* 
@@ -503,8 +508,11 @@
 		}
 
 		public function getGCList(){
-
 			return DataTables::of(GcListSummaryView::query()->where('uploaded_img', '!=', null))->make(true);
+		}
+
+		public function export() {
+			return Excel::download(new GcListExport, 'store_gclist.xlsx');
 		}
 
 	}

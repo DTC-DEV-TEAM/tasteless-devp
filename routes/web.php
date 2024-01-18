@@ -88,6 +88,10 @@ Route::post('/admin/qr_creations/email_testing', [AdminQrCreationsController::cl
 
 // Yajra Table
 Route::get('gc_list_data', [AdminGCListsHistoryController::class, 'getGCList'])->name('get_gc_list');
+// GCList Export
+Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryController::class, 'export'])->name('store_gclist_export');
+
+
 // Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
     
 //     $data['pos_sale'] = DB::connection('mysql_tunnel')
