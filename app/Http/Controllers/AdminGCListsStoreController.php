@@ -18,6 +18,7 @@
 use App\g_c_lists_devp;
 use App\GCListsDevpsCustomer;
 use App\StoreConcept;
+use App\StoreHistory;
 use Illuminate\Support\Facades\Mail;
 
 	class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -515,6 +516,12 @@ use Illuminate\Support\Facades\Mail;
 			$store_invoice_number = $customer['store_invoice_number'];
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+			
+			$previous_entry = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
+			->latest('id')
+			->value('egc_value_id');
+
+			// dd($customer,$egc_value->id);
 
 			// For Testing
 			// $invoice_number_exists = DB::table('g_c_lists_devps')->where('id', $store_invoice_number)->exists();
@@ -546,6 +553,18 @@ use Illuminate\Support\Facades\Mail;
 					'st_cashier_date_transact' => date('Y-m-d H:i:s')
 				]);
 
+			if($egc_value->id != $previous_entry){
+
+				$store_history = DB::table('store_histories')->insert([
+					'g_c_lists_devps_id' => $customer['id'],
+					'egc_value_id' => $egc_value->id,
+					'created_by' => CRUDBooster::myId(),
+					'created_at' => date('Y-m-d H:i:s')
+				]);
+			}
+
+
+
 			return CRUDBooster::redirect(
 				CRUDBooster::mainpath(),
 				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['store_invoice_number']}.",
@@ -558,10 +577,83 @@ use Illuminate\Support\Facades\Mail;
 			$customer = $request->all();
 			
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
-
+			
 			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
 			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
 			
+			$customer_previous_entry = DB::table('g_c_lists_devps_customers')->where('id', $customer['id'])
+				->latest('id')
+				->first();
+			$egc_previous_entry = DB:: table('g_c_lists_devps')->where('g_c_lists_devps_customer_id', $customer['id'] )
+				->latest('id')
+				->first();
+			
+			$egc_previous_value = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
+				->latest('id')
+				->first();
+			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_value->id)->first();
+
+			$combined_previous_entry = [
+				'cus_first_name' => $customer_previous_entry->first_name,
+				'cus_last_name' => $customer_previous_entry->last_name,
+				'cus_email' => $customer_previous_entry->email,
+				'cus_contact_number' => $customer_previous_entry->phone,
+				'first_name'=> $egc_previous_entry->first_name,
+				'last_name' => $egc_previous_entry->last_name,
+				'email' => $egc_previous_entry->email,
+				'contact_number' => $egc_previous_entry->phone,
+				'egc_value' => strval($egc_cus_previous_value->value),
+				// Add more fields if needed
+			];
+			
+			$result = [];
+			$is_to_insert = false;
+
+			foreach ($combined_previous_entry as $key => $value) {
+				// Check if the key exists in both arrays
+				// if (isset($customer[$key]) && isset($combined_previous_entry[$key])) {
+				// 	// Compare the values
+				// 	$result[$key] = ($customer[$key] == $combined_previous_entry[$key]) ? null : $customer[$key];
+				// }
+				if ($customer[$key] != $combined_previous_entry[$key]) {
+					$is_to_insert = true;
+					$result[$key] = $customer[$key];
+				} else {
+					$result[$key] = null;
+				}
+			}
+
+			
+			if($customer['egc_value'] == $combined_previous_entry['egc_value']){
+				$result['egc_value'] = null;
+			} else {
+				$result['egc_value'] = EgcValueType::where('value',(int) $customer['egc_value'])->first()->id;
+			}
+			// dd($customer, $combined_previous_entry, $result);
+
+			
+			if ($is_to_insert) {
+				$store_history = DB::table('store_histories')->insert([
+					'g_c_lists_devps_id' => $customer['id'],
+					'customer_first_name' => $result['cus_first_name'],
+					'customer_last_name' => $result['cus_last_name'],
+					'customer_name' => $result['cus_first_name'] . ' ' . $result['cus_last_name'],
+					'customer_phone' => $result['cus_contact_number'],
+					'egc_first_name' => $result['first_name'],
+					'egc_last_name' => $result['last_name'],
+					'egc_name' => $result['first_name'] . ' ' . $result['last_name'],
+					'egc_phone' => $result['contact_number'],
+					'egc_email' => $result['email'],
+					'egc_value_id' => $result['egc_value'],
+					'created_by' => CRUDBooster::myId(),
+					'created_at' => date('Y-m-d H:i:s')
+				]);
+			}
+
+
+			// dd($customer, $combined_previous_entry, $result);
+
+
 			if($gclists_devps->first()->store_status > 3 && !CRUDBooster::isSuperAdmin()){
 				return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");
 			}
@@ -590,6 +682,8 @@ use Illuminate\Support\Facades\Mail;
 				'updated_by' => CRUDBooster::myId(),
 				'updated_at' => date('Y-m-d H:i:s')
 			]);
+
+
 
 			$email_testings = new EmailTesting();
 			$customer_data = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $customer['id'])
@@ -725,8 +819,15 @@ use Illuminate\Support\Facades\Mail;
 				'qr_reference_number' => $generated_qr_code,
 				'created_by' => CRUDBooster::myId()
 			]);
-
 			$gclist_devp->save();
+
+			$store_history = new StoreHistory([
+				'g_c_lists_devps_id' => $gclist_devp->id,
+				'egc_value_id' => $egc['egc_value'],
+				
+			]);
+			$store_history->save();
+
 
 			$url = url("qr_link/$user_store_logo/$store_concept->name/$gclist_devp->qr_reference_number");
 

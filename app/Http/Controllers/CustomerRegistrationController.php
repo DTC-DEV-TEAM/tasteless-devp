@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Request as Input;
 use DB;
 use App\GCList;
 use App\GCListsDevpsCustomer;
+use App\StoreHistory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -62,7 +63,8 @@ class CustomerRegistrationController extends Controller
 
         $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
-        
+        $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
+
         $devp =  $gc_list_devp->update([
             'first_name' => $customer['egc_first_name'],
             'last_name' => $customer['egc_last_name'],
@@ -72,13 +74,30 @@ class CustomerRegistrationController extends Controller
             'store_status' => 2
         ]);
 
-        $customer = $gc_list_devp_customer->update([
+        $devp_customer = $gc_list_devp_customer->update([
             'first_name' => $customer['first_name'],
             'last_name' => $customer['last_name'],
             'name' => $customer['first_name'].' '.$customer['last_name'],
             'phone' => $customer['contact_number'],
             'email' => $customer['email'],
         ]);
+
+
+        $history = $store_history->update([
+            'customer_first_name' => $customer['first_name'], 
+            'customer_last_name' => $customer['last_name'], 
+            'customer_name' =>$customer['first_name'].' '.$customer['last_name'],
+            'customer_phone' =>$customer['contact_number'],
+            'customer_email' => $customer['email'],
+            'egc_first_name' => $customer['first_name'],
+            'egc_last_name' => $customer['egc_last_name'],
+            'egc_name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
+            'egc_phone' => $customer['egc_contact_number'],
+            'egc_email' => $customer['egc_email'],
+            
+        ]);
+
+
 
         return redirect()->back()->with('success', $gc_list_devp_customer->first()->toArray());
     }
