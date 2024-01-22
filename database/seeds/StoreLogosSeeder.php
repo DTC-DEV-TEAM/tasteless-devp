@@ -51,5 +51,15 @@ class StoreLogosSeeder extends Seeder
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+        DB::table('store_logos')->updateOrInsert([
+            'name' => 'Store',
+            ],
+            [
+                'name' => 'Store',
+                'concept' => 'ST',
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
     }
 }
