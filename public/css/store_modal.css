@@ -4,12 +4,17 @@
     position: fixed;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 1);
-    opacity: 0.2;
+    /* position: fixed;
+    top: 0;
+    left: 0; */
+    /* background: red; */
+    background: rgba(0, 0, 0, 0.5);
     height: 100vh;
     width: 100%;
     z-index: 1030;
     display: none;
+    overflow: auto;
+    padding-top: 80px;
 }
 
 .store-modal{
@@ -18,10 +23,14 @@
     max-width: 500px;
     background-color: #fff;
     z-index: 9999;
-    position: absolute;
+    margin: auto;
+    /* position: absolute; */
+    /* top: 0;
+    left: 0; */
+    /* position: absolute;
     top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
     border-radius: 10px;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
     padding: 25px;
@@ -43,74 +52,6 @@
     margin-top: 25px;
 }
 
-.custom_sm_normal_table{
-    /* width: 100%; */
-    border-collapse: collapse;
-}
-
-.custom_sm_normal_table th, .custom_sm_normal_table td {
-    text-align: left;
-    width: 235px;
-    font-size: 14px;
-}
-
-.custom_sm_normal_table td{
-    padding: 10px;
-}
-
-.custom_sm_normal_table tr td:nth-child(odd){
-    font-weight: bold;
-    color: #4d4b4b !important;
-}
-
-.custom_normal_table{
-    width: 100%;
-    border-collapse: collapse;
-    flex: 1;
-}
-
-.custom_normal_table th, .custom_normal_table td {
-    text-align: left;
-    width: 300px;
-    font-size: 14px;
-}
-
-.custom_normal_table td{
-    padding: 10px;
-}
-
-.custom_normal_table td p{
-    font-weight: bold;
-    color: #4d4b4b !important;
-    margin-bottom: 10px;
-    font-size: 1rem;
-}
-
-.custom_table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #f9f9f9;
-    border-radius: 5px !important;
-    flex: 1;
-}
-
-.custom_table th, .custom_table td {
-    border: 1px solid #ddd;
-    text-align: left;
-    width: 300px;
-    font-size: 14px;
-}
-
-.custom_table td{
-    padding: 10px;
-}
-
-.custom_table td p{
-    font-weight: bold;
-    color: #4d4b4b !important;
-    margin-bottom: 10px;
-    font-size: 1rem;
-}
 
 .select2-container--default .select2-selection--single {
     height: 38px;
@@ -118,32 +59,6 @@
     border-top: 3px solid #b1b0b0 !important;
     border-radius: 4px;
 }
-
-/* Use a media query to apply styles for smaller screens */
-@media only screen and (max-width: 500px) {
-    /* Set the table row (tr) to be displayed as a block */
-    .custom_table tr, .custom_normal_table tr, .custom_sm_normal_table tr {
-        display: block;
-    }
-
-    /* Hide table headers on smaller screens */
-    .custom_table th, .custom_normal_table th, .custom_sm_normal_table th{
-        display: none;
-    }
-
-    /* Style table data (td) for smaller screens */
-    .custom_table td, .custom_normal_table td, .custom_sm_normal_table{
-        display: block;
-        text-align: left;
-        width: 100%;
-    }
-
-    .customer-box-header-container{
-        flex-direction: column;
-        gap: 30px;
-    }
-}
-
 
 /* Modal */
 

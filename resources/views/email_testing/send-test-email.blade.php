@@ -39,10 +39,14 @@
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/for-test-btb-dw.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/os_terms_and_conditions.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/beyond_the_box_claiming.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
-                    @else
+                    @elseif($store_logo_id == 4)
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/for-test-os.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/os_terms_and_conditions.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
                         <img src="{{ $message->embed(public_path() . '/store_logo/img/os_claiming.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
+                    @else
+                        <img src="{{ $message->embed(public_path() . '/store_logo/img/store.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
+                        <img src="{{ $message->embed(public_path() . '/store_logo/img/store_terms_and_conditions.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
+                        <img src="{{ $message->embed(public_path() . '/store_logo/img/store_claiming.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />
                     @endif
                     @foreach ($html_email_img as $img)
                      <img src="{{ $message->embed(public_path() . '/uploaded_item/send_test_images/' . $img) }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center; margin-top: 5px;" />

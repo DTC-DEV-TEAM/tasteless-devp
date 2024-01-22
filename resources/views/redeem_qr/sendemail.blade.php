@@ -72,6 +72,16 @@
             </div>
         </tr>
         @endif
+        @if ($store_logo == 5)
+        <tr align="center">
+            <div class="container">
+                <img src="{{ $message->embed(public_path() . '/store_logo/img/' . 'store_terms_and_conditions.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center;" />
+            </div>
+            <div class="container">
+                <img src="{{ $message->embed(public_path() . '/store_logo/img/' . 'store_claiming.jpg') }}" width="800" style="max-height: 800px; min-width: 800px; object-fit: contain; text-align: center;" />
+            </div>
+        </tr>
+        @endif
         <tr>
             <td align="center">
                 <div class="container">

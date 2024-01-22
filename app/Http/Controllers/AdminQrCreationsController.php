@@ -740,14 +740,15 @@ use App\EmailTemplateImg;
 			$btb_path = 'store_logo/img/beyond_the_box';
 			$dw_btb_path = 'store_logo/img/btb_and_dw';
 			$os_path = 'store_logo/img/os';
+			$store_path = 'store_logo/img/store';
 			$dyanamic_img_path = 'email_template_img/img/';
 			
 			$dw_image = Image::make(public_path($dw_path.'.jpg'));
 			$btb_image = Image::make(public_path($btb_path.'.jpg'));
 			$dw_btb_image = Image::make(public_path($dw_btb_path.'.png'));
-			$os_path = Image::make(public_path($os_path.'.jpg'));
+			$os_image = Image::make(public_path($os_path.'.jpg'));
+			$store_image = Image::make(public_path($store_path.'.jpg'));
 			// $dynamic_image = Image::make(public_path($dyanamic_img_path.$qr_img));
-
 			$save_path = 'e_gift_card/img/';
 
 			if($store_logo == 1){
@@ -791,7 +792,20 @@ use App\EmailTemplateImg;
 
 			if($store_logo == 4){
 
-				$logo_path = $os_path;
+				$logo_path = $os_image;
+				$filename = $save_path.Str::random(10).'.jpg';
+				$value_width = 510;
+				$qr_x_position = 89;
+				$qr_y_position = 35;
+				$color = '#1a1a1a';
+				$shadow = null;
+
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+			}
+
+			if($store_logo == 5){
+
+				$logo_path = $store_image;
 				$filename = $save_path.Str::random(10).'.jpg';
 				$value_width = 510;
 				$qr_x_position = 89;

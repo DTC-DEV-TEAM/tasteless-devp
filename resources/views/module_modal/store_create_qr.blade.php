@@ -13,29 +13,31 @@
 </div>
 @endif
 
-<div class="store-modal-bg-dark"></div>
-<div class="store-modal">
-    <form method="POST" action="{{ route('create_egc') }}"  id="gc-form">
-        @csrf
-        <div class="store-modal-header">Create Gift Card</div>
-        <br>
-        <div class="store-modal-content">
-            <label for="">EGC Value</label>
-            <div>
-                <select class="form-control" name="egc_value" id="egc-value" required></select>
-            </div>
+<div class="store-modal-bg-dark">
+    <div class="store-modal">
+        <form method="POST" action="{{ route('create_egc') }}"  id="gc-form">
+            @csrf
+            <div class="store-modal-header">Create Gift Card</div>
             <br>
-            <label for="">Invoice Number</label>
-            <div>
-                <input class="form-control" name="invoice_number" type="text" required>
+            <div class="store-modal-content">
+                <label for="">EGC Value</label>
+                <div>
+                    <select class="form-control" name="egc_value" id="egc-value" required></select>
+                </div>
+                <br>
+                <label for="">Invoice Number</label>
+                <div>
+                    <input class="form-control" name="invoice_number" type="text" required>
+                </div>
+                <div class="btn-content">
+                    <button class="btn btn-default pull-left" id="btn-cancel" type="button">Cancel</button>
+                    <button class="btn btn-primary pull-right" id="btn-submit" type="submit">Submit</button>
+                </div>
             </div>
-            <div class="btn-content">
-                <button class="btn btn-default pull-left" id="btn-cancel" type="button">Cancel</button>
-                <button class="btn btn-primary pull-right" id="btn-submit" type="submit">Submit</button>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+
 
 <script>
 

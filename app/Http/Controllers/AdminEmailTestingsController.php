@@ -445,7 +445,7 @@ use App\StoreLogo;
 			
 			$data = [];
 			$data['page_title'] = 'Create Email Template';
-			$data['store_logos'] = DB::table('store_logos')->where('status','ACTIVE')->get();
+			$data['store_logos'] = DB::table('store_logos')->where('id', 5)->where('status','ACTIVE')->get();
 			
 			//Please use view method instead view method from laravel
 			return $this->view('email_testing.add_email',$data);
@@ -594,7 +594,20 @@ use App\StoreLogo;
 				</div>
 				';
 			}
-
+			// Store
+			else if($data['CampaignId']->store_logo == 5){
+				$data['emailContent'] .='		
+				<div class="col-md-4">		
+					<img id="uploaded_img" style="max-height: 500px; width: 100%; max-width: 500px; object-fit: contain; text-align: center; margin-top: 5px;" src="'.URL::to('store_logo/img').'/'.'store.jpg' .'"> 
+				</div>
+				<div class="col-md-4">		
+					<img id="uploaded_img" style="max-height: 500px; width: 100%; max-width: 500px; object-fit: contain; text-align: center; margin-top: 5px;" src="'.URL::to('store_logo/img').'/'.'store_terms_and_conditions.jpg' .'"> 
+				</div>
+				<div class="col-md-4">		
+					<img id="uploaded_img" style="max-height: 500px; width: 100%; max-width: 500px; object-fit: contain; text-align: center; margin-top: 5px;" src="'.URL::to('store_logo/img').'/'.'store_claiming.jpg' .'"> 
+				</div>
+				';
+			}
 
 			foreach($data['EmailHeaderImgs'] as $image){
 				$tableRow++;
