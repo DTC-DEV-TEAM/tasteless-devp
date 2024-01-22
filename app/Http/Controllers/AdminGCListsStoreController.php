@@ -506,12 +506,17 @@ use Illuminate\Support\Facades\Mail;
 					if ($key == 'egc_value_id') {
 						$key = 'egc_value';
 					}
-					$customerInfo[$key] = $value;
-				}
-			
-				$data['customer_information'][$i] = $customerInfo;
-			}
 				
+					// Check if $key is either 'customer_name' or 'egc_name'
+					if ($key !== 'customer_name' && $key !== 'egc_name') {
+						$customerInfo[$key] = $value;
+					}
+				}
+				
+				$data['customer_information'][$i] = $customerInfo;
+				
+			}
+
 			return $this->view('customer.customer_edit',$data);
 			
 		}
@@ -572,9 +577,13 @@ use Illuminate\Support\Facades\Mail;
 					if ($key == 'egc_value_id') {
 						$key = 'egc_value';
 					}
-					$customerInfo[$key] = $value;
+				
+					// Check if $key is either 'customer_name' or 'egc_name'
+					if ($key !== 'customer_name' && $key !== 'egc_name') {
+						$customerInfo[$key] = $value;
+					}
 				}
-			
+				
 				$data['customer_information'][$i] = $customerInfo;
 			}
 
@@ -666,7 +675,7 @@ use Illuminate\Support\Facades\Mail;
 				->latest('id')
 				->first();
 
-			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_value->egc_value_id)->first();
+			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_entry->egc_value_id)->first();
 
 
 			$combined_previous_entry = [
@@ -711,12 +720,12 @@ use Illuminate\Support\Facades\Mail;
 					'g_c_lists_devps_id' => $customer['id'],
 					'customer_first_name' => $result['cus_first_name'],
 					'customer_last_name' => $result['cus_last_name'],
-					'customer_name' => $result['cus_first_name'] . ' ' . $result['cus_last_name'],
+					'customer_name' => $result['cus_first_name'] || $result['cus_last_name'] ? $result['cus_first_name'] . ' ' . $result['cus_last_name'] : null,
 					'customer_phone' => $result['cus_contact_number'],
 					'customer_email' => $result['cus_email'],
 					'egc_first_name' => $result['first_name'],
 					'egc_last_name' => $result['last_name'],
-					'egc_name' => $result['first_name'] . ' ' . $result['last_name'],
+					'egc_name' => $result['first_name'] || $result['last_name'] ? $result['first_name'] . ' ' . $result['last_name'] : null,
 					'egc_phone' => $result['contact_number'],
 					'egc_email' => $result['email'],
 					'egc_value_id' => $result['egc_value'],
@@ -820,11 +829,11 @@ use Illuminate\Support\Facades\Mail;
 					'g_c_lists_devps_id' => $customer['id'],
 					'customer_first_name' => $result['cus_first_name'],
 					'customer_last_name' => $result['cus_last_name'],
-					'customer_name' => $result['cus_first_name'] . ' ' . $result['cus_last_name'],
+					'customer_name' => $result['cus_first_name'] || $result['cus_last_name'] ? $result['cus_first_name'] . ' ' . $result['cus_last_name'] : null,
 					'customer_phone' => $result['cus_contact_number'],
 					'egc_first_name' => $result['first_name'],
 					'egc_last_name' => $result['last_name'],
-					'egc_name' => $result['first_name'] . ' ' . $result['last_name'],
+					'egc_name' => $result['first_name'] || $result['last_name'] ? $result['first_name'] . ' ' . $result['last_name'] : null,
 					'egc_phone' => $result['contact_number'],
 					'egc_email' => $result['email'],
 					'egc_value_id' => $result['egc_value'],

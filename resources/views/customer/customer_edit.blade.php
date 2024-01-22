@@ -225,7 +225,7 @@
                             <span style="font-weight: bold;">Customer Information</span>
                             <ul>
                                 <li><span style="color: #2a9bb1; font-weight: 600;">Name: </span>{{ $original_history->customer_first_name }}</li>
-                                <li><span style="color: #2a9bb1; font-weight: 600;">Email: </span>{{ $original_history->customer_last_name }}</li>
+                                <li><span style="color: #2a9bb1; font-weight: 600;">Email: </span>{{ $original_history->customer_email }}</li>
                                 <li><span style="color: #2a9bb1; font-weight: 600;">Phone: </span>{{ $original_history->customer_phone }}</li>
                             </ul>
                         </div>
