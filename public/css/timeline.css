@@ -1,0 +1,88 @@
+/* The actual timeline (the vertical ruler) */
+.timeline {
+    position: relative;
+    max-width: 1200px;
+}
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: rgb(191, 188, 188);
+    top: 0;
+    bottom: 0;
+    left: 2%;
+    margin-left: -3px;
+}
+.timeline::before{
+    width: 0 !important;
+}
+  /* Container around content */
+.container1 {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 100%;
+}
+/* The circles on the timeline */
+.container1::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: -17px;
+    background-color: white;
+    border: 3px solid #4D4A86;
+    top: 19px;
+    border-radius: 50%;
+    z-index: 1;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+/* Place the container to the left */
+.left {
+    left: 0;
+}
+/* Place the container to the right */
+.right {
+    left: 2%;
+}
+/* Add arrows to the left container (pointing right) */
+.left::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 22px;
+    width: 0;
+    z-index: 1;
+    right: 30px;
+    border: medium solid white;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent white;
+}
+  /* Add arrows to the right container (pointing left) */
+.right::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: 22px;
+    width: 0;
+    z-index: 1;
+    left: 30px;
+    border: medium solid white;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent rgb(191, 188, 188) transparent transparent;
+    z-index: 1;
+}
+/* Fix the circle for containers on the right side */
+.right::after {
+    left: -13px;
+}
+/* The actual content */
+.content1 {
+    padding: 12px 30px;
+    background-color: white;
+    position: relative;
+    border-radius: 6px;
+    box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+    z-index: 2;
+}

@@ -807,9 +807,9 @@ use App\EmailTemplateImg;
 
 				$logo_path = $store_image;
 				$filename = $save_path.Str::random(10).'.jpg';
-				$value_width = 510;
-				$qr_x_position = 89;
-				$qr_y_position = 35;
+				$value_width = 800;
+				$qr_x_position = 53;
+				$qr_y_position = 30;
 				$color = '#1a1a1a';
 				$shadow = null;
 
@@ -825,7 +825,7 @@ use App\EmailTemplateImg;
 	
 			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width) {
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(55);
+				$font->size(110);
 				
 				$textSize = $font->getBoxSize()['width'];
 				
@@ -834,25 +834,25 @@ use App\EmailTemplateImg;
 			});
 
 			if($shadow){
-				$real_image = $logo_path->text('P'.$amount, $text_width, 240, function($font) use ($color, $shadow){
+				$real_image = $logo_path->text('P'.$amount, $text_width, 190, function($font) use ($color, $shadow){
 					$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-					$font->size(55);
+					$font->size(110);
 					$font->color($shadow);
 				});
 			}
 
-			$real_image = $logo_path->text('P'.$amount, $text_width, 237, function($font) use ($color, $shadow){
+			$real_image = $logo_path->text('P'.$amount, $text_width, 187, function($font) use ($color, $shadow){
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(55);
+				$font->size(110);
 				$font->color($color);
 			});
 
-			$rectangleImage = Image::canvas(210, 210, 'rgba(255, 255, 255, 1)');
-			$rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
-				$draw->border(1, '#000');
-			});
+			// $rectangleImage = Image::canvas(130, 130, 'rgba(255, 255, 255, 1)');
+			// $rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
+			// 	$draw->border(1, '#000');
+			// });
 
-			$real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
+			// $real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
 
 			// $qrCodeApiLink = $qr_api;
 			// $content = file_get_contents($qrCodeApiLink);

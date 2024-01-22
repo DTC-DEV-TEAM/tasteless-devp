@@ -8,6 +8,7 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
     {{-- Css --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
     {{-- Swal --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -77,138 +78,6 @@
             top: 50%;
             max-width: 70rem !important;
         }
-
-/* The actual timeline (the vertical ruler) */
-.timeline {
-  position: relative;
-  max-width: 1200px;
-}
-
-/* The actual timeline (the vertical ruler) */
-.timeline::after {
-  content: '';
-  position: absolute;
-  width: 6px;
-  background-color: rgb(191, 188, 188);
-  top: 0;
-  bottom: 0;
-  left: 2%;
-  margin-left: -3px;
-}
-
-.timeline::before{
-            width: 0 !important;
-        }
-
-/* Container around content */
-.container1 {
-  padding: 10px 40px;
-  position: relative;
-  background-color: inherit;
-  width: 100%;
-}
-
-/* The circles on the timeline */
-.container1::after {
-  content: '';
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  right: -17px;
-  background-color: white;
-  border: 3px solid #4D4A86;
-  top: 19px;
-  border-radius: 50%;
-  z-index: 1;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Place the container to the left */
-.left {
-  left: 0;
-}
-
-/* Place the container to the right */
-.right {
-  left: 2%;
-}
-
-/* Add arrows to the left container (pointing right) */
-.left::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  right: 30px;
-  border: medium solid white;
-  border-width: 10px 0 10px 10px;
-  border-color: transparent transparent transparent white;
-}
-
-/* Add arrows to the right container (pointing left) */
-.right::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  left: 30px;
-  border: medium solid white;
-  border-width: 10px 10px 10px 0;
-  border-color: transparent rgb(191, 188, 188) transparent transparent;
-  z-index: 1;
-}
-
-/* Fix the circle for containers on the right side */
-.right::after {
-  left: -13px;
-}
-
-/* The actual content */
-.content1 {
-  padding: 12px 30px;
-  background-color: white;
-  position: relative;
-  border-radius: 6px;
-  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-  z-index: 2;
-}
-
-/* Media queries - Responsive timeline on screens less than 600px wide */
-@media screen and (max-width: 600px) {
-  /* Place the timelime to the left */
-  .timeline::after {
-  left: 31px;
-  }
-  
-  /* Full-width containers */
-  .container1 {
-  width: 100%;
-  padding-left: 70px;
-  padding-right: 25px;
-  }
-  
-  /* Make sure that all arrows are pointing leftwards */
-  .container1::before {
-  left: 60px;
-  border: medium solid white;
-  border-width: 10px 10px 10px 0;
-  border-color: transparent white transparent transparent;
-  }
-
-  /* Make sure all circles are at the same spot */
-  .left::after, .right::after {
-  left: 15px;
-  }
-  
-  /* Make all right containers behave like the left ones */
-  .right {
-  left: 0%;
-  }
-}
     </style>
 @endpush
 
@@ -225,7 +94,7 @@
                 <div class="cb-header">
                     Customer Information
                 </div>
-                @if ($customer->store_status == 3)
+                @if ($customer->store_status > 2)
                 <button class="btn btn-primary" type="button" id="show-history">
                     Show History
                 </button>
@@ -348,7 +217,7 @@
                 <div class="container1 right">
                   <div class="content1">
                     <p>
-                        <span style="font-weight: bold;">Created at: {{ \Carbon\Carbon::parse($original_history->created_at)->format('Y-m-d H:i') }}</span>
+                        <span style="font-weight: bold;">Created at: {{ \Carbon\Carbon::parse($original_history->created_at)->format('Y-m-d H:i') }} (Original)</span>
                     </p>
                     </table>
                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between">
@@ -380,9 +249,11 @@
                     <div class="content1">
                         <p style="font-weight: bold;">Updated at {{ \Carbon\Carbon::parse($history[$i]['created_at'])->format('Y-m-d H:i') }}</p>
                         <p>
-                        @foreach ($customer_information[$i] as $key => $value)
-                        {{ ucfirst(str_replace('_', ' ', $key)).": $value" }}
-                        @endforeach
+                            <ul>
+                                @foreach ($customer_information[$i] as $key => $value)
+                                <li>{{ ucfirst(str_replace('_', ' ', $key)).": $value" }}</li>
+                                @endforeach
+                            </ul>
                         </p>
                         <p>Updated By: {{ $history[$i]['created_by'] }}</p>
                     </div>
@@ -392,7 +263,6 @@
             <button class="btn btn-default" id="btn-cancel">Close</button>
         </div>
     </div>
-
 
     <script>
 

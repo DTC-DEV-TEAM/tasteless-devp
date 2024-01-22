@@ -14,7 +14,7 @@
     z-index: 1030;
     display: none;
     overflow: auto;
-    padding-top: 80px;
+    padding: 80px 10px;
 }
 
 .store-modal{

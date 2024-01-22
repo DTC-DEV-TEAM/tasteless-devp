@@ -540,6 +540,44 @@ use Illuminate\Support\Facades\Mail;
 			$data['egcs'] = $egc_value;
 			$data['history'] = StoreHistory::where('g_c_lists_devps_id', $id)->get();
 
+						
+			$data['original_history'] = StoreHistory::where('g_c_lists_devps_id', $id)
+				->leftJoin('egc_value_types as egc_value', 'egc_value.id', 'store_histories.egc_value_id')
+				->select('store_histories.*',
+					'egc_value.name as egc_value_id')
+				->first();
+			$data['history'] = StoreHistory::where('g_c_lists_devps_id', $id)
+				->leftJoin('egc_value_types as egc_value', 'egc_value.id', 'store_histories.egc_value_id')
+				->leftJoin('cms_users as user', 'user.id', 'store_histories.created_by')
+				->select('store_histories.*',
+					'egc_value.name as egc_value_id',
+					'user.name as created_by')
+				->skip(1) // Skip the first row
+				->take(PHP_INT_MAX) // Take all remaining records
+				->get()
+				->toArray();
+			
+			$data['customer_information'] = []; // Initialize the array outside the loop
+
+			foreach ($data['history'] as $i => $history) {
+				$history = array_slice($history, 2, -4);
+			
+				$filteredData = array_filter($history, function ($value) {
+					return $value !== null;
+				});
+			
+				$customerInfo = []; // Initialize the inner array for each iteration
+			
+				foreach ($filteredData as $key => $value) {
+					if ($key == 'egc_value_id') {
+						$key = 'egc_value';
+					}
+					$customerInfo[$key] = $value;
+				}
+			
+				$data['customer_information'][$i] = $customerInfo;
+			}
+
 			// dd($data['history']);
 
 			return $this->view('customer.customer_detail',$data);
@@ -836,7 +874,7 @@ use Illuminate\Support\Facades\Mail;
 			->first();
 
 			$url = "/g_c_lists/edit/$customer_data->id?value=$customer_data->qr_reference_number&campaign_id=3";
-			$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=' . urlencode($url);
+			$qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' . urlencode($url);
 			$qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
 			
 			$store_logos_id = 5;
