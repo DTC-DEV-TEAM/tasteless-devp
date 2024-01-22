@@ -396,9 +396,6 @@
 
     <script>
 
-        $('.store-modal-bg-dark').show();
-        $('.store-modal').show();
-
         function preventBack() {
             window.history.forward();
         }
@@ -459,7 +456,7 @@
         $(document).ready(function() {
 
 
-            if("{{ $customer->store_status == 3 }}"){
+            if("{{ $customer->store_status == 3 }}" || "{{ $customer->store_status == 2 }}"){
                 $('input[name="store_invoice_number"]').attr('readonly', true);
                 $('.inputs').attr('readonly', false);
                 $('.branch').attr('readonly', true);

@@ -556,6 +556,9 @@ use Illuminate\Support\Facades\Mail;
 			$store_invoice_number = $customer['store_invoice_number'];
 
 			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+
+			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
+			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
 			
 			$previous_entry = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
 			->latest('id')
@@ -583,15 +586,27 @@ use Illuminate\Support\Facades\Mail;
 			// 	)->send();
 			// }
 
+			$gclists_devps->update([
+				'first_name' => $customer['first_name'],
+				'last_name' => $customer['last_name'],
+				'name' => $customer['first_name'].' '.$customer['last_name'],
+				'email' => $customer['email'],
+				'phone' => $customer['contact_number'],
+				'store_status' => 3,
+				'egc_value_id' => $egc_value->id,
+				'st_cashier_id' => CRUDBooster::myId(),
+				'st_cashier_date_transact' => date('Y-m-d H:i:s')
+			]);
 
-			$gc_list = DB::table('g_c_lists_devps')->where('id', $customer['id'])
-				->update([
-					'store_status' => 3,
-					'egc_value_id' => $egc_value->id,
-					// 'store_invoice_number' => $customer['store_invoice_number'],
-					'st_cashier_id' => CRUDBooster::myId(),
-					'st_cashier_date_transact' => date('Y-m-d H:i:s')
-				]);
+			$gclists_devps_customer->update([
+				'first_name' => $customer['cus_first_name'],
+				'last_name' => $customer['cus_last_name'],
+				'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+				'email' => $customer['cus_email'],
+				'phone' => $customer['cus_contact_number'],
+				'updated_by' => CRUDBooster::myId(),
+				'updated_at' => date('Y-m-d H:i:s')
+			]);
 
 			if($egc_value->id != $previous_entry){
 
