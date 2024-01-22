@@ -560,9 +560,9 @@ use Illuminate\Support\Facades\Mail;
 			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
 			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
 			
-			$previous_entry = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
-			->latest('id')
-			->value('egc_value_id');
+			// $previous_entry = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
+			// ->latest('id')
+			// ->value('egc_value_id');
 
 			// dd($customer,$egc_value->id);
 
@@ -586,56 +586,37 @@ use Illuminate\Support\Facades\Mail;
 			// 	)->send();
 			// }
 
-			$gclists_devps->update([
-				'first_name' => $customer['first_name'],
-				'last_name' => $customer['last_name'],
-				'name' => $customer['first_name'].' '.$customer['last_name'],
-				'email' => $customer['email'],
-				'phone' => $customer['contact_number'],
-				'store_status' => 3,
-				'egc_value_id' => $egc_value->id,
-				'st_cashier_id' => CRUDBooster::myId(),
-				'st_cashier_date_transact' => date('Y-m-d H:i:s')
-			]);
+			// $gclists_devps->update([
+			// 	'first_name' => $customer['first_name'],
+			// 	'last_name' => $customer['last_name'],
+			// 	'name' => $customer['first_name'].' '.$customer['last_name'],
+			// 	'email' => $customer['email'],
+			// 	'phone' => $customer['contact_number'],
+			// 	'store_status' => 3,
+			// 	'egc_value_id' => $egc_value->id,
+			// 	'st_cashier_id' => CRUDBooster::myId(),
+			// 	'st_cashier_date_transact' => date('Y-m-d H:i:s')
+			// ]);
 
-			$gclists_devps_customer->update([
-				'first_name' => $customer['cus_first_name'],
-				'last_name' => $customer['cus_last_name'],
-				'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
-				'email' => $customer['cus_email'],
-				'phone' => $customer['cus_contact_number'],
-				'updated_by' => CRUDBooster::myId(),
-				'updated_at' => date('Y-m-d H:i:s')
-			]);
+			// $gclists_devps_customer->update([
+			// 	'first_name' => $customer['cus_first_name'],
+			// 	'last_name' => $customer['cus_last_name'],
+			// 	'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+			// 	'email' => $customer['cus_email'],
+			// 	'phone' => $customer['cus_contact_number'],
+			// 	'updated_by' => CRUDBooster::myId(),
+			// 	'updated_at' => date('Y-m-d H:i:s')
+			// ]);
 
-			if($egc_value->id != $previous_entry){
+			// if($egc_value->id != $previous_entry){
 
-				$store_history = DB::table('store_histories')->insert([
-					'g_c_lists_devps_id' => $customer['id'],
-					'egc_value_id' => $egc_value->id,
-					'created_by' => CRUDBooster::myId(),
-					'created_at' => date('Y-m-d H:i:s')
-				]);
-			}
-
-
-
-			return CRUDBooster::redirect(
-				CRUDBooster::mainpath(),
-				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['store_invoice_number']}.",
-				'success'
-			)->send();
-		}
-
-		public function pendingOIC(Request $request){
-
-			$customer = $request->all();
-			
-			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
-			
-			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
-			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
-			
+			// 	$store_history = DB::table('store_histories')->insert([
+			// 		'g_c_lists_devps_id' => $customer['id'],
+			// 		'egc_value_id' => $egc_value->id,
+			// 		'created_by' => CRUDBooster::myId(),
+			// 		'created_at' => date('Y-m-d H:i:s')
+			// 	]);
+			// }
 			$customer_previous_entry = DB::table('g_c_lists_devps_customers')->where('id', $customer['id'])
 				->latest('id')
 				->first();
@@ -646,7 +627,9 @@ use Illuminate\Support\Facades\Mail;
 			$egc_previous_value = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
 				->latest('id')
 				->first();
-			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_value->id)->first();
+
+			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_value->egc_value_id)->first();
+
 
 			$combined_previous_entry = [
 				'cus_first_name' => $customer_previous_entry->first_name,
@@ -683,6 +666,113 @@ use Illuminate\Support\Facades\Mail;
 				$result['egc_value'] = null;
 			} else {
 				$result['egc_value'] = EgcValueType::where('value',(int) $customer['egc_value'])->first()->id;
+				$is_to_insert = true;
+			}
+			if ($is_to_insert) {
+				$store_history = DB::table('store_histories')->insert([
+					'g_c_lists_devps_id' => $customer['id'],
+					'customer_first_name' => $result['cus_first_name'],
+					'customer_last_name' => $result['cus_last_name'],
+					'customer_name' => $result['cus_first_name'] . ' ' . $result['cus_last_name'],
+					'customer_phone' => $result['cus_contact_number'],
+					'customer_email' => $result['cus_email'],
+					'egc_first_name' => $result['first_name'],
+					'egc_last_name' => $result['last_name'],
+					'egc_name' => $result['first_name'] . ' ' . $result['last_name'],
+					'egc_phone' => $result['contact_number'],
+					'egc_email' => $result['email'],
+					'egc_value_id' => $result['egc_value'],
+					'created_by' => CRUDBooster::myId(),
+					'created_at' => date('Y-m-d H:i:s')
+				]);
+			}
+
+			$gclists_devps->update([
+				'first_name' => $customer['first_name'],
+				'last_name' => $customer['last_name'],
+				'name' => $customer['first_name'].' '.$customer['last_name'],
+				'email' => $customer['email'],
+				'phone' => $customer['contact_number'],
+				'store_status' => 3,
+				'egc_value_id' => $egc_value->id,
+				'st_oic_id' => CRUDBooster::myId(),
+				'st_oic_date_transact' => date('Y-m-d H:i:s')
+			]);
+
+			$gclists_devps_customer->update([
+				'first_name' => $customer['cus_first_name'],
+				'last_name' => $customer['cus_last_name'],
+				'name' => $customer['cus_first_name'].' '.$customer['cus_last_name'],
+				'email' => $customer['cus_email'],
+				'phone' => $customer['cus_contact_number'],
+				'updated_by' => CRUDBooster::myId(),
+				'updated_at' => date('Y-m-d H:i:s')
+			]);
+
+			return CRUDBooster::redirect(
+				CRUDBooster::mainpath(),
+				"Your transaction edited successfully. Where E-gift card value: {$customer['egc_value']} and Invoice number: {$customer['store_invoice_number']}.",
+				'success'
+			)->send();
+		}
+
+		public function pendingOIC(Request $request){
+
+			$customer = $request->all();
+			
+			$egc_value = EgcValueType::where('value',(int) $customer['egc_value'])->first();
+			
+			$gclists_devps = DB::table('g_c_lists_devps')->where('id', $customer['id']);
+			$gclists_devps_customer = DB::table('g_c_lists_devps_customers')->where('id', $gclists_devps->first()->g_c_lists_devps_customer_id);
+			
+			$customer_previous_entry = DB::table('g_c_lists_devps_customers')->where('id', $customer['id'])
+				->latest('id')
+				->first();
+			$egc_previous_entry = DB:: table('g_c_lists_devps')->where('g_c_lists_devps_customer_id', $customer['id'] )
+				->latest('id')
+				->first();
+			
+			$egc_previous_value = DB::table('store_histories')->where('g_c_lists_devps_id', $customer['id'])
+				->latest('id')
+				->first();
+			$egc_cus_previous_value = EgcValueType::where('id',$egc_previous_entry->egc_value_id)->first();
+			$combined_previous_entry = [
+				'cus_first_name' => $customer_previous_entry->first_name,
+				'cus_last_name' => $customer_previous_entry->last_name,
+				'cus_email' => $customer_previous_entry->email,
+				'cus_contact_number' => $customer_previous_entry->phone,
+				'first_name'=> $egc_previous_entry->first_name,
+				'last_name' => $egc_previous_entry->last_name,
+				'email' => $egc_previous_entry->email,
+				'contact_number' => $egc_previous_entry->phone,
+				'egc_value' => strval($egc_cus_previous_value->value),
+				// Add more fields if needed
+			];
+			
+			$result = [];
+			$is_to_insert = false;
+
+			foreach ($combined_previous_entry as $key => $value) {
+				// Check if the key exists in both arrays
+				// if (isset($customer[$key]) && isset($combined_previous_entry[$key])) {
+				// 	// Compare the values
+				// 	$result[$key] = ($customer[$key] == $combined_previous_entry[$key]) ? null : $customer[$key];
+				// }
+				if ($customer[$key] != $combined_previous_entry[$key]) {
+					$is_to_insert = true;
+					$result[$key] = $customer[$key];
+				} else {
+					$result[$key] = null;
+				}
+			}
+
+			
+			if($customer['egc_value'] == $combined_previous_entry['egc_value']){
+				$result['egc_value'] = null;
+			} else {
+				$result['egc_value'] = EgcValueType::where('value',(int) $customer['egc_value'])->first()->id;
+				$is_to_insert = true;
+
 			}
 			// dd($customer, $combined_previous_entry, $result);
 
