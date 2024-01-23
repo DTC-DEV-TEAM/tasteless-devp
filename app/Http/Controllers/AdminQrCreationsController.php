@@ -1,36 +1,37 @@
 <?php namespace App\Http\Controllers;
 
-use App\CampaignStatus;
-use App\ChargeTo;
-use App\CompanyId;
-use App\IdType;
+use App\DateToSendCampaigns;
+use DB;
 use Session;
 use Request;
-use DB;
 use CRUDBooster;
-use Illuminate\Http\Request as IlluminateRequest;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
-use App\Imports\GcListImport;
-use App\Exports\GCListTemplateExport;
+use Mail;
+use Exception;
 use App\GCList;
+use App\IdType;
 use App\QrCreation;
 use App\EmailTesting;
-use Mail;
-use Illuminate\Support\Facades\Session as UserSession;
 use App\Mail\QrEmail;
 use App\Jobs\SendEmailJob;
-use App\StoreConcept;
-use App\StoreLogo;
-use App\Stores;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
+use App\Jobs\GCListFetchJob;
+use App\Jobs\StoreConceptFetchApi;
+use App\Imports\GcListImport;
+use App\Exports\GCListTemplateExport;
+use App\Jobs\CampaignCreationFetchApi;
+use App\Jobs\EmailScheduler;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request as IlluminateRequest;
+use Illuminate\Support\Facades\Request as Input;
+use Illuminate\Support\Facades\Session as UserSession;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
-use App\EmailTemplateImg;
+use App\Models\EmailTemplateImg;
+use App\StoreConcept;
 
 
 
@@ -854,16 +855,16 @@ use App\EmailTemplateImg;
 
 			// $real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
 
-			// $qrCodeApiLink = $qr_api;
-			// $content = file_get_contents($qrCodeApiLink);
 			$qrCodeApiLink = $qr_api;
-			$arrContextOptions = [
-				"ssl" => [
-					"verify_peer" => true,
-					"verify_peer_name" => true,
-				],
-			];
-			$content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
+			$content = file_get_contents($qrCodeApiLink);
+			// $qrCodeApiLink = $qr_api;
+			// $arrContextOptions = [
+			// 	"ssl" => [
+			// 		"verify_peer" => true,
+			// 		"verify_peer_name" => true,
+			// 	],
+			// ];
+			// $content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
 
 			$qrCodeImage = Image::make($content);
 
