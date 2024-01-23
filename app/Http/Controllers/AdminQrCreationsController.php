@@ -854,16 +854,16 @@ use App\EmailTemplateImg;
 
 			// $real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
 
-			// $qrCodeApiLink = $qr_api;
-			// $content = file_get_contents($qrCodeApiLink);
 			$qrCodeApiLink = $qr_api;
-			$arrContextOptions = [
-				"ssl" => [
-					"verify_peer" => false,
-					"verify_peer_name" => false,
-				],
-			];
-			$content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
+			$content = file_get_contents($qrCodeApiLink);
+			// $qrCodeApiLink = $qr_api;
+			// $arrContextOptions = [
+			// 	"ssl" => [
+			// 		"verify_peer" => false,
+			// 		"verify_peer_name" => false,
+			// 	],
+			// ];
+			// $content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
 
 			$qrCodeImage = Image::make($content);
 
