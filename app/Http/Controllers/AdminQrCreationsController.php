@@ -855,9 +855,10 @@ use App\StoreConcept;
 
 			// $real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
 
-			$qrCodeApiLink = $qr_api;
-			$content = file_get_contents($qrCodeApiLink);
 			// $qrCodeApiLink = $qr_api;
+			// $content = file_get_contents($qrCodeApiLink);
+			// $qrCodeApiLink = $qr_api;
+
 			// $arrContextOptions = [
 			// 	"ssl" => [
 			// 		"verify_peer" => false,
@@ -865,6 +866,13 @@ use App\StoreConcept;
 			// 	],
 			// ];
 			// $content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
+
+			$qrCodeApiLink = $qr_api;
+
+			$ch = curl_init($qrCodeApiLink);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$content = curl_exec($ch);
+			curl_close($ch);
 
 			$qrCodeImage = Image::make($content);
 
