@@ -859,8 +859,8 @@ use App\EmailTemplateImg;
 			$qrCodeApiLink = $qr_api;
 			$arrContextOptions = [
 				"ssl" => [
-					"verify_peer" => false,
-					"verify_peer_name" => false,
+					"verify_peer" => true,
+					"verify_peer_name" => true,
 				],
 			];
 			$content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
