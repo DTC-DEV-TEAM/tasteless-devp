@@ -133,7 +133,7 @@
                     </tr>
                     <tr>
                         <td>Email:</td>
-                        <td><input class="form-control inputs" type="text" name="email" value="{{ $customer->email }}" readonly></td>
+                        <td><input class="form-control inputs" type="email" name="email" value="{{ $customer->email }}" readonly></td>
                         <td>Contact:</td>
                         <td><input class="form-control inputs" type="text" name="contact_number" value="{{ $customer->phone }}" readonly></td>
                     </tr>
@@ -329,6 +329,7 @@
             if("{{ $customer->store_status == 3 }}" || "{{ $customer->store_status == 2 }}"){
                 $('input[name="store_invoice_number"]').attr('readonly', true);
                 $('.inputs').attr('readonly', false);
+                $('.inputs').attr('required', true);
                 $('.branch').attr('readonly', true);
             }
             else if ("{{ $customer->store_status > 2 && !CRUDBooster::isSuperAdmin() }}"){

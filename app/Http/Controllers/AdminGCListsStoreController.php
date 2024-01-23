@@ -63,6 +63,8 @@ use Illuminate\Support\Facades\Mail;
 			$this->col[] = ["label"=>"Branch","name"=>"g_c_lists_devps.store_concepts_id","join"=>"store_concepts,name"];
 			$this->col[] = ["label"=>"Concept","name"=>"store_concept"];
 			$this->col[] = ["label"=>"Created at","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,created_at"];
+			$this->col[] = ["label"=>"Updated By","name"=>"updated_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Last Update","name"=>"created_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -732,6 +734,11 @@ use Illuminate\Support\Facades\Mail;
 					'created_by' => CRUDBooster::myId(),
 					'created_at' => date('Y-m-d H:i:s')
 				]);
+
+				$gclists_devps->update([
+					'updated_by' => CRUDBooster::myId(),
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
 			}
 
 			$gclists_devps->update([
@@ -821,10 +828,9 @@ use Illuminate\Support\Facades\Mail;
 				$is_to_insert = true;
 
 			}
-			// dd($customer, $combined_previous_entry, $result);
-
 			
 			if ($is_to_insert) {
+
 				$store_history = DB::table('store_histories')->insert([
 					'g_c_lists_devps_id' => $customer['id'],
 					'customer_first_name' => $result['cus_first_name'],
@@ -840,11 +846,12 @@ use Illuminate\Support\Facades\Mail;
 					'created_by' => CRUDBooster::myId(),
 					'created_at' => date('Y-m-d H:i:s')
 				]);
+
+				$gclists_devps->update([
+					'updated_by' => CRUDBooster::myId(),
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
 			}
-
-
-			// dd($customer, $combined_previous_entry, $result);
-
 
 			if($gclists_devps->first()->store_status > 3 && !CRUDBooster::isSuperAdmin()){
 				return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("You don't have privilege to access this area."),"danger");

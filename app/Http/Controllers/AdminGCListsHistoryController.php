@@ -397,7 +397,8 @@
 			$data['page_title'] = ' Redemption Code History';
 			$data['customers'] = DB::table('g_c_lists_summary_view')
 				->where('uploaded_img', '!=', null)
-				->orderBy('id', 'asc')->get();
+				// ->orderBy('id', 'asc')->
+				->get();
 			// dd($data['customers']);
 			//Create a view. Please use `cbView` method instead of view method from laravel.
 			return $this->view('redeem_qr.custom_egc_list',$data);
