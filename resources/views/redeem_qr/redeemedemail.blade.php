@@ -17,8 +17,7 @@
 
         {{-- <p>Redemption Details:</p>
 
-        <p>Campaign ID: {{ $row->campaign_id }}</p>
-        <p>Redeemed On: {{ date('F d, Y', strtotime($row->cashier_date_transact)) }}</p> --}}
+        <p>Campaign ID: {{ $row->campaign_id }}</p> --}}
         <br>
         <p>If you have any questions or need further assistance, please don't hesitate to contact our customer support team.</p>
 
@@ -26,7 +25,9 @@
         <br>
         <p>Best regards,</p> 
         <p>BPG Department</p>
-        <p>Digits Trading Corp.</p>        
+        <p>Digits Trading Corp.</p>
+        
+        <p style="display: none;">Redeemed On: {{ date('F d, Y H:i:s', strtotime($row->cashier_date_transact)) }}</p>
     </div>
     <script>
         console.log('yes');
