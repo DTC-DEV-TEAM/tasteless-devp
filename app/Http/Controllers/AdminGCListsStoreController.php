@@ -971,6 +971,7 @@ use Illuminate\Support\Facades\Mail;
 			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
 			$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
 			$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
+			$store_name = StoreConcept::find($cms_user->id_store_concept);
 			
 			if($store_logos->name == 'Digital Walker and Beyond the Box'){
 				$user_store_logo = 'dw_and_btb';
