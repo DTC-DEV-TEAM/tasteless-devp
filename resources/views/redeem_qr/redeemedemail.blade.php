@@ -15,10 +15,10 @@
         <br>
         <p>We are delighted to inform you that your QR code has been successfully redeemed.</p>
 
-        <p>Redemption Details:</p>
+        {{-- <p>Redemption Details:</p>
 
         <p>Campaign ID: {{ $row->campaign_id }}</p>
-        <p>Redeemed On: {{ date('F d, Y', strtotime($row->cashier_date_transact)) }}</p>
+        <p>Redeemed On: {{ date('F d, Y', strtotime($row->cashier_date_transact)) }}</p> --}}
         <br>
         <p>If you have any questions or need further assistance, please don't hesitate to contact our customer support team.</p>
 
