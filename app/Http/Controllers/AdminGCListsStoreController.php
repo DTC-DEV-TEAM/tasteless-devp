@@ -972,7 +972,7 @@ use Illuminate\Support\Facades\Mail;
 			$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
 			$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
 			$store_name = StoreConcept::find($cms_user->id_store_concept);
-			
+
 			if($store_logos->name == 'Digital Walker and Beyond the Box'){
 				$user_store_logo = 'dw_and_btb';
 			}else{
@@ -985,7 +985,7 @@ use Illuminate\Support\Facades\Mail;
 			->table('pos_sale')
 			->where('fcompanyid',$store_name->fcompanyid)
 			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no',$invoice_number)
+			->where('fdocument_no',$egc['invoice_number'])
 			->where('ftermid', $store_name->ftermid)
 			->where('fdoctype',6000)
 			->exists();
