@@ -91,6 +91,11 @@
                 </div>
             </td>
         </tr>
+        <tr>
+            <td>
+                <span style="display: none;">{{ now()->format('Y-m-d H:i:s') }} {!! html_entity_decode($html_email) !!}</span>
+            </td>
+        </tr>
     </table>
 
     <script>
