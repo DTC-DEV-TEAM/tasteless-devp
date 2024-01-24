@@ -550,10 +550,10 @@ use Illuminate\Support\Facades\Log;
 			$user_information = $campaign_type_id ? GCList::find($id) : DB::table('g_c_lists_devps')->where('id', $id);
 			
 			// For testing 
-			$user_information->update(
-				['invoice_number'=>$invoice_number]
-			);
-			$invoice_number_exists = $campaign_type_id ? GCList::where('invoice_number', $invoice_number)->exists() : DB::table('g_c_lists_devps')->where('invoice_number', $invoice_number)->exists();
+			// $user_information->update(
+			// 	['invoice_number'=>$invoice_number]
+			// );
+			// $invoice_number_exists = $campaign_type_id ? GCList::where('invoice_number', $invoice_number)->exists() : DB::table('g_c_lists_devps')->where('invoice_number', $invoice_number)->exists();
 			
 			$store_name = StoreConcept::find($cms_user->id_store_concept);
 			
@@ -561,14 +561,14 @@ use Illuminate\Support\Facades\Log;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
 			
-			// $invoice_number_exists = DB::connection('mysql_tunnel')
-			// ->table('pos_sale')
-			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
-			// ->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
-			// ->where('fdocument_no',$invoice_number)
-			// ->where('ftermid', $store_name->ftermid) //need setup user management
-			// ->where('fdoctype',6000)
-			// ->exists();
+			$invoice_number_exists = DB::connection('mysql_tunnel')
+			->table('pos_sale')
+			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
+			->where('fdocument_no',$invoice_number)
+			->where('ftermid', $store_name->ftermid) //need setup user management
+			->where('fdoctype',6000)
+			->exists();
 
 // 			$invoice_number_exists = DB::connection('mysql_tunnel')
 // 			->table('pos_sale')
