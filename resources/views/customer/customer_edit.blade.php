@@ -325,7 +325,6 @@
 
         $(document).ready(function() {
 
-
             if("{{ $customer->store_status == 3 }}" || "{{ $customer->store_status == 2 }}"){
                 $('input[name="store_invoice_number"]').attr('readonly', true);
                 $('.inputs').attr('readonly', false);
@@ -339,8 +338,8 @@
             $('#btn-fake').on('click', function(){
                 const btnText = $(this).val();
 
-                const firstName = $('input[name="cus_first_name"]').val();
-                const lastName = $('input[name="cus_last_name"]').val();
+                const firstName = $('input[name="first_name"]').val();
+                const lastName = $('input[name="last_name"]').val();
                 const invoiceNumber = $('input[name="store_invoice_number"]').val();
                 const egcValue = $('select[name="egc_value"]').val();
                 let name = `${firstName} ${lastName}`
