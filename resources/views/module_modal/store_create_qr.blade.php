@@ -3,7 +3,7 @@
     <div class="modal-box">
         <div class="modal-header">Status</div>
         <div class='modal-content'>
-            <span style="font-weight: 500;">QR Link: </span><a id="url" href=""></a>
+            <span style="font-weight: 500;">QR Link: </span><a id="url" href="" target="_blank"></a>
         </div>
         <div class="modal-box-footer">
             <span style="font-size: 14px; color: green; font-weight: 600; margin: 5px 5px 5px 0">Your request has been succesfully submitted.</span>
@@ -80,6 +80,7 @@
 
         // $('#url').text('Redirecting in ' + countdownSeconds + ' seconds');
         $('#url').text('{{ session('success') }}');
+        $('#url').attr('href', '{{ session("success") }}')
 
         var countdownInterval = setInterval(function () {
             countdownSeconds--;
