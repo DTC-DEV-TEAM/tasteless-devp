@@ -120,6 +120,7 @@
             confirmButtonText: `Yes, ${btnSubmit} it!`,
             reverseButtons: true
             }, function(){
+                $('#btn-submit').attr('disabled', true);
                 form.submit();
             })
     });
