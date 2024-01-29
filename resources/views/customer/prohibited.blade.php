@@ -168,7 +168,8 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>                <br>
+                </table>                
+                <br>
                 <h4 style="text-align: center; color: #8f8f91;">For more information, please contact the BPG department.</h4>
             </div>
         </div>
