@@ -170,7 +170,7 @@
                     </tbody>
                 </table>                
                 <br>
-                <h4 style="text-align: center; color: #8f8f91;">For more information, please contact the BPG department.</h4>
+                {{-- <h4 style="text-align: center; color: #8f8f91;">For more information, please contact the BPG department.</h4> --}}
             </div>
         </div>
     </div>
@@ -182,7 +182,7 @@
                 <h1 style="text-align: center;">Access Denied</h1>
                 <h3 style="font-weight: 500; text-align: center; max-width: 550px;">You cannot access this area. Please make sure you have the necessary permissions to view this content.</h3>
                 <br>
-                <h4 style="text-align: center; color: #8f8f91;">For more information, please contact the BPG department.</h4>
+                {{-- <h4 style="text-align: center; color: #8f8f91;">For more information, please contact the BPG department.</h4> --}}
             </div>
         </div>
     </div>
