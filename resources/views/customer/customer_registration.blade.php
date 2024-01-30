@@ -277,6 +277,7 @@
                         }).then((result) => {
                         if (result.isConfirmed) {
                             $('#store_concepts_id').attr('disabled', false);
+                            btnSubmit.attr('disabled', true);
                             form.submit();
                         }
                     });                
