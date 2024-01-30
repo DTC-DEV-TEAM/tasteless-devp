@@ -16,7 +16,7 @@
 <div class="store-modal-bg-dark">
     <div class="store-modal">
         <form method="POST" action="{{ route('create_egc') }}"  id="gc-form">
-            @csrf
+            {{ csrf_field() }}
             <div class="store-modal-header">Create Gift Card</div>
             <br>
             <div class="store-modal-content">
