@@ -566,7 +566,7 @@ use Illuminate\Support\Facades\Log;
 			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
 			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
 			->where('fdocument_no',$invoice_number)
-			->where('ftermid', $store_name->ftermid) //need setup user management
+			->where('ftermid', (int) $store_name->ftermid) //need setup user management
 			->where('fdoctype',6000)
 			->exists();
 
