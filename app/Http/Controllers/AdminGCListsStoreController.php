@@ -979,16 +979,16 @@ use Illuminate\Support\Facades\Mail;
 				$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
 			}
 
-			// $invoice_number_exists = true;
+			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid)
-			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no',$egc['invoice_number'])
-			->where('ftermid', $store_name->ftermid)
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no',$egc['invoice_number'])
+			// ->where('ftermid', $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
