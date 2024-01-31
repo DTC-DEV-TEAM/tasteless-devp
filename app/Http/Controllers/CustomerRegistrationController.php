@@ -21,11 +21,12 @@ class CustomerRegistrationController extends Controller
      */
     public function index($store_branch, $qr_reference_number)
     {
+
         $gclist_devp = g_c_lists_devp::where('qr_reference_number', $qr_reference_number)->first();
 
-        $successData = session('success');
-
         if($gclist_devp->store_status >= 2 || !$gclist_devp){
+
+            $successData = session('success_form');
 
             $data = [];
             $data['session'] = $successData;
@@ -103,7 +104,7 @@ class CustomerRegistrationController extends Controller
             
         ]);
 
-        return redirect()->back()->with('success', [
+        return redirect()->back()->with('success_form', [
             'first_name' => $gc_list_devp_customer->first()->first_name,
             'phone' => $gc_list_devp_customer->first()->phone,
             'email' => $gc_list_devp_customer->first()->email,
