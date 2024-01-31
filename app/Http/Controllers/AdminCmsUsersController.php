@@ -73,7 +73,7 @@ class AdminCmsUsersController extends CBController {
 				$('#id_cms_privileges').on('change', function(){
 
 					const company_id = $(this).val();
-					if(company_id == 3){
+					if(company_id == 3 || company_id == 7){
 						$('#form-group-company_id').show();
 						$('#form-group-id_store_concept').show();
 						$('#company_id').attr('required', true);
