@@ -103,15 +103,26 @@ class CustomerRegistrationController extends Controller
             
         ]);
 
-        return redirect()->back()->with('success', [
+        // return redirect()->back()->with('success', [
+        //     'first_name' => $gc_list_devp_customer->first()->first_name,
+        //     'phone' => $gc_list_devp_customer->first()->phone,
+        //     'email' => $gc_list_devp_customer->first()->email,
+        //     'store_concept' => $gc_list_devp_customer->first()->store_concept,
+        // ]);
+
+        session()->flash('success', [
             'first_name' => $gc_list_devp_customer->first()->first_name,
             'phone' => $gc_list_devp_customer->first()->phone,
             'email' => $gc_list_devp_customer->first()->email,
             'store_concept' => $gc_list_devp_customer->first()->store_concept,
         ]);
+
+        return redirect()->back();
     }
 
-    public function suggestExistingCustomer(Request $request){
+    public function suggestExistingCustomer(Request $request)
+    {
+
         $term = $request->input('term');
         $suggestions = DB::table('g_c_lists_devps')
             ->whereNotNull('g_c_lists_devps.email')
@@ -124,7 +135,9 @@ class CustomerRegistrationController extends Controller
         return response()->json($suggestions);
     }
 
-    public function viewCustomerInfo(Request $request){
+    public function viewCustomerInfo(Request $request)
+    {
+
         $user_request = $request->all();
         $user_customer_id = $user_request['customerID'];
         $customer_information = g_c_lists_devp::where('id',$user_customer_id)
