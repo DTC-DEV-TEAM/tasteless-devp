@@ -139,7 +139,7 @@
     </style>
 </head>
 <body>
-    @if((session('success') && is_array(session('success'))))
+    @if($session)
     <div class="prohibited-center">
         <div class="prohibited-box">
             <div class="prohibited-content">
@@ -150,21 +150,21 @@
                         <tr>
                             <td>
                                 <p>Name</p>
-                                <input class="inputs m-input" type="text" value="{{ session('success')['first_name'] }}" readonly>
+                                <input class="inputs m-input" type="text" value="{{ $session['first_name'] }}" readonly>
                             </td>
                             <td>
                                 <p>Contact Number</p>
-                                <input class="inputs m-input" type="text" value="{{ session('success')['phone'] }}" readonly>
+                                <input class="inputs m-input" type="text" value="{{ $session['phone'] }}" readonly>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <p>Email</p>
-                                <input class="inputs m-input" type="text" value="{{ session('success')['email'] }}" readonly>
+                                <input class="inputs m-input" type="text" value="{{ $session['email'] }}" readonly>
                             </td>
                             <td>
                                 <p>Concept</p>
-                                <input class="inputs m-input" type="text" value="{{ session('success')['store_concept'] }}" readonly>
+                                <input class="inputs m-input" type="text" value="{{ $session['store_concept'] }}" readonly>
                             </td>
                         </tr>
                     </tbody>

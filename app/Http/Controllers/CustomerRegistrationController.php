@@ -23,8 +23,14 @@ class CustomerRegistrationController extends Controller
     {
         $gclist_devp = g_c_lists_devp::where('qr_reference_number', $qr_reference_number)->first();
 
+        $successData = session('success');
+
         if($gclist_devp->store_status >= 2 || !$gclist_devp){
-            return view('customer.prohibited');
+
+            $data = [];
+            $data['session'] = $successData;
+
+            return view('customer.prohibited', $data);
         }
 
         $data = [];
