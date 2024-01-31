@@ -104,12 +104,20 @@ class CustomerRegistrationController extends Controller
             
         ]);
 
-        return redirect()->back()->with('success_form', [
+        session()->flash('success_form' , [
             'first_name' => $gc_list_devp_customer->first()->first_name,
             'phone' => $gc_list_devp_customer->first()->phone,
             'email' => $gc_list_devp_customer->first()->email,
             'store_concept' => $gc_list_devp_customer->first()->store_concept,
         ]);
+
+        return redirect()->back();
+        // ->with('success_form', [
+        //     'first_name' => $gc_list_devp_customer->first()->first_name,
+        //     'phone' => $gc_list_devp_customer->first()->phone,
+        //     'email' => $gc_list_devp_customer->first()->email,
+        //     'store_concept' => $gc_list_devp_customer->first()->store_concept,
+        // ]);
     }
 
     public function suggestExistingCustomer(Request $request)
