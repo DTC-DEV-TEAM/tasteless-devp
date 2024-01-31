@@ -668,7 +668,7 @@ use Illuminate\Support\Facades\Log;
 				dd($e);
 			}
 			
-			CRUDBooster::redirect(CRUDBooster::adminPath('g_c_lists/scan_qr'), sprintf('Code redemption succesful. CAMPAIGN ID REFERENCE# : %s', $data['row']->campaign_id.' - '.$data['row']->qr_reference_number),"success")->send();
+			CRUDBooster::redirect(CRUDBooster::adminPath('g_c_lists/scan_qr'), sprintf('Code redemption succesful'),"success")->send();
 		}
 
 		public function getDetail($id) {
