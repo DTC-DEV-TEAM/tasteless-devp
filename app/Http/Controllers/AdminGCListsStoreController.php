@@ -979,14 +979,23 @@ use Illuminate\Support\Facades\Mail;
 				$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
 			}
 
+			$inv_num = (int) $egc['invoice_number'];
+			if($inv_num === 0){
+				return CRUDBooster::redirect(
+					CRUDBooster::mainpath(),
+					"Invoice number does not match to the system, please try again or contact BPG for assistance.",
+					'danger'
+				)->send();
+			}
+
 			// $invoice_number_exists = true;
 			
 			$invoice_number_exists = DB::connection('mysql_tunnel')
 			->table('pos_sale')
 			->where('fcompanyid',$store_name->fcompanyid)
 			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no',$egc['invoice_number'])
-			->where('ftermid', $store_name->ftermid)
+			->where('fdocument_no', $inv_num)
+			->where('ftermid', (int) $store_name->ftermid)
 			->where('fdoctype',6000)
 			->exists();
 

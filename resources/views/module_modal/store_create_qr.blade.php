@@ -27,7 +27,7 @@
                 <br>
                 <label for="">Invoice Number</label>
                 <div>
-                    <input class="form-control" name="invoice_number" type="text" required>
+                    <input class="form-control" name="invoice_number" type="number" required>
                 </div>
                 <div class="btn-content">
                     <button class="btn btn-default pull-left" id="btn-cancel" type="button">Cancel</button>
