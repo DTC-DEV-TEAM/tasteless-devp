@@ -980,16 +980,16 @@ use Illuminate\Support\Facades\Mail;
 				)->send();
 			}
 
-			$invoice_number_exists = true;
+			// $invoice_number_exists = true;
 			
-			// $invoice_number_exists = DB::connection('mysql_tunnel')
-			// ->table('pos_sale')
-			// ->where('fcompanyid',$store_name->fcompanyid)
-			// ->where('fofficeid',$store_name->branch_id)
-			// ->where('fdocument_no', $inv_num)
-			// ->where('ftermid', (int) $store_name->ftermid)
-			// ->where('fdoctype',6000)
-			// ->exists();
+			$invoice_number_exists = DB::connection('mysql_tunnel')
+			->table('pos_sale')
+			->where('fcompanyid',$store_name->fcompanyid)
+			->where('fofficeid',$store_name->branch_id)
+			->where('fdocument_no', $inv_num)
+			->where('ftermid', (int) $store_name->ftermid)
+			->where('fdoctype',6000)
+			->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
@@ -1041,7 +1041,7 @@ use Illuminate\Support\Facades\Mail;
 		public function egcValue(){
 
 			$data = [];
-			$data['egc_value'] = EgcValueType::get();
+			$data['egc_value'] = EgcValueType::orderBy('value', 'asc')->get();
 
 			return $data;
 		}
