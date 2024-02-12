@@ -63,8 +63,8 @@ use Illuminate\Support\Facades\Mail;
 			$this->col[] = ["label"=>"Branch","name"=>"g_c_lists_devps.store_concepts_id","join"=>"store_concepts,name"];
 			$this->col[] = ["label"=>"Concept","name"=>"store_concept"];
 			$this->col[] = ["label"=>"Created at","name"=>"g_c_lists_devps_customer_id","join"=>"g_c_lists_devps_customers,created_at"];
-			$this->col[] = ["label"=>"Updated By","name"=>"updated_by","join"=>"cms_users,name"];
-			$this->col[] = ["label"=>"Last Update","name"=>"created_at"];
+			// $this->col[] = ["label"=>"Updated By","name"=>"updated_by","join"=>"cms_users,name"];
+			// $this->col[] = ["label"=>"Last Update","name"=>"created_at"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -115,11 +115,12 @@ use Illuminate\Support\Facades\Mail;
 			$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [qr_link]','target'=>'_blank'];
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
-			}else if(CRUDBooster::myPrivilegeId() == 7 ){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3])'];
-			}else if(CRUDBooster::myPrivilegeId() == 3){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2])'];
 			}
+			// else if(CRUDBooster::myPrivilegeId() == 7 ){
+			// 	$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3])'];
+			// }else if(CRUDBooster::myPrivilegeId() == 3){
+			// 	$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2])'];
+			// }
 
 
 	        /* 
@@ -304,11 +305,11 @@ use Illuminate\Support\Facades\Mail;
 				$query->where('g_c_lists_devps.store_concept', '!=', null)
 					->orderByRaw(
 						"CASE
-							WHEN store_status = 1 THEN 3
-							WHEN store_status = 2 THEN 1
-							WHEN store_status = 3 THEN 2
-							WHEN store_status = 4 THEN 5
-							WHEN store_status = 5 THEN 4
+							WHEN store_status = 1 THEN 1
+							WHEN store_status = 2 THEN 2
+							WHEN store_status = 3 THEN 3
+							WHEN store_status = 4 THEN 4
+							WHEN store_status = 5 THEN 5
 							WHEN store_status = 6 THEN 6
 							ELSE 7
 						END"
@@ -343,11 +344,14 @@ use Illuminate\Support\Facades\Mail;
 				if($column_value == 'Pending Customer'){
 					$column_value = '<span class="label" style="background-color: #233329; color: white; font-size: 12px;">Pending Customer</span>';
 				}
-				if($column_value == 'Pending Cashier'){
-					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Pending Cashier</span>';
+				if($column_value == 'Verify OTP'){
+					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Verify OTP</span>';
 				}
-				else if($column_value == 'OIC Approval'){
-					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">OIC Approval</span>';
+				else if($column_value == 'Send EGC Recipient'){
+					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">Send EGC Recipient</span>';
+				}
+				else if($column_value == 'Verified'){
+					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Verified</span>';
 				}
 				else if($column_value == 'Email Sent'){
 					$column_value = '<span class="label" style="background-color: rgb(74 222 128); color: white; font-size: 12px;">Email Sent</span>';
@@ -355,9 +359,7 @@ use Illuminate\Support\Facades\Mail;
 				else if($column_value == 'Email Failed'){
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Email Failed</span>';
 				}
-				else if($column_value == 'Approved'){
-					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Approved</span>';
-				}else if($column_value == 'Voided'){
+				else if($column_value == 'Voided'){
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Voided</span>';
 				}
 			}
@@ -895,16 +897,6 @@ use Illuminate\Support\Facades\Mail;
 			
 			$store_logos_id = 5;
 
-			// if($customer_data->store_concept == 'Digital Walker'){
-			// 	$store_logos_id = 1;
-			// }else if($customer_data->store_concept == 'Beyond the Box'){
-			// 	$store_logos_id = 2;
-			// }else if($customer_data->store_concept == 'BTB x open_source'){
-			// 	$store_logos_id = 3;
-			// }else if($customer_data->store_concept == 'open_source'){
-			// 	$store_logos_id = 4;
-			// }
-
 			$emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
 			->where('status','ACTIVE')
 			->first();
@@ -988,16 +980,16 @@ use Illuminate\Support\Facades\Mail;
 				)->send();
 			}
 
-			// $invoice_number_exists = true;
+			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid)
-			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no', $inv_num)
-			->where('ftermid', (int) $store_name->ftermid)
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no', $inv_num)
+			// ->where('ftermid', (int) $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(

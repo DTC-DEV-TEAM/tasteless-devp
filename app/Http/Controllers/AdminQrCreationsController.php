@@ -806,11 +806,16 @@ use App\StoreConcept;
 
 			if($store_logo == 5){
 
+				if(strlen((string) $amount) == 4){
+					$qr_x_position = 155;
+				}else{
+					$qr_x_position = 190;
+				};
+
 				$logo_path = $store_image;
 				$filename = $save_path.Str::random(10).'.jpg';
 				$value_width = 800;
-				$qr_x_position = 53;
-				$qr_y_position = 30;
+				$qr_y_position = 90;
 				$color = '#1a1a1a';
 				$shadow = null;
 
@@ -824,14 +829,18 @@ use App\StoreConcept;
 
 			$text_width = 0; // Initialize outside the closure
 	
-			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width) {
+			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width, $amount) {
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
 				$font->size(110);
 				
 				$textSize = $font->getBoxSize()['width'];
 				
 				$calculate_position = ($value_width - $textSize) / 2;
-				$text_width = $calculate_position; // Modify the value inside the closure
+				if(strlen((string) $amount) == 4){
+					$text_width = $calculate_position - 80;
+				}else{
+					$text_width = $calculate_position - 85;
+				};
 			});
 
 			if($shadow){

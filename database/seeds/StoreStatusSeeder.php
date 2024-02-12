@@ -22,20 +22,30 @@ class StoreStatusSeeder extends Seeder
             ]);
 
         DB::table('store_statuses')->updateOrInsert([
-            'name' => 'Pending Cashier',
+            'name' => 'Verify OTP',
             ],
             [
-                'name' => 'Pending Cashier',
+                'name' => 'Verify OTP',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
         DB::table('store_statuses')->updateOrInsert([
-            'name' => 'OIC Approval',
+            'name' => 'Send EGC Recipient',
             ],
             [
-                'name' => 'OIC Approval',
+                'name' => 'Send EGC Recipient',
+                'status' => 'ACTIVE',
+                'created_by' => 7,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+        DB::table('store_statuses')->updateOrInsert([
+            'name' => 'Verified',
+            ],
+            [
+                'name' => 'Verified',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
@@ -52,16 +62,6 @@ class StoreStatusSeeder extends Seeder
             ]);
 
         DB::table('store_statuses')->updateOrInsert([
-            'name' => 'Approved',
-            ],
-            [
-                'name' => 'Approved',
-                'status' => 'ACTIVE',
-                'created_by' => 7,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-
-        DB::table('store_statuses')->updateOrInsert([
             'name' => 'Email failed',
             ],
             [
@@ -70,6 +70,7 @@ class StoreStatusSeeder extends Seeder
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+
         DB::table('store_statuses')->updateOrInsert([
             'name' => 'Voided',
             ],

@@ -10,6 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    {{-- Utilities CSS --}}
+    <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
+
     <style>
         body.swal2-height-auto {
             height: 100% !important;
@@ -57,57 +60,101 @@
 
         .select2-container--default .select2-selection--single {
             border: 1px solid #b1b0b0 !important;
-
+            height: 36px;
         }
 
+        .swal-size{
+            font-size: 14px
+        }
 
+        .btn-color {
+            background-color: #3498db !important;
+            border: none !important;
+            outline: none; /* Remove the outline on focus */
+        }
 
 
     </style>
 </head>
 <body>
-    @if((session('success') && is_array(session('success'))))
-        <div class="modal-success">
-            <div class="modal-box">
-                <div class="modal-header">Customer Information</div>
-                <div class='modal-content'>
-                    <table class="custom_normal_table">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <p>Name</p>
-                                    <input class="inputs m-input" type="text" value="{{ session('success')['first_name'] }}" readonly>
-                                </td>
-                                <td>
-                                    <p>Contact Number</p>
-                                    <input class="inputs m-input" type="text" value="{{ session('success')['phone'] }}" readonly>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>Email</p>
-                                    <input class="inputs m-input" type="text" value="{{ session('success')['email'] }}" readonly>
-                                </td>
-                                <td>
-                                    <p>Concept</p>
-                                    <input class="inputs m-input" type="text" value="{{ session('success')['store_concept'] }}" readonly>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <br>
-                <div class="modal-box-footer">
-                    <span style="font-size: 14px; color: green; font-weight: 600; margin: 5px 5px 5px 0">Your request has been succesfully submitted.</span>
-                    <button class="btn" id="modal-close" type="submit">Close</button>
-                </div>
+    <div class="otp prohibited-center" style="display: none;">
+        <div class="prohibited-box">
+            <div class="prohibited-content">
+                
+                <img id="alert-img" src="{{ asset('img/one-time-password.png') }}" alt="">
+                <h4 style="text-align: center; margin-top: 15px;">Verify using OTP</h4>
+                <form action="" method="POST" autocomplete="off" id="verify_otp">
+                    <div class="otp-input">
+                        <input type="text" class="otp-box" maxlength="1" required>
+                        <input type="text" class="otp-box" maxlength="1" required>
+                        <input type="text" class="otp-box" maxlength="1" required>
+                        <input type="text" class="otp-box" maxlength="1" required>
+                        <input style="display: none;" type="text" name="otp" value="">
+                    </div>
+                    <h6 class="u-tw-gray u-t-center">An OTP has been sent to your email</h6>
+                    <div class="otp-btns">
+                        <button id="close-otp" type="button">✏️ Back</button>
+                        <button id="submit-otp" type="submit">➡️ Submit OTP</button>
+                    </div>
+                </form>
             </div>
         </div>
-    @endif
+    </div>
+
+    <div class="egc-mail prohibited-center" style="display: none;">
+        <div class="prohibited-box">
+            <div class="prohibited-content">
+                <img id="alert-img" src="{{ asset('img/gift.png') }}" alt="">
+                <h4 class="u-tw-gray" style="text-align: center; margin-top: 15px;">Send E-GC</h4>
+                <form action="verify-otp.php" method="post" id="send-egc-form">
+                    <div class="customer-box-content1" style="padding: 0;">
+                        <div class="customer-box-header-container" style="margin-bottom: 10px;">                    
+                            <div class="customer-box-header">GC Recipient</div>
+                        </div>
+                        <hr>
+                        <table class="custom_normal_table" >
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="egc-checkbox-content">
+                                            <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
+                                            <label for="egc-checkbox">Same as customer information</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>First name</p>
+                                        <input class="inputs egc-validate" type="text" id="egc_first_name" name="egc_first_name" placeholder="Enter first name" required>
+                                    </td>
+                                    <td>
+                                        <p>Last Name</p>
+                                        <input class="inputs egc-validate" type="text"  id="egc_last_name" name="egc_last_name" placeholder="Enter last name" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>Email</p>
+                                        <input class="inputs egc-validate" type="email" id="egc_email" name="egc_email" placeholder="Enter email" required>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="egc-mail-btns">
+                        <button id="review-form-egc" type="button" style="display: none;">⬅️ Review Form</button>
+                        <button id="send-egc" type="submit">📩 Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <section class="customer-section">
         <div class="customer-box">
-            <form action="{{ route('store_ui') }}" method="POST" autocomplete="off" id="registration-form">
-                @csrf
+            <form action="" method="POST" autocomplete="off" id="registration-form">
                 <input style="display: none" name="qr_reference_number" value="{{ Request::segment(4) }}" type="text">
                 <div class="customer-box-logos">
                     @if (Request::segment(2) == 'digital_walker')
@@ -122,11 +169,11 @@
                 </div>
                 <div class="customer-box-content">
                     <div class="customer-box-header-container">                    
+                        <div class="customer-box-header" style="color:rgb(87, 87, 87)">📝 Please verify that the information provided below is accurate and complete before submitting the form</div>
+                    </div>
+                    <br>
+                    <div class="customer-box-header-container">                    
                         <div class="customer-box-header">Customer Information</div>
-                        {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
-                        </select>
-                        <p id="select-note">Search For Existing Customer:</p>
-                        </div> --}}
                     </div>
                     <br>
                     <hr>
@@ -135,24 +182,28 @@
                             <tr>
                                 <td>
                                     <p>First name</p>
-                                    <input class="inputs validate c-info" type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
+                                    <input class="inputs validate c-info" type="text" id="first_name" name="first_name" value="{{ $customer->first_name }}" required placeholder="Enter your first name">
                                 </td>
                                 <td>
                                     <p>Last Name</p>
-                                    <input class="inputs validate c-info" type="text"  id="last_name" name="last_name" required placeholder="Enter your last name">
+                                    <input class="inputs validate c-info" type="text"  id="last_name" name="last_name" value="{{ $customer->last_name }}" required placeholder="Enter your last name">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <p>Email</p>
-                                    <input class="inputs validate c-info" type="email" id="email" name="email" required placeholder="Enter your email">
+                                    <input class="inputs validate c-info" type="email" id="email" name="email" value="{{ $customer->email }}" onpaste="return false;" oncopy="return false;" oncut="return false;" required placeholder="Enter your email">
                                 </td>
                                 <td>
-                                    <p>Contact Number</p>
-                                    <input class="inputs validate c-info" type="text" id="contact_number" name="contact_number" required placeholder="Enter your contact number">
+                                    <p>Confirm Email</p>
+                                    <input class="inputs validate c-info" type="email" id="confirm_email" name="confirm_email" value="{{ $customer->confirmed_email }}" onpaste="return false;" oncopy="return false;" oncut="return false;" required placeholder="Enter your confirm email">
                                 </td>
                             </tr>
                             <tr>
+                                <td>
+                                    <p>Contact Number</p>
+                                    <input class="inputs validate c-info" type="text" id="contact_number" name="contact_number" value="{{ $customer->phone }}" required placeholder="Enter your contact number">
+                                </td>
                                 <td>
                                     <p>Store Branch</p>
                                     <select name="store_concepts_id" id="store_concepts_id" class="search-select" disabled required>
@@ -166,59 +217,42 @@
                                         @endforeach
                                     </select>
                                 </td>
+                            </tr>
+                            <tr>
                                 <td>
                                     <p>Concept</p>
                                     <input class="inputs" id="concept" name="concept" type="text" readonly>
                                 </td>
+                                <td>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="customer-box-content1">
-                    <div class="customer-box-header-container">                    
-                        <div class="customer-box-header">GC Recipient</div>
-                        {{-- <div class="customer-box-header-select" style="display: none;"><select class="search-select" id="existing-customer">
-                        </select>
-                        <p id="select-note">Search For Existing Customer:</p>
-                        </div> --}}
-                    </div>
-                    <br>
-                    <hr>
-                    <table class="custom_normal_table" >
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="egc-checkbox-content">
-                                        <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
-                                        <label for="egc-checkbox">Same as above</label>
-                                    </div>
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>First name</p>
-                                    <input class="inputs validate" type="text" id="egc_first_name" name="egc_first_name" placeholder="Enter first name" required>
-                                </td>
-                                <td>
-                                    <p>Last Name</p>
-                                    <input class="inputs validate" type="text"  id="egc_last_name" name="egc_last_name" placeholder="Enter last name" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>Email</p>
-                                    <input class="inputs validate" type="email" id="egc_email" name="egc_email" placeholder="Enter email" required>
-                                </td>
-                                <td>
-                                    <p>Contact Number</p>
-                                    <input class="inputs validate" type="text" id="egc_contact_number" name="egc_contact_number" placeholder="Enter contact number" required>
-                                </td>
-                            </tr>
-                        </tbody>
+                    <table class="custom_normal_table">
+                        <tr>
+                            <td>
+                                <div class="egc-checkbox-content">
+                                    <input type="checkbox" name="terms_and_condition" id="terms-and-condition" required>
+                                    <label for="terms-and-condition" style="font-weight: 400; font-size: 1rem;">I agree with terms and condition</label>
+                                </div>
+                                <br>
+                                <div id="terms-and-condition-body" style="display: none;">
+                                    <h6>1. e-Gift certificates are not convertible to cash.</h6>
+                                    <h6>2. e-Gift certificates are non-transferable</h6>
+                                    <h6>3. e-Gift certificates may only be redeemed once.</h6>
+                                    <h6>4. If purchase exceeds the e-Git certificate value, the balance must be paid by the customer with other available payment options.</h6>
+                                    <h6>5. If purchase is lower than the e-Gift certificate value, no change will be given.</h6>
+                                    <h6>6. The store reserves the right to verify the identity o the e-Gift certificate's bearer.</h6>
+                                    <h6>7. e-Gift certificate must be presented in its original and unaltered form.</h6>
+                                    <h6>8. e-Gift certificate is valid in the stores listed below</h6>
+                                    <h6>9. This e-Gift certificate is valid on all accessories and units.</h6>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                 </div>
                 <div class="customer-box-footer">
+                    <button class="btn" id="review-form-recipient" type="button" style="display: none;">⬅️ Review Form Recipient</button>
                     <button class="btn" id="btn-submit" type="submit">Submit</button>
                 </div>
             </form>
@@ -228,10 +262,25 @@
     <script>
 
         const urlSegment = '{{ Request::segment(2) }}';
+        const urlRefenrenceNumber = '{{ Request::segment(4) }}';
+        let recipient = {!! json_encode($recipient) !!}
 
         customerUrl(urlSegment);
                 
         $(document).ready(function() {
+
+            let validEmail = false;
+
+            if(recipient.store_status >= 2){
+                $('#terms-and-condition').attr('checked', true);
+                $('#terms-and-condition-body').show();
+            }
+            if(recipient.store_status == 2){
+                $('.otp').show();
+                validEmail = true;
+            }else if(recipient.store_status == 3){
+                $('.egc-mail').show();
+            }
 
             $('#store_concepts_id').select2({
                 width: '100%'
@@ -253,7 +302,16 @@
             $('#egc-checkbox').on('change', egcCheckBox);
             $('.c-info').on('input', egcCheckBox);
 
-            
+            // Terms and Condition
+            $('#terms-and-condition').on('change', function(){
+                if($(this).is(':checked')){
+                    $('#terms-and-condition-body').show();
+                }else{
+                    $('#terms-and-condition-body').hide();
+                }
+            });
+
+            // First Step Registration form
             $("#registration-form").submit(function(event) {
 
                 event.preventDefault();
@@ -261,9 +319,7 @@
                 const btnSubmit = $('#btn-submit');
 
                 // Check if all required fields are valid
-                if ($(this).find('.validate:invalid').length === 0 && $(this).find('#store_concepts_id').val()) {
-                    
-                    const form = this;
+                if (($(this).find('.validate:invalid').length === 0 && $(this).find('#store_concepts_id').val()) && validEmail) {
 
                     Swal.fire({
                         title: "Are you sure?",
@@ -275,13 +331,41 @@
                         confirmButtonText: `Yes, ${btnSubmit.text()} it!`,
                         reverseButtons: true
                         }).then((result) => {
-                        if (result.isConfirmed) {
-                            $('#store_concepts_id').attr('disabled', false);
-                            btnSubmit.attr('disabled', true);
-                            form.submit();
-                        }
-                    });                
-                }else{
+                            if (result.isConfirmed) {
+                                $('#store_concepts_id').attr('disabled', false);
+                                // btnSubmit.attr('disabled', true);
+                                let registration_form = $('#registration-form').serialize();
+                                
+                                $.ajax({
+                                    url: "{{ route('send_otp') }}",
+                                    dataType: 'json',
+                                    type: 'POST',
+                                    data: registration_form + '&_token={{ csrf_token() }}',
+                                    success: function(response) {
+                                        console.log(response);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        Swal.fire({
+                                            title: "Error",
+                                            text: "Something went wrong. Please contact BPG or refresh the page and try again.",
+                                            icon: "error"
+                                        });
+                                    }
+                                });
+
+                                $('#store_concepts_id').attr('disabled', true);
+
+                                $('.otp').show();
+                            }
+                        });                
+                }else if(!validEmail){
+                    Swal.fire({
+                        title: "Error",
+                        text: "The email you entered does not correspond with the confirmation email provided",
+                        icon: "error"
+                    });
+                }
+                else{
                     Swal.fire({
                         title: "Error",
                         text: "Make sure you are on the correct page, and that all inputs are filled in!",
@@ -290,30 +374,195 @@
                 }
             });
 
-            $('#existing-customer').select2({
-                ajax: {
-                    url: "{{ route('suggest_existing_customer') }}",
-                    dataType: 'json',
-                    processResults: function(data) {
-                        return {
-                            results: data
-                        };
-                    },
-                    cache: true
-                },
-                templateResult: formatResult,
-                templateSelection: formatSelection, 
+            // Second Step verify OTP
+            $('#verify_otp').submit(function(event){
+
+                event.preventDefault();
+
+                const btnSubmit = $('#submit-otp');
+
+                let verifyOtpForm = new URLSearchParams($(this).serialize());
+
+                if($(this).find('.otp-box:invalid').length === 0){
+
+                    verifyOtpForm.append('qr_reference_number', urlRefenrenceNumber);
+
+                    $.ajax({
+                        url: "{{ route('verify_otp') }}",
+                        dataType: 'json',
+                        type: 'POST',
+                        data: verifyOtpForm + '&_token={{ csrf_token() }}',
+                        success: function(response) {
+                            if(response.otp){
+                                $('.otp').hide();
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: "OTP Verification Successful",
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                }).then((result) => {
+                                    $('.egc-mail').show();
+                                });
+                            }else{
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "OTP Verification Failed",
+                                    text: "The entered OTP does not match. Please double-check and try again.",
+                                    showConfirmButton: false,
+                                    timer: 2000 // You may adjust the timer duration as needed
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error: ", xhr.responseText);
+                        }
+                    });
+
+                }
             });
 
-            $('#existing-customer').on('change',function(){
-                const selectedValue = $(this).val();
-                getInfo(selectedValue);
+            // Third Step Send egc
+            $('#send-egc-form').submit(function(event){
+
+                event.preventDefault();
+
+                let sendEgcForm = new URLSearchParams($(this).serialize());
+
+                sendEgcForm.append('qr_reference_number', urlRefenrenceNumber);
+
+                if($(this).find('.egc-validate:invalid').length === 0){
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: `Yes, send it!`,
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('send_egc') }}",
+                                dataType: 'json',
+                                type: 'POST',
+                                data: sendEgcForm + '&_token={{ csrf_token() }}',
+                                success: function(response) {
+                                    if(response.same_email){
+                                        Swal.fire({
+                                            position: "center",
+                                            icon: "success",
+                                            title: "Your E-Gift Card is on its way! Expect it in your inbox shortly",
+                                            showConfirmButton: false,
+                                            showCloseButton: true,
+                                            customClass: {
+                                                popup: 'swal-size',
+                                            },
+                                        }).then((result) => {
+                                            $('#send-egc, #btn-submit, .egc-validate, .validate').attr('disabled', true);
+                                            $('#review-form-egc').show();
+                                            $('#review-form-recipient').show();
+                                        });
+                                    }else{
+                                        Swal.fire({
+                                            position: "center",
+                                            icon: "success",
+                                            title: "Your E-Gift Card is activated",
+                                            showConfirmButton: false,
+                                            showCloseButton: true,
+                                            customClass: {
+                                                popup: 'swal-size',
+                                            },
+                                        }).then((result) => {
+                                            $('#send-egc, #btn-submit, .egc-validate, .validate').attr('disabled', true);
+                                            $('#send-egc').hide();
+                                            $('#review-form-egc').show();
+                                            $('#review-form-recipient').show();
+                                        });
+                                    }
+
+                                },
+                                error: function(xhr, status, error) {
+                                    if(xhr.responseText){
+                                        Swal.fire({
+                                            position: "center",
+                                            icon: "error",
+                                            title: "Something went wrong",
+                                            text: "Take a screenshot of the input form and send it to BPG.",
+                                            showConfirmButton: false,
+                                            timer: 3000
+                                        });
+                                    }
+                                }
+                            });
+
+                            $('#store_concepts_id').attr('disabled', true);
+                        }
+                    });
+                }
             });
 
+            // Confirm Email
+            $('#email,#confirm_email').on('input', function () {
+                
+                const email = $('#email').val();
+                const confirmEmail = $('#confirm_email').val();
+
+                if(!email || !confirmEmail){
+                    return;
+                }
+
+                if ((email != confirmEmail) && (email && confirmEmail)) {
+                    $(this).css({
+                        'border': '1px solid #CB6767',
+                        'border-top': '3px solid #CB6767'
+                    });
+                    validEmail = false;
+                }else{
+                    $('#email,#confirm_email').css({
+                        'border': '1px solid #b1b0b0',
+                        'border-top': '3px solid #b1b0b0'
+                    });
+                    validEmail = true;
+                }
+            });
+
+            // Modal
+            // Close OTP
+            $('#close-otp').on('click', function(){
+                $('.otp').hide();
+            });
+
+            // Close EGC Mail
+            $('#review-form-egc').on('click', function(){
+                $('.egc-mail').hide();
+            });
+
+            // Open Recipient
+            $('#review-form-recipient').on('click', function(){
+                $('.egc-mail').show();
+            })
+
+            // OTP
+            $('.otp-box').on('input', function(event) {
+                
+                const currentInput = $(this);
+                const maxLength = parseInt(currentInput.attr('maxlength'), 10);
+                const inputValue = currentInput.val();
+
+                if (inputValue.length === maxLength) {
+                    currentInput.next('.otp-box').focus();
+                }
+
+                $('input[name="otp"]').val(getOptValue());
+            });
         });
 
 
         function convertToTitleCase(str) {
+
             // Split the string into an array of words
             let words = str.split('_');
             // Capitalize the first letter of each word
@@ -351,14 +600,16 @@
         }
 
         function formatResult(result) {
+
             return result.text;
         }
         function formatSelection(selection) {
+
             return selection.text.length > 20 ? selection.text.substring(0, 20) + '...' : selection.text;
         }
 
         function getInfo(selectedValue){
-            console.log(selectedValue);
+            
             $.ajax({
                 url:"{{ route('viewCustomerInfo')}}",
                 type:'POST',
@@ -378,6 +629,7 @@
         }
 
         function populateCustomerInfo (res){
+
             const customerInformation = res.customer_information;
             console.log(customerInformation);
             $('#first_name').val(customerInformation.first_name || '');
@@ -399,9 +651,20 @@
                 $('#egc_last_name').val(lastName).attr('readonly', true);
                 $('#egc_email').val(email).attr('readonly', true);
                 $('#egc_contact_number').val(contact).attr('readonly', true);
+
             }else{
                 $('input[name^="egc"]').val('').attr('readonly',false);
             }
+        }
+
+        function getOptValue(){
+
+            let optValue = '';
+            $('.otp-box').each(function(){
+                optValue += $(this).val();
+            })
+
+            return optValue;
         }
 
     </script>

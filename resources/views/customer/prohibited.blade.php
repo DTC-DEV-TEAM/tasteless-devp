@@ -175,6 +175,7 @@
         </div>
     </div>
     @else
+    <img src="{{ asset('img/2000x2000 logo.png') }}" alt="" style="height: 100%; width: 100%; position: fixed; z-index: -1; object-fit: cover; background-repeat: no-repeat; ">
     <div class="prohibited-center">
         <div class="prohibited-box pb">
             <div class="prohibited-content">

@@ -75,6 +75,12 @@ Route::get('admin/store_devps/void/{id}', [AdminGCListsStoreController::class, '
 Route::get('admin/store_devps/egc_value', [AdminGCListsStoreController::class, 'egcValue'])->name('egc_value');
 // createEGC Store
 Route::post('admin/store_devps/create_egc', [AdminGCListsStoreController::class, 'createEGC'])->name('create_egc');
+// First step customer information and otp
+Route::post('customer_registration/submit-otp', [CustomerRegistrationController::class, 'store'])->name('send_otp');
+// Second step verify OTP
+Route::post('customer_registration/verify-otp', [CustomerRegistrationController::class, 'verifyOtp'])->name('verify_otp');
+// Third step send EGC
+Route::post('customer_registration/send-egc', [CustomerRegistrationController::class, 'sendEgc'])->name('send_egc');
 
 
 // Email Template
@@ -91,27 +97,6 @@ Route::get('gc_list_data', [AdminGCListsHistoryController::class, 'getGCList'])-
 // GCList Export
 Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryController::class, 'export'])->name('store_gclist_export');
 
-
-// Route::get('/get-sales/{receipt}/{company}/{store}/{voucher}', function($receipt, $company, $store, $voucher){
-    
-//     $data['pos_sale'] = DB::connection('mysql_tunnel')
-//     ->table('pos_sale')
-//     ->where('fcompanyid',$company)
-//     ->where('fofficeid',$store)
-//     ->where('fdocument_no',$receipt)
-//     ->first();
-
-//     $data['pos_sale_discount'] = DB::connection('mysql_tunnel')
-//             ->table('pos_sale_product_discount')
-//             ->where('fcompanyid',$company)
-//             ->where('frecno',$data['pos_sale']->frecno)
-//             ->first();
-
-//     $data['pos_sale_discount_detail'] = DB::connection('mysql_tunnel')
-//         ->table('mst_discount')
-//         ->where('fdiscountid',$data['pos_sale_discount']->fdiscountid)
-//         ->where('fcompanyid',$company)
-//         ->first();
-
-//     return $data;
-// });
+Route::get('1245', function(){
+    return view('email_testing.otp-email');
+});

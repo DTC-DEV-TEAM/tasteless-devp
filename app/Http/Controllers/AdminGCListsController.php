@@ -450,8 +450,12 @@ use Illuminate\Support\Facades\Log;
 				// 	CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 				// }
 			}else{
+				if(!($gc_list_devp->store_status > 3 && $gc_list_devp->store_status !=7)){
+
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("E-Gift Card is not activated."), "danger");
+				}
 				
-				if ($user->qr_reference_number == $slug && $slug || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
+				if (($user->qr_reference_number == $slug) && ($slug)|| CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 					$data = [];
 					$data['page_title'] = 'Redeem QR';
 					$data['row'] = DB::table('g_c_lists_devps')

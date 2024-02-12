@@ -1,0 +1,138 @@
+:root {
+    --gradient-color: linear-gradient(to bottom, #010406, #072533);
+    --primary-color: #1c2331;
+    --secondary-color: #333333;
+    --accent-color: #02718A;
+    --background-color: #F7FAFC;
+    --header-color: #808080;
+    --card-header-color: #036886;
+    --card-header-color1: #2f4f4f;
+    --delete-btn-color: rgb(246, 51, 51);
+    --view-btn-color: #26cad3;
+    --edit-btn-color: rgb(24, 221, 80);
+    --mg-bottom-10: 20px;
+    --blue: #2777a9;
+    --indigo: #5603ad;
+    --purple: #8965e0;
+    --pink: #f3a4b5;
+    --red: #ef4444;
+    --orange: #fb6340;
+    --yellow: #ffd600;
+    --green: #2dce89;
+    --teal: #11cdef;
+    --cyan: #2bffc6;
+    --gray: #8898aa;
+    --gray-dark: #67717d;
+    --light: #ced4da;
+    --lighter: #e9ecef;
+    --primary: #02718A;
+    --secondary: #f7fafc;
+    --success: #2dce89;
+    --info: #11cdef;
+    --warning: #fb6340;
+    --danger: #ef4444;
+    --light: #adb5bd;
+    --dark: #212529;
+    --default: #172b4d;
+    --white: #fff;
+    --neutral: #fff;
+    --darker: #000;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-weight: 400;
+}
+
+h1 {
+    font-size: 2.25rem; /* 36px */
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 1.75rem; /* 28px */
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.4;
+}
+
+h4 {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.5;
+}
+
+h5 {
+    font-size: 1rem; /* 16px */
+    line-height: 1.6;
+}
+
+h6 {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.7;
+}
+
+.u-fw-b{
+    font-weight: bold;
+}
+
+.u-fw-400{
+    font-weight: 400;
+}
+.u-fw-500{
+    font-weight: 500;
+}
+.u-fw-600{
+    font-weight: 600;
+}
+
+.u-flex{
+    display: flex;
+}
+
+.u-t-white{
+    color: var(--white);
+}
+
+.u-tw-gray{
+    color: var(--gray-dark);
+}
+
+.u-t-danger{
+    color: var(--danger);
+}
+
+.u-t-center{
+    text-align: center;
+}
+
+.u-bg-danger{
+    background-color: var(--danger);
+}
+
+.lara-btn{
+    padding: 0.625rem;
+    cursor: pointer;
+}
+
+.u-p-5{
+    padding: 0.125rem;
+}
+
+.u-p-10{
+    padding: 0.625rem;
+}
+
+.u-mt-10{
+    margin-top: 0.625rem;
+}
+
+.u-mt-15{
+    margin-top: 0.9375rem;
+}
+
+.u-mt-25{
+    margin-top: 1.56rem;
+}
+

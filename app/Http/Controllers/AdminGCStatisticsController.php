@@ -319,9 +319,81 @@
 
 		public function getIndex() {
 
+			$gc_list_campaign = DB::table('g_c_lists')->get();
+			$gc_list_store = DB::table('g_c_lists_devps');
+			$store_concept = DB::table('store_concepts');
+
+			// Highest Store Sales Claim
+			$shs_data = $gc_list_store
+				->leftJoin('egc_value_types', 'egc_value_types.id', 'g_c_lists_devps.egc_value_id')
+				->select('store_concepts_id', 'egc_value_types.value')
+				->where('store_status', '!=', 7)
+				->get()
+				->toArray();
+		
+			$store_occurrences = array_count_values(array_column($shs_data, 'store_concepts_id'));
+
+			// Find the store_concepts_id with the highest occurrence
+			arsort($store_occurrences); // Sort the array in descending order by value while maintaining index association
+			$store_concept_id = key($store_occurrences);
+			// Filter the array to get elements with the most common store_concepts_id
+			$elements_with_most_common_id = array_filter($shs_data, function ($item) use ($store_concept_id) {
+				return $item->store_concepts_id == $store_concept_id;
+			});
+
+			$store_highest_sales_value = array_map(function($item) {
+				return $item->value;
+			}, $elements_with_most_common_id);
+			// End of Highest Store Sales Claim
+
+			// Sold Per Concept and redeemed per concept
+			$spc = DB::table('g_c_lists_devps')
+			->leftJoin('egc_value_types', 'egc_value_types.id', 'g_c_lists_devps.egc_value_id')
+			->leftJoin('store_concepts', 'store_concepts.id', 'g_c_lists_devps.store_concepts_id')
+			->select('store_concepts.concept', DB::raw('SUM(egc_value_types.value) AS value'), DB::raw('SUM(COALESCE(g_c_lists_devps.redeem, 0)) as redeemed'))
+			->groupBy('concept')
+			->get();
+
+			// Cancelled EGC
+			$cancelled_egc = DB::table('g_c_lists_devps')->where('store_status', '7')->count();
+			// Claimed EGC
+			$claimed_egc = DB::table('g_c_lists_devps')
+				->where('redeem', '!=', null)
+				->where('store_status', '!=', '7')
+				->count();
+			// Unclaimed EGC
+			$unclaimed_egc = DB::table('g_c_lists_devps')
+				->where('redeem', null)
+				->where('store_status', '!=', '7')
+				->count();
+			// Total
+			$total = DB::table('g_c_lists_devps')->count();
+			
+
+			// Aging Chart
+			$ac = DB::table('g_c_lists_devps')
+			->leftJoin('egc_value_types', 'egc_value_types.id', 'g_c_lists_devps.egc_value_id')
+			->leftJoin('store_concepts', 'store_concepts.id', 'g_c_lists_devps.store_concepts_id')
+			->whereNotNull('g_c_lists_devps.cashier_date_transact')
+			->select('store_concepts.concept', 
+				DB::raw('AVG(DATEDIFF(g_c_lists_devps.cashier_date_transact, g_c_lists_devps.created_at)) AS average_duration'))
+			->groupBy('store_concepts.concept')
+			->get();
+		
 			$data = [];
 			$data['page_title'] = 'GC Statistics';
-		
+			$data['highest_store_sales'] = [
+				'store_name' => $store_concept->where('id',$store_concept_id)->first()->name,
+				'value' => array_sum($store_highest_sales_value)
+			];
+			$data['sold_per_concepts'] = $spc;
+			$data['cancelled'] = $cancelled_egc;
+			$data['claimed'] = $claimed_egc;
+			$data['unclaimed'] = $unclaimed_egc;
+			$data['total'] = $total;
+			$data['total_sold_egc'] = $spc->sum('value');
+			$data['aging_chart'] = $ac;
+
 			return $this->view('statistics.gc_statistics',$data);
 		}
 	}

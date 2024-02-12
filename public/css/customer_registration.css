@@ -10,6 +10,53 @@ body, html{
     background: #181B20;
 }
 
+/* Modal */
+
+/* body{
+    overflow: hidden;
+} */
+
+.prohibited-center{
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    display: flex;
+    padding: 10px;
+    z-index: 1;
+}
+
+.prohibited-box{
+    min-height: auto;
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 1rem rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease;
+}
+
+.prohibited-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* End of Modal */
+
 .customer-section{
     display: flex;
     align-items: center;
@@ -43,7 +90,7 @@ body, html{
 
 .customer-box-content{
     height: 100%;
-    padding: 50px;
+    padding: 20px 50px;
 }
 
 .customer-box-content1{
@@ -128,9 +175,14 @@ body, html{
     opacity: 0.7;
 }
 
+#btn-submit:disabled{
+    opacity: 0.7;
+}
+
 .egc-checkbox-content{
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .egc-checkbox-content label{
@@ -139,7 +191,7 @@ body, html{
     cursor: pointer;
 }
 .egc-checkbox-content input{
-    margin-top: 1px;
+    margin-top: 4px;
     margin-right: 5px;
     vertical-align: middle;
     cursor: pointer;
@@ -327,4 +379,75 @@ body, html{
         flex-direction: column;
         gap: 30px;
     }
+}
+
+/* Modal */
+#alert-img{
+    object-fit: content;
+    width: 75px;
+}
+
+.otp-input{
+    display: flex;
+    justify-content: center;
+}
+
+.otp-input input{
+    max-width: 40px;
+    height: 50px;
+    text-align: center;
+    margin: 5px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #abaaaa;
+    font-size: 1rem;
+}
+
+.otp-input input:focus{
+    border: 1px solid #42a1c9;
+}
+
+.otp-btns{
+    display: flex;
+    justify-content: center;
+    flex: wrap wrap;
+    margin-top: 5px;
+}
+
+.egc-mail-btns{
+    display: flex;
+    justify-content: flex-end;
+    flex: wrap wrap;
+}
+
+.otp-btns button, .egc-mail-btns button{
+    padding: 10px 12px;
+    border: none;
+    margin-right: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+.otp-btns button:hover, .egc-mail-btns button:hover{
+    opacity: 0.7;
+}
+
+#close-otp, #close-egc, #review-form-egc, #review-form-recipient {
+    background-color: #3498db;
+    color: #fff;
+}
+
+#submit-otp, #send-egc {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+#send-egc{
+    float: right;
+}
+
+#send-egc:disabled{
+    opacity: 0.7;
 }

@@ -62,11 +62,11 @@
                 <div class="cb-header">
                     Customer Information
                 </div>
-                @if ($customer->store_status > 2)
+                {{-- @if ($customer->store_status > 2)
                 <button class="btn btn-primary" type="button" id="show-history">
                     Show History
                 </button>
-                @endif
+                @endif --}}
             </div>
             <table class="custom_table">
                 <tbody>

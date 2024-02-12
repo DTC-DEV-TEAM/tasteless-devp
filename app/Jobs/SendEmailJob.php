@@ -61,7 +61,6 @@ class SendEmailJob implements ShouldQueue
     public function failed(){
         Log::info('Error');
         DB::table('g_c_lists_devps')->where('id', $this->details['id'])->update(['store_status' => 6]);
-
     }
     
 }

@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\EgcValueType;
+use App\EmailTemplateImg;
+use App\EmailTesting;
 use App\g_c_lists_devp;
 use Session;
 use Illuminate\Support\Facades\Request as Input;
 use DB;
 use App\GCList;
 use App\GCListsDevpsCustomer;
+use App\Jobs\SendEmailJob;
+use App\Jobs\SendEmailOtp;
 use App\StoreHistory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -24,14 +29,9 @@ class CustomerRegistrationController extends Controller
 
         $gclist_devp = g_c_lists_devp::where('qr_reference_number', $qr_reference_number)->first();
 
-        if($gclist_devp->store_status >= 2 || !$gclist_devp){
+        if($gclist_devp->store_status >= 4 || !$gclist_devp){
 
-            $successData = session('success_form');
-
-            $data = [];
-            $data['session'] = $successData;
-
-            return view('customer.prohibited', $data);
+            return view('customer.prohibited');
         }
 
         $data = [];
@@ -40,6 +40,8 @@ class CustomerRegistrationController extends Controller
             ->orderBY('beach_name', 'asc')
             ->get()
             ->toArray();
+        $data['recipient'] = DB::table('g_c_lists_devps')->where('qr_reference_number',$qr_reference_number)->first();
+        $data['customer'] = DB::table('g_c_lists_devps_customers')->where('id', $data['recipient']->g_c_lists_devps_customer_id)->first();
         
         return view('customer.customer_registration', $data);
     }
@@ -72,14 +74,7 @@ class CustomerRegistrationController extends Controller
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
         $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
 
-        $devp =  $gc_list_devp->update([
-            'first_name' => $customer['egc_first_name'],
-            'last_name' => $customer['egc_last_name'],
-            'name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
-            'phone' => $customer['egc_contact_number'],
-            'email' => $customer['egc_email'],
-            'store_status' => 2
-        ]);
+        $otp = Str::random(4);
 
         $devp_customer = $gc_list_devp_customer->update([
             'first_name' => $customer['first_name'],
@@ -87,63 +82,28 @@ class CustomerRegistrationController extends Controller
             'name' => $customer['first_name'].' '.$customer['last_name'],
             'phone' => $customer['contact_number'],
             'email' => $customer['email'],
+            'confirmed_email' => $customer['confirm_email'],
+            'otp_code' => $otp
         ]);
 
-
-        $history = $store_history->update([
-            'customer_first_name' => $customer['first_name'], 
-            'customer_last_name' => $customer['last_name'], 
-            'customer_name' =>$customer['first_name'].' '.$customer['last_name'],
-            'customer_phone' =>$customer['contact_number'],
-            'customer_email' => $customer['email'],
-            'egc_first_name' => $customer['first_name'],
-            'egc_last_name' => $customer['egc_last_name'],
-            'egc_name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
-            'egc_phone' => $customer['egc_contact_number'],
-            'egc_email' => $customer['egc_email'],
-            
+        $devp =  $gc_list_devp->update([
+            'store_status' => 2
         ]);
 
-        session()->flash('success_form' , [
-            'first_name' => $gc_list_devp_customer->first()->first_name,
-            'phone' => $gc_list_devp_customer->first()->phone,
+        $data = [
+            'gc_list_devp_customer_id' => $gc_list_devp_customer->first()->id,
+            'subject_of_the_email' => 'Your One-Time Password (OTP) for E-Gift Card',
             'email' => $gc_list_devp_customer->first()->email,
-            'store_concept' => $gc_list_devp_customer->first()->store_concept,
-        ]);
+            'otp' => $gc_list_devp_customer->first()->otp_code,
+            'link' => $gc_list_devp->first()->qr_link
+        ];
 
-        return redirect()->back();
-        // ->with('success_form', [
-        //     'first_name' => $gc_list_devp_customer->first()->first_name,
-        //     'phone' => $gc_list_devp_customer->first()->phone,
-        //     'email' => $gc_list_devp_customer->first()->email,
-        //     'store_concept' => $gc_list_devp_customer->first()->store_concept,
-        // ]);
-    }
+        $send_email_otp = new SendEmailOtp($data);
 
-    public function suggestExistingCustomer(Request $request)
-    {
+        $this->sendGiftCardCustomer($gc_list_devp_customer->first(), $gc_list_devp->first());
 
-        $term = $request->input('term');
-        $suggestions = DB::table('g_c_lists_devps')
-            ->whereNotNull('g_c_lists_devps.email')
-            ->where('g_c_lists_devps.email', 'like', '%' . $term . '%')
-            ->select('g_c_lists_devps.email as text', DB::raw('MAX(g_c_lists_devps.id) as id'))
-            ->groupBy('g_c_lists_devps.email')
-            ->orderBy('id', 'desc')
-            ->get();
-    
-        return response()->json($suggestions);
-    }
+        return response()->json(['is_otp_sent' => $send_email_otp->handle()]);
 
-    public function viewCustomerInfo(Request $request)
-    {
-
-        $user_request = $request->all();
-        $user_customer_id = $user_request['customerID'];
-        $customer_information = g_c_lists_devp::where('id',$user_customer_id)
-            ->first();
-
-        return response()->json(['customer_information' => $customer_information]);
     }
 
     /**
@@ -189,5 +149,155 @@ class CustomerRegistrationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function verifyOtp(Request $request){
+
+        $customer = $request->all();
+
+        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
+
+        if($gc_list_devp_customer->first()->otp_code == $customer['otp']){
+
+            $gc_list_devp_customer->update([
+                'otp_is_matched' => 1
+            ]);
+
+            $devp =  $gc_list_devp->update([
+                'store_status' => 3
+            ]);
+
+            return response()->json(['otp' => true]);
+        }else{
+            return response()->json(['otp' => false]);
+        }
+    }
+
+    public function sendEgc(Request $request){
+
+        $customer = $request->all();
+
+        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
+        $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
+        $same_email = false;
+
+        $gc_list_devp->update([
+            'first_name' => $customer['egc_first_name'],
+            'last_name' => $customer['egc_last_name'],
+            'name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
+            'email' => $customer['egc_email'],
+        ]);
+
+        if($gc_list_devp->first()->email != $gc_list_devp_customer->first()->email){
+            $send_egc = $this->sendGiftCardRecipient($gc_list_devp->first());
+
+            $gc_list_devp->update([
+                'store_status' => 4,
+                'email_is_sent' => 1
+            ]);
+            $same_email = true;
+        }else{
+            $gc_list_devp->update([
+                'store_status' => 5,
+            ]);
+        }
+
+        return response()->json(['same_email' => $same_email]);
+    }
+
+    public function sendGiftCardRecipient($recipient){
+
+        $email_testings = new EmailTesting();
+		$egc_value = EgcValueType::where('id',(int) $recipient->egc_value_id)->first()->value;
+
+        $url = "/g_c_lists/edit/$recipient->id?value=$recipient->qr_reference_number&campaign_id=3";
+        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' . urlencode($url);
+        $qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
+        
+        $store_logos_id = 5;
+
+        $emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
+        ->where('status','ACTIVE')
+        ->first();
+        $emailTestingImg = EmailTemplateImg::where('header_id', $emailTesting->id)
+            ->get();
+
+        $html_email_img = [];
+
+        foreach($emailTestingImg as $file){
+            $filename = $file->file_name;
+            $html_email_img[]= $filename;
+        }
+
+        $html_email = str_replace(
+            ['[name]'],
+            [$recipient->name],
+            $emailTesting->html_email
+        );
+
+        $data = array(
+            'id' => $recipient->id,
+            'html_email' => $html_email,
+            'email_subject' => $emailTesting->subject_of_the_email,
+            'html_email_img' => $html_email_img,
+            'email' => $recipient->email,
+            'qrCodeApiUrl' => $qrCodeApiUrl,
+            'qr_code' => $qr_code,
+            'gc_value' => $egc_value,
+            'store_logo' => $store_logos_id,
+            'qr_reference_number'=> $recipient->qr_reference_number,
+        );
+
+        SendEmailJob::dispatch($data);
+
+        return true;
+    }
+
+    public function sendGiftCardCustomer($customer, $recipient){
+        
+        $email_testings = new EmailTesting();
+		$egc_value = EgcValueType::where('id',(int) $recipient->egc_value_id)->first()->value;
+
+        $url = "/g_c_lists/edit/$recipient->id?value=$recipient->qr_reference_number&campaign_id=3";
+        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' . urlencode($url);
+        $qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
+        
+        $store_logos_id = 5;
+
+        $emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
+        ->where('status','ACTIVE')
+        ->first();
+        $emailTestingImg = EmailTemplateImg::where('header_id', $emailTesting->id)
+            ->get();
+
+        $html_email_img = [];
+
+        foreach($emailTestingImg as $file){
+            $filename = $file->file_name;
+            $html_email_img[]= $filename;
+        }
+
+        $html_email = str_replace(
+            ['[name]'],
+            [$customer->name],
+            $emailTesting->html_email
+        );
+
+        $data = array(
+            'id' => $recipient->id,
+            'html_email' => $html_email,
+            'email_subject' => $emailTesting->subject_of_the_email,
+            'html_email_img' => $html_email_img,
+            'email' => $customer->email,
+            'qrCodeApiUrl' => $qrCodeApiUrl,
+            'qr_code' => $qr_code,
+            'gc_value' => $egc_value,
+            'store_logo' => $store_logos_id,
+            'qr_reference_number'=> $recipient->qr_reference_number,
+        );
+
+        SendEmailJob::dispatch($data);
     }
 }

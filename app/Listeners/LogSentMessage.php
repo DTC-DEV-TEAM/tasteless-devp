@@ -36,11 +36,11 @@ class LogSentMessage
         
         $gc_lists_devps = DB::table('g_c_lists_devps')->where('id', $id);
 
-        if(in_array($gc_lists_devps->first()->store_status, [3,5,6])){
+        if(in_array($gc_lists_devps->first()->store_status, [4])){
             
             $gc_lists_devps->update([
                 'email_is_sent' => 1,
-                'store_status' => 4
+                'store_status' => 5
             ]);
         }
 

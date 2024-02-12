@@ -243,20 +243,16 @@
           <div class="user-info-content">
             <div class="user-info">
               <div class="user-element">
-                <label for="">Phone Number: </label>
-                <input type="text" value="{{ $row->phone }}" readonly>
-              </div>
-              <div class="user-element">
                 <label for="">GC Description: </label>
                 <input type="text" value="EGC Purchased in the store" readonly>
               </div>
-            </div>
-          </div>
-          <div class="user-info-content">
-            <div class="user-info">
               <div class="user-element">
-                <label for="">GC Value: </label>
-                <input type="text" value="{{ $row->gc_value }}" readonly>
+                {{-- <label for="">Phone Number: </label>
+                <input type="text" value="{{ $row->phone }}" readonly> --}}
+                <div class="user-element">
+                  <label for="">GC Value: </label>
+                  <input type="text" value="{{ $row->gc_value }}" readonly>
+                </div>
               </div>
             </div>
           </div>
