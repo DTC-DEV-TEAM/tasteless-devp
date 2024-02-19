@@ -1,3 +1,17 @@
+<style>
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+
 @if(session('success'))
 <div class="modal-store">
     <div class="modal-box">
@@ -27,7 +41,7 @@
                 <br>
                 <label for="">Invoice Number</label>
                 <div>
-                    <input class="form-control" name="invoice_number" type="number" required>
+                    <input class="form-control" name="invoice_number" type="number" min="0" required>
                 </div>
                 <div class="btn-content">
                     <button class="btn btn-default pull-left" id="btn-cancel" type="button">Cancel</button>
