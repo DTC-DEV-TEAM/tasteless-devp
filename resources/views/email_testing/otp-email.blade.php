@@ -25,7 +25,7 @@
                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 5px 0; border-radius: 5px; padding: 10px; width: 100%;">
                     <tr style="text-align: center;">
                         <td style="color: #color: #656464;; font-size: 14px;">
-                            <span>Link: {{ url_encode($link) }}</span>
+                            <span>Link: {{ $link }}</span>
                         </td>
                     </tr>
                 </table>
