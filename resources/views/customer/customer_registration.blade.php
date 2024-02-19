@@ -238,13 +238,13 @@
                                 <br>
                                 <div id="terms-and-condition-body" style="display: none;">
                                     <h6>1. e-Gift certificates are not convertible to cash.</h6>
-                                    <h6>2. e-Gift certificates are transferable</h6>
+                                    <h6>2. e-Gift certificates are transferable.</h6>
                                     <h6>3. e-Gift certificates may only be redeemed once.</h6>
                                     <h6>4. If purchase exceeds the e-Gift certificate value, the balance must be paid by the customer with other available payment options.</h6>
                                     <h6>5. If purchase is lower than the e-Gift certificate value, no change will be given.</h6>
                                     <h6>6. The store reserves the right to verify the identity of the e-Gift certificate's bearer.</h6>
                                     <h6>7. e-Gift certificate must be presented in its original and unaltered form.</h6>
-                                    <h6>8. e-Gift certificate is valid in all branches</h6>
+                                    <h6>8. e-Gift certificate is valid in all branches.</h6>
                                     <h6>9. This e-Gift certificate is valid on all accessories and units.</h6>
                                 </div>
                             </td>
