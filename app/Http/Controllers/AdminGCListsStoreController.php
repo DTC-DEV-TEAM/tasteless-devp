@@ -1029,8 +1029,8 @@ use Illuminate\Support\Facades\Mail;
 			]);
 			$store_history->save();
 
-
-			$url = url(urlencode("qr_link/$user_store_logo/$store_concept->name/$gclist_devp->qr_reference_number"));
+			$sc_name = urlencode($store_concept->name);
+			$url = url("qr_link/$user_store_logo/$sc_name/$gclist_devp->qr_reference_number");
 
 			$gclist_devp->qr_link = $url;
 			$gclist_devp->save();
