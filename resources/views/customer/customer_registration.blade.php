@@ -244,7 +244,7 @@
                                     <h6>5. If purchase is lower than the e-Gift certificate value, no change will be given.</h6>
                                     <h6>6. The store reserves the right to verify the identity of the e-Gift certificate's bearer.</h6>
                                     <h6>7. e-Gift certificate must be presented in its original and unaltered form.</h6>
-                                    <h6>8. e-Gift certificate is valid in the stores listed below</h6>
+                                    <h6>8. e-Gift certificate is valid in all branches</h6>
                                     <h6>9. This e-Gift certificate is valid on all accessories and units.</h6>
                                 </div>
                             </td>
