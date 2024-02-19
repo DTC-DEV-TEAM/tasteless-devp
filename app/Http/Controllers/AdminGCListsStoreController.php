@@ -1029,7 +1029,7 @@ use Illuminate\Support\Facades\Mail;
 			]);
 			$store_history->save();
 
-			$sc_name = urlencode($store_concept->name);
+			$sc_name = str_replace(' ', '%', $store_concept->name);
 			$url = url("qr_link/$user_store_logo/$sc_name/$gclist_devp->qr_reference_number");
 
 			$gclist_devp->qr_link = $url;
