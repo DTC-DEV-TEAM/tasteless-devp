@@ -232,11 +232,11 @@
             <div class="user-info">
               <div class="user-element">
                 <label for="">Name: </label>
-                <input type="text" value="{{ $row->name }}" readonly>
+                <input type="text" id="claimed_by" value="{{ $row->claimed_by }}" {{ $row->claimed_by ? 'readonly' : '' }} required>
               </div>
               <div class="user-element">
                 <label for="">Email: </label>
-                <input type="text" value="{{ $row->email }}" readonly>
+                <input type="email" id="claimed_email" value="{{ $row->claimed_email }}" {{ $row->claimed_email ? 'readonly' : '' }} required>
               </div>
             </div>
           </div>
@@ -382,10 +382,12 @@
         const id_number = $('#id_number').val();
         const user_id = $('#user_id').val();
         const my_id = $('#my_id').val();
-        
+        const claimed_by = $('#claimed_by').val();
+        const claimed_email = $('#claimed_email').val();
+
         event.preventDefault();
 
-        if(!id_number || !id_type ){
+        if(!id_number || !id_type || !claimed_by || !claimed_email ){
             const Toast = Swal.mixin({
             toast: true,
             position: 'bottom-end',
@@ -418,6 +420,8 @@
             id_number: id_number,
             user_id: user_id,
             my_id: my_id,
+            claimed_by: claimed_by,
+            claimed_email: claimed_email
           },
           success: function(response){
 
@@ -439,6 +443,8 @@
             $('#id-type').attr('disabled', true);
             $('#id-type').css({'background-color': '#eeeeee'});
             $('#id_number').attr('readonly', true);
+            $('#claimed_by').attr('readonly', true);
+            $('#claimed_email').attr('readonly', true);
 
             const Toast = Swal.mixin({
               toast: true,
@@ -551,8 +557,6 @@
         });        
       }
 
-
-
       transactionValidation();
       toggleAndClosing();
       stepFour();
@@ -561,11 +565,11 @@
 
     function copyToClipboard(element) {
 
-        var $temp = $("<input>");
-        $("body").append($temp);
-        $temp.val($(element).text()).select();
-        document.execCommand("copy");
-        $temp.remove();
-      }
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val($(element).text()).select();
+      document.execCommand("copy");
+      $temp.remove();
+    }
   </script>
 @endsection

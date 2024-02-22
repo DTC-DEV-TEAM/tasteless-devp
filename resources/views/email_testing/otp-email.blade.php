@@ -20,7 +20,7 @@
                 </table>
             </td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td style="text-align: center;">
                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 5px 0; border-radius: 5px; padding: 10px; width: 100%;">
                     <tr style="text-align: center;">
@@ -30,7 +30,7 @@
                     </tr>
                 </table>
             </td>
-        </tr>
+        </tr> --}}
         <tr>
             <td style="text-align: center;">
                 <span style="color: #color: #656464;; font-size: 14px;">Please use this OTP to verify your E-Gift Card. Keep it confidential and do not share your OTP with anyone.</span>

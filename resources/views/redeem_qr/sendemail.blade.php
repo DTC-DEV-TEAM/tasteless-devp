@@ -93,6 +93,7 @@
         </tr>
         <tr>
             <td>
+                <span>Your EGC has been activated successfully. If you wish to send it to the recipient click <a href="{{ $link }}">here</a>.</span>
                 <span style="display: none;">{{ now()->format('Y-m-d H:i:s') }} {!! html_entity_decode($html_email) !!}</span>
             </td>
         </tr>

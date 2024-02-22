@@ -193,7 +193,11 @@
                         var imageUrl = '{{ asset("uploaded_item/img/") }}' + '/' + data;
                         return '<img src="' + imageUrl + '" style="max-height: 100px; max-width: 120px;">';
                     }
-                },                { data: 'name', name: 'name' },
+                },                
+                { 
+                    data: 'name', 
+                    name: 'name',
+                },
                 { data: 'phone', name: 'phone' },
                 { data: 'email', name: 'email' },
                 { data: 'campaign_id', name: 'campaign_id' },

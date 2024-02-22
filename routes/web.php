@@ -100,3 +100,7 @@ Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryControl
 Route::get('1245', function(){
     return view('email_testing.otp-email');
 });
+
+Route::get('send-email-test', function(){
+    return view('email_testing.sendemail-t');
+});

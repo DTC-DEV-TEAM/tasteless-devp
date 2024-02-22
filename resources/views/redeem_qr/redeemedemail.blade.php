@@ -11,7 +11,7 @@
         {{-- {!! html_entity_decode($htmlEmail) !!} --}}
         <h3>QR Code Redemption Successful</h3>
 
-        <p>Dear {{ $row->name }},</p>
+        <p>Dear {{ $row->claimed_by }},</p>
         <br>
         <p>We are delighted to inform you that your QR code has been successfully redeemed.</p>
 

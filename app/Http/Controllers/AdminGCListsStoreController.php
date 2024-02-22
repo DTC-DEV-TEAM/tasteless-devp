@@ -362,6 +362,9 @@ use Illuminate\Support\Facades\Mail;
 				else if($column_value == 'Voided'){
 					$column_value = '<span class="label" style="background-color: rgb(239 68 68); color: white; font-size: 12px;">Voided</span>';
 				}
+				else if($column_value == 'Claimed'){
+					$column_value = '<span class="label" style="background-color: rgb(74 222 128); color: white; font-size: 12px;">Claimed</span>';
+				}
 			}
 	    }
 
@@ -884,8 +887,6 @@ use Illuminate\Support\Facades\Mail;
 				'updated_at' => date('Y-m-d H:i:s')
 			]);
 
-
-
 			$email_testings = new EmailTesting();
 			$customer_data = DB::table('g_c_lists_devps')->where('g_c_lists_devps.id', $customer['id'])
 			->get()
@@ -948,7 +949,6 @@ use Illuminate\Support\Facades\Mail;
 				'store_status' => 7
 			]);
 
-
 			return CRUDBooster::redirect(
 				CRUDBooster::mainpath(),
 				"Reference#: $reference_number successfully voided",
@@ -980,16 +980,16 @@ use Illuminate\Support\Facades\Mail;
 				)->send();
 			}
 
-			// $invoice_number_exists = true;
+			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid)
-			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no', $inv_num)
-			->where('ftermid', (int) $store_name->ftermid)
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no', $inv_num)
+			// ->where('ftermid', (int) $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
@@ -1020,14 +1020,8 @@ use Illuminate\Support\Facades\Mail;
 				'qr_reference_number' => $generated_qr_code,
 				'created_by' => CRUDBooster::myId()
 			]);
+			
 			$gclist_devp->save();
-
-			$store_history = new StoreHistory([
-				'g_c_lists_devps_id' => $gclist_devp->id,
-				'egc_value_id' => $egc['egc_value'],
-				
-			]);
-			$store_history->save();
 
 			$sc_name = str_replace(' ', '_', $store_concept->name);
 			$url = url("qr_link/$user_store_logo/$sc_name/$gclist_devp->qr_reference_number");

@@ -50,11 +50,11 @@
                             <tr>
                                 <td class="text-center table-label"> Name:</td>
                                 <td style="width: 200px;">
-                                    <input class="input" type="text" value="{{ $row->name }}" disabled>
+                                    <input class="input" type="text" value="{{ $row->claimed_by ? $row->claimed_by : $row->name }}" disabled>
                                 </td>
                                 <td class="text-center table-label"> Email:</td>
                                 <td style="width: 200px;">
-                                    <input class="input" type="text" value="{{ $row->email }}" disabled>
+                                    <input class="input" type="text" value="{{ $row->claimed_email ? $row->claimed_email : $row->email }}" disabled>
                                 </td>
                             </tr>
                             <tr>

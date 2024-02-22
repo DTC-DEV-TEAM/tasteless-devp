@@ -80,18 +80,21 @@
     <div class="otp prohibited-center" style="display: none;">
         <div class="prohibited-box">
             <div class="prohibited-content">
-                
                 <img id="alert-img" src="{{ asset('img/one-time-password.png') }}" alt="">
-                <h4 style="text-align: center; margin-top: 15px;">Verify using OTP</h4>
+                <h4 style="text-align: center; margin-top: 15px; letter-spacing: 1px;">VERIFY YOUR EMAIL ADDRESS</h4>
+                <h6 class="u-tw-gray u-t-center">A Verification code has been sent to</h6>
+                <h6 class="u-fw-b u-tw-gray u-t-center" id="otp-email">{{ $customer->email }}</h6>
                 <form action="" method="POST" autocomplete="off" id="verify_otp">
-                    <div class="otp-input">
+                    <div class="otp-input" style="margin: 10px 0;">
                         <input type="text" class="otp-box" maxlength="1" required>
                         <input type="text" class="otp-box" maxlength="1" required>
                         <input type="text" class="otp-box" maxlength="1" required>
                         <input type="text" class="otp-box" maxlength="1" required>
                         <input style="display: none;" type="text" name="otp" value="">
                     </div>
-                    <h6 class="u-tw-gray u-t-center">An OTP has been sent to your email</h6>
+                    <div style="display: flex; justify-content: space-between; max-width: 350px;">
+                        <h6 class="u-tw-gray" style="text-align: center;">Please check your inbox and enter the verification code below your email address.</h6>
+                    </div>
                     <div class="otp-btns">
                         <button id="close-otp" type="button">✏️ Back</button>
                         <button id="submit-otp" type="submit">➡️ Submit OTP</button>
@@ -275,12 +278,18 @@
                 $('#terms-and-condition').attr('checked', true);
                 $('#terms-and-condition-body').show();
             }
+
+            if(recipient.store_status>2){
+                $('.customer-section').find('input,#btn-submit').attr('disabled', 'true');
+            }
+
             if(recipient.store_status == 2){
                 $('.otp').show();
                 validEmail = true;
             }else if(recipient.store_status == 3){
                 $('.egc-mail').show();
             }
+
 
             $('#store_concepts_id').select2({
                 width: '100%'
@@ -332,6 +341,7 @@
                         reverseButtons: true
                         }).then((result) => {
                             if (result.isConfirmed) {
+                                $('#otp-email').text($('#email').val());
                                 $('#store_concepts_id').attr('disabled', false);
                                 // btnSubmit.attr('disabled', true);
                                 let registration_form = $('#registration-form').serialize();
@@ -342,7 +352,13 @@
                                     type: 'POST',
                                     data: registration_form + '&_token={{ csrf_token() }}',
                                     success: function(response) {
-                                        console.log(response);
+                                        if(!(response.is_otp_sent)){
+                                            Swal.fire({
+                                                title: "Error",
+                                                text: "OTP not sent",
+                                                icon: "error"
+                                            });
+                                        }
                                     },
                                     error: function(xhr, status, error) {
                                         Swal.fire({
@@ -399,10 +415,23 @@
                                     position: "center",
                                     icon: "success",
                                     title: "OTP Verification Successful",
-                                    showConfirmButton: false,
-                                    timer: 1000
+                                    html: `
+                                        <div>
+                                            <h4 class="u-fw-b">EGC activated 💳</h4>
+                                            <h5>Click <span class="u-fw-b">'Proceed'</span> if you intend to send the EGC to the recipient.</h5>
+                                            <h5>If you forget the email, you can send the link that we sent to you along with the e-gift card.</h5>
+                                        </div>
+                                    `,
+                                    showConfirmButton: true,
+                                    showCloseButton: true,
+                                    confirmButtonText: "Proceed",
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
                                 }).then((result) => {
-                                    $('.egc-mail').show();
+                                    $('.customer-section').find('input,#btn-submit').attr('disabled', 'true');
+                                    if (result.isConfirmed) {
+                                        $('.egc-mail').show();
+                                    }
                                 });
                             }else{
                                 Swal.fire({
@@ -441,7 +470,7 @@
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",
                         confirmButtonText: `Yes, send it!`,
-                        reverseButtons: true
+                        reverseButtons: true,
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({

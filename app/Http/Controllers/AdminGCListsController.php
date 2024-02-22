@@ -450,8 +450,7 @@ use Illuminate\Support\Facades\Log;
 				// 	CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 				// }
 			}else{
-				if(!($gc_list_devp->store_status > 3 && $gc_list_devp->store_status !=7)){
-
+				if(!($gc_list_devp->store_status > 2 && $gc_list_devp->store_status !=7)){
 					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("E-Gift Card is not activated."), "danger");
 				}
 				
@@ -487,11 +486,12 @@ use Illuminate\Support\Facades\Log;
 			$id_type = $return_inputs['id_type'];
 			$my_id = $return_inputs['my_id'];
 			$campaign_type_id = $return_inputs['campaign_type_id'];
-			
+			$claimed_by = $return_inputs['claimed_by'];
+			$claimed_email = $return_inputs['claimed_email'];
+
 			if($campaign_type_id){
 
 				GCList::where('id', $id)->update([
-	
 					'redeem' => 1,
 					'cashier_name' => CRUDBooster::myId(),
 					'cashier_date_transact' => date('Y-m-d H:i:s'),
@@ -518,12 +518,14 @@ use Illuminate\Support\Facades\Log;
 			else{
 
 				DB::table('g_c_lists_devps')->where('id', $id)->update([
-
 					'redeem' => 1,
+					'claimed_by' => $claimed_by,
+					'claimed_email' => $claimed_email,
 					'cashier_name' => CRUDBooster::myId(),
 					'cashier_date_transact' => date('Y-m-d H:i:s'),
 					'id_number' => $id_number,
 					'id_type' => $id_type,
+					'store_status' => 8,
 					'status' => 'CLAIMED',
 					'pos_terminal' => StoreConcept::find((DB::table('cms_users')->where('id', CRUDBooster::myId())->first()->id_store_concept))->ftermid
 				]);
@@ -659,7 +661,7 @@ use Illuminate\Support\Facades\Log;
 			]);
 			
 			// Send Mail
-			$email = $data['row']->email;
+			$email = $data['row']->claimed_email;
 
 			try {
 
