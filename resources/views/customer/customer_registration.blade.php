@@ -419,7 +419,6 @@
                                         <div>
                                             <h4 class="u-fw-b">EGC activated 💳</h4>
                                             <h5>Click <span class="u-fw-b">'Proceed'</span> if you intend to send the EGC to the recipient.</h5>
-                                            <h5>If you forget the email, you can send the link that we sent to you along with the e-gift card.</h5>
                                         </div>
                                     `,
                                     showConfirmButton: true,

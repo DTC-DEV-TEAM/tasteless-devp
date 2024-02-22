@@ -25,6 +25,11 @@
     </div>
     <table>
         <tr>
+            <td>
+                <span>If you wish to send it to the recipient click <a href="{{ $link }}">here</a>.</span>
+            </td>
+        </tr>
+        <tr>
             <td align="center">
                 <div style="width: 100%; text-align:center;">
                     <img src="{{ $message->embed(public_path() . "/$qr_code_generated") }}" width="800" style="height: 300px; min-width: 800px; object-fit: contain; text-align: center; pointer-events: none;" />
@@ -93,7 +98,6 @@
         </tr>
         <tr>
             <td>
-                <span>Your EGC has been activated successfully. If you wish to send it to the recipient click <a href="{{ $link }}">here</a>.</span>
                 <span style="display: none;">{{ now()->format('Y-m-d H:i:s') }} {!! html_entity_decode($html_email) !!}</span>
             </td>
         </tr>

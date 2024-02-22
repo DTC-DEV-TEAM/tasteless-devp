@@ -296,7 +296,7 @@ class CustomerRegistrationController extends Controller
             'gc_value' => $egc_value,
             'store_logo' => $store_logos_id,
             'qr_reference_number'=> $recipient->qr_reference_number,
-            'link' => $recipient->qr_link
+            'link' => str_replace('qr_link','customer_registration',$recipient->qr_link)
         );
 
         SendEmailJob::dispatch($data);
