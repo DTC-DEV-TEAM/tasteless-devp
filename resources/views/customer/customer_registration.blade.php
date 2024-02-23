@@ -418,7 +418,7 @@
                                     html: `
                                         <div>
                                             <h4 class="u-fw-b">EGC activated 💳</h4>
-                                            <h5>Click <span class="u-fw-b">'Gift'</span> if you intend to send the EGC to the recipient.</h5>
+                                            <h5>Click <span class="u-fw-b">'Gift'</span> if you intend to send the EGC to a recipient.</h5>
                                         </div>
                                     `,
                                     showConfirmButton: true,
