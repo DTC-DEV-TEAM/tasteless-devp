@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
 
+use App\ChargeTo;
+use App\CompanyId;
 use App\DateToSendCampaigns;
 use DB;
 use Session;
@@ -32,9 +34,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\Models\EmailTemplateImg;
 use App\StoreConcept;
-
-
-
+use App\StoreLogo;
+use App\Stores;
 
 	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -427,7 +428,7 @@ use App\StoreConcept;
 			$company = CompanyId::get();
 			$store = StoreConcept::get();
 			$store_logo = StoreLogo::get();
-
+			
 			$data = [];
 			$data['page_title'] = 'Add Data';
 			$data['company_id'] = $company;
@@ -454,7 +455,7 @@ use App\StoreConcept;
 			$store_logo = StoreLogo::get();
 			$charge_to = ChargeTo::get();
 			$excluded_concept = Stores::get();
-
+			
 			$data = [];
 			$data['page_title'] = 'Edit Campaign Creation';
 			$data['company_id'] = $company;
@@ -464,8 +465,6 @@ use App\StoreConcept;
 			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
 			$data['charge_to'] = $charge_to;
 			$data['excluded_concept'] = $excluded_concept;
-			// dd($data['stores1']);
-			// dd($data['stores1']);
 
 			if($qr_creation->campaign_type_id == 1){
 				return $this->view('redeem_qr.add_campaign_tpc',$data);

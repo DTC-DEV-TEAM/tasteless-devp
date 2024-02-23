@@ -116,9 +116,10 @@ use Illuminate\Support\Facades\Mail;
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
 			}
-			// else if(CRUDBooster::myPrivilegeId() == 7 ){
-			// 	$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3])'];
-			// }else if(CRUDBooster::myPrivilegeId() == 3){
+			else if(CRUDBooster::myPrivilegeId() == 7 ){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [1])'];
+			}
+			// else if(CRUDBooster::myPrivilegeId() == 3){
 			// 	$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2])'];
 			// }
 
@@ -348,7 +349,7 @@ use Illuminate\Support\Facades\Mail;
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Verify OTP</span>';
 				}
 				else if($column_value == 'Send EGC Recipient'){
-					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">Send EGC Recipient</span>';
+					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">Verified</span>';
 				}
 				else if($column_value == 'Verified'){
 					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Verified</span>';
@@ -461,7 +462,8 @@ use Illuminate\Support\Facades\Mail;
 				->get()
 				->first();
 			
-			$egc_value = DB::table('egc_value_types')->get();
+			$egc_value = DB::table('egc_value_types')->where('id', $gc_list->egc_value_id)->first();
+			
 			$email_testings = new EmailTesting();
 
 			$store_logos_id = 5;

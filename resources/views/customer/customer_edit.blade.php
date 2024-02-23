@@ -157,7 +157,8 @@
                 <tr>
                     <td>EGC Value:</td>
                     <td>
-                        <select class="form-control" name="egc_value" id="egc_value" required>
+                        {{ $egcs->name }}
+                        {{-- <select class="form-control" name="egc_value" id="egc_value" required>
                             <option value="" selected disabled>Select an option</option>
                             @foreach ($egcs as $egc)
                             @if ($customer->egc_value_id == $egc->id)
@@ -166,7 +167,7 @@
                                 <option value="{{ $egc->value }}">{{ $egc->name }}</option>
                             @endif
                             @endforeach
-                        </select>
+                        </select> --}}
                     </td>
                 </tr>
                 <tr>
@@ -203,7 +204,7 @@
     </form>
     <div class='panel-footer'>
         <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default">Cancel</a>
-        <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 2 ? 'Submit' : 'Approve' }}"/>
+        {{-- <input type='button' class='btn btn-primary pull-right' id='btn-fake' value="{{ $customer->store_status == 2 ? 'Submit' : 'Approve' }}"/> --}}
         @if (in_array(CRUDBooster::myPrivilegeId(),[1,7]))
         <a class="btn btn-danger pull-right" id="void" style="margin-right: 5px;">Void</a>
         @endif
