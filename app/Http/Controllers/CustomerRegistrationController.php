@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Request as Input;
 use DB;
 use App\GCList;
 use App\GCListsDevpsCustomer;
+use App\Jobs\GCListFetchJob;
 use App\Jobs\SendEmailJob;
 use App\Jobs\SendEmailOtp;
 use App\StoreHistory;
@@ -98,12 +99,14 @@ class CustomerRegistrationController extends Controller
             'link' => $gc_list_devp->first()->qr_link
         ];
 
-        $send_email_otp = new SendEmailOtp($data);
+        $egc_data = $this->sendGiftCardCustomer($gc_list_devp_customer->first(), $gc_list_devp->first());
 
-        $this->sendGiftCardCustomer($gc_list_devp_customer->first(), $gc_list_devp->first());
+        GCListFetchJob::withChain([
+            new SendEmailJob($egc_data),
+            new SendEmailOtp($data)
+        ])->dispatch();
 
-        return response()->json(['is_otp_sent' => $send_email_otp->handle()]);
-
+        return response()->json(['is_otp_sent' => 1]);
     }
 
     /**
@@ -250,9 +253,7 @@ class CustomerRegistrationController extends Controller
             'qr_reference_number'=> $recipient->qr_reference_number,
         );
 
-        SendEmailJob::dispatch($data);
-
-        return true;
+        return new SendEmailJob($data);
     }
 
     public function sendGiftCardCustomer($customer, $recipient){
@@ -299,6 +300,6 @@ class CustomerRegistrationController extends Controller
             'link' => str_replace('qr_link','customer_registration',$recipient->qr_link)
         );
 
-        SendEmailJob::dispatch($data);
+        return $data;
     }
 }
