@@ -349,7 +349,7 @@ use Illuminate\Support\Facades\Mail;
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">Verify OTP</span>';
 				}
 				else if($column_value == 'Send EGC Recipient'){
-					$column_value = '<span class="label" style="background-color: #77BFA3; color: white; font-size: 12px;">Verified</span>';
+					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Verified</span>';
 				}
 				else if($column_value == 'Verified'){
 					$column_value = '<span class="label" style="background-color: rgb(255, 179, 102); color: white; font-size: 12px;">Verified</span>';
@@ -982,16 +982,16 @@ use Illuminate\Support\Facades\Mail;
 				)->send();
 			}
 
-			$invoice_number_exists = true;
+			// $invoice_number_exists = true;
 			
-			// $invoice_number_exists = DB::connection('mysql_tunnel')
-			// ->table('pos_sale')
-			// ->where('fcompanyid',$store_name->fcompanyid)
-			// ->where('fofficeid',$store_name->branch_id)
-			// ->where('fdocument_no', $inv_num)
-			// ->where('ftermid', (int) $store_name->ftermid)
-			// ->where('fdoctype',6000)
-			// ->exists();
+			$invoice_number_exists = DB::connection('mysql_tunnel')
+			->table('pos_sale')
+			->where('fcompanyid',$store_name->fcompanyid)
+			->where('fofficeid',$store_name->branch_id)
+			->where('fdocument_no', $inv_num)
+			->where('ftermid', (int) $store_name->ftermid)
+			->where('fdoctype',6000)
+			->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(

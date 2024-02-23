@@ -75,7 +75,11 @@ class CustomerRegistrationController extends Controller
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
         $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
 
-        $otp = Str::random(4);
+        $otp = '';
+
+        for ($i = 0; $i < 4; $i++) {
+            $otp .= rand(0, 9);
+        }
 
         $devp_customer = $gc_list_devp_customer->update([
             'first_name' => $customer['first_name'],
