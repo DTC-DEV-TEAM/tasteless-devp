@@ -10,9 +10,11 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use DB;
 
-class SendEmailOtp
+class SendEmailOtp implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $details;
 
     /**
      * Create a new job instance.
