@@ -112,7 +112,7 @@ use Illuminate\Support\Facades\Mail;
 	        | 
 	        */
 	        $this->addaction = array();
-			$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [qr_link]','target'=>'_blank'];
+			$this->addaction[] = ['title'=>'Edit','url'=>'[customer_reference_number]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [customer_reference_number]','target'=>'_blank'];
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
 			}
@@ -300,7 +300,7 @@ use Illuminate\Support\Facades\Mail;
 
 			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
 
-			$query->addSelect('g_c_lists_devps.qr_link');
+			$query->addSelect('g_c_lists_devps.customer_reference_number');
 	        
 			if(CRUDBooster::isSuperAdmin()){
 				$query->where('g_c_lists_devps.store_concept', '!=', null)
@@ -966,13 +966,12 @@ use Illuminate\Support\Facades\Mail;
 			$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
 			$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
 			$store_name = StoreConcept::find($cms_user->id_store_concept);
-
+			
 			if($store_logos->name == 'Digital Walker and Beyond the Box'){
 				$user_store_logo = 'dw_and_btb';
 			}else{
 				$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
 			}
-
 			$inv_num = (int) $egc['invoice_number'];
 			if($inv_num === 0){
 				return CRUDBooster::redirect(
@@ -982,16 +981,16 @@ use Illuminate\Support\Facades\Mail;
 				)->send();
 			}
 
-			// $invoice_number_exists = true;
+			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid)
-			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no', $inv_num)
-			->where('ftermid', (int) $store_name->ftermid)
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no', $inv_num)
+			// ->where('ftermid', (int) $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
@@ -1003,7 +1002,7 @@ use Illuminate\Support\Facades\Mail;
 
 			do {
 				$generated_qr_code = Str::random(10);
-			} while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
+			} while (GCList::where('customer_reference_number', $generated_qr_code)->exists());
 
 			$gclist_devp_customer = new GCListsDevpsCustomer([
 				'created_by' => CRUDBooster::myId(),
@@ -1019,14 +1018,14 @@ use Illuminate\Support\Facades\Mail;
 				'g_c_lists_devps_customer_id' => $gclist_devp_customer->id,
 				'egc_value_id' => $egc['egc_value'],
 				'store_invoice_number' => $egc['invoice_number'],
-				'qr_reference_number' => $generated_qr_code,
+				'customer_reference_number' => $generated_qr_code,
 				'created_by' => CRUDBooster::myId()
 			]);
 			
 			$gclist_devp->save();
 
 			$sc_name = str_replace(' ', '_', $store_concept->name);
-			$url = url("qr_link/$user_store_logo/$sc_name/$gclist_devp->qr_reference_number");
+			$url = url("qr_link/$user_store_logo/$sc_name/$gclist_devp->customer_reference_number");
 
 			$gclist_devp->qr_link = $url;
 			$gclist_devp->save();

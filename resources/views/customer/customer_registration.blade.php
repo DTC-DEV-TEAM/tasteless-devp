@@ -117,14 +117,14 @@
                         <hr>
                         <table class="custom_normal_table" >
                             <tbody>
-                                <tr>
+                                {{-- <tr>
                                     <td>
                                         <div class="egc-checkbox-content">
                                             <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
                                             <label for="egc-checkbox">Same as customer information</label>
                                         </div>
                                     </td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <td>
                                         <p>First name</p>
@@ -158,7 +158,7 @@
     <section class="customer-section">
         <div class="customer-box">
             <form action="" method="POST" autocomplete="off" id="registration-form">
-                <input style="display: none" name="qr_reference_number" value="{{ Request::segment(4) }}" type="text">
+                <input style="display: none" name="customer_reference_number" value="{{ Request::segment(4) }}" type="text">
                 <div class="customer-box-logos">
                     @if (Request::segment(2) == 'digital_walker')
                         {{-- <img src="{{ asset('img/digital_walker1.png') }}" alt=""> --}}
@@ -401,7 +401,7 @@
 
                 if($(this).find('.otp-box:invalid').length === 0){
 
-                    verifyOtpForm.append('qr_reference_number', urlRefenrenceNumber);
+                    verifyOtpForm.append('customer_reference_number', urlRefenrenceNumber);
 
                     $.ajax({
                         url: "{{ route('verify_otp') }}",
@@ -439,7 +439,7 @@
                                     title: "OTP Verification Failed",
                                     text: "The entered OTP does not match. Please double-check and try again.",
                                     showConfirmButton: false,
-                                    timer: 2000 // You may adjust the timer duration as needed
+                                    timer: 2000
                                 });
                             }
                         },
@@ -458,7 +458,7 @@
 
                 let sendEgcForm = new URLSearchParams($(this).serialize());
 
-                sendEgcForm.append('qr_reference_number', urlRefenrenceNumber);
+                sendEgcForm.append('customer_reference_number', urlRefenrenceNumber);
 
                 if($(this).find('.egc-validate:invalid').length === 0){
                     Swal.fire({

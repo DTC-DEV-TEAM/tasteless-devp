@@ -473,7 +473,7 @@ use Illuminate\Support\Facades\Log;
 					
 				}else{
 	
-					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Invalid EGC or try again scanning."),"danger");
 				}
 			}
 		}

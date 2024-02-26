@@ -25,10 +25,10 @@ class CustomerRegistrationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($store_branch, $qr_reference_number)
+    public function index($store_branch, $customer_reference_number)
     {
 
-        $gclist_devp = g_c_lists_devp::where('qr_reference_number', $qr_reference_number)->first();
+        $gclist_devp = g_c_lists_devp::where('customer_reference_number', $customer_reference_number)->first();
 
         if($gclist_devp->store_status >= 4 || !$gclist_devp){
 
@@ -41,7 +41,7 @@ class CustomerRegistrationController extends Controller
             ->orderBY('beach_name', 'asc')
             ->get()
             ->toArray();
-        $data['recipient'] = DB::table('g_c_lists_devps')->where('qr_reference_number',$qr_reference_number)->first();
+        $data['recipient'] = DB::table('g_c_lists_devps')->where('customer_reference_number',$customer_reference_number)->first();
         $data['customer'] = DB::table('g_c_lists_devps_customers')->where('id', $data['recipient']->g_c_lists_devps_customer_id)->first();
         
         return view('customer.customer_registration', $data);
@@ -71,27 +71,31 @@ class CustomerRegistrationController extends Controller
     {
         $customer = $request->all();
 
-        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        $gc_list_devp = g_c_lists_devp::where('customer_reference_number', $customer['customer_reference_number']);
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
         $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
 
+        do {
+            $generated_qr_code = Str::random(10);
+        } while (DB::table('g_c_lists_devps')->where('qr_reference_number', $generated_qr_code)->exists());
+        
         $otp = '';
 
         for ($i = 0; $i < 4; $i++) {
             $otp .= rand(0, 9);
         }
 
-        $devp_customer = $gc_list_devp_customer->update([
+        $gc_list_devp_customer->update([
             'first_name' => $customer['first_name'],
             'last_name' => $customer['last_name'],
             'name' => $customer['first_name'].' '.$customer['last_name'],
             'phone' => $customer['contact_number'],
             'email' => $customer['email'],
             'confirmed_email' => $customer['confirm_email'],
-            'otp_code' => $otp
+            'otp_code' => $otp,
         ]);
-
-        $devp =  $gc_list_devp->update([
+        $gc_list_devp->update([
+            'qr_reference_number' => $generated_qr_code,
             'store_status' => 2
         ]);
 
@@ -162,9 +166,9 @@ class CustomerRegistrationController extends Controller
 
         $customer = $request->all();
 
-        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        $gc_list_devp = g_c_lists_devp::where('customer_reference_number', $customer['customer_reference_number']);
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
-
+        
         if($gc_list_devp_customer->first()->otp_code == $customer['otp']){
 
             $gc_list_devp_customer->update([
