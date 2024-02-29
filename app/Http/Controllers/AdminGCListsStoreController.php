@@ -112,7 +112,7 @@ use Illuminate\Support\Facades\Mail;
 	        | 
 	        */
 	        $this->addaction = array();
-			$this->addaction[] = ['title'=>'Edit','url'=>'[customer_reference_number]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [customer_reference_number]','target'=>'_blank'];
+			$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [customer_reference_number]','target'=>'_blank'];
 			if(CRUDBooster::isSuperAdmin()){
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
 			}
@@ -300,7 +300,7 @@ use Illuminate\Support\Facades\Mail;
 
 			$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
 
-			$query->addSelect('g_c_lists_devps.customer_reference_number');
+			$query->addSelect('g_c_lists_devps.qr_link');
 	        
 			if(CRUDBooster::isSuperAdmin()){
 				$query->where('g_c_lists_devps.store_concept', '!=', null)
