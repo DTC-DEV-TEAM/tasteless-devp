@@ -36,6 +36,7 @@ use App\Models\EmailTemplateImg;
 use App\StoreConcept;
 use App\StoreLogo;
 use App\Stores;
+use Illuminate\Support\Arr;
 
 	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -172,7 +173,7 @@ use App\Stores;
 			$this->index_button = array();
 			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
 				if(CRUDBooster::myPrivilegeName() == 'Marketing' || CRUDBooster::myPrivilegeName() == 'Super Administrator'){
-					$this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
+					// $this->index_button[] = ['label'=>'Third Party Campaign','url'=>CRUDBooster::mainpath("add"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
 					$this->index_button[] = ['label'=>'In House Campaign','url'=>CRUDBooster::mainpath("getAddIhc"),"icon"=>"fa fa-plus-circle", 'color'=>'success'];
 				}
 			}

@@ -6,8 +6,58 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
 
     <style>
+
+        /* File upload container */
+.file-upload {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+/* File upload label */
+.file-upload-label {
+    display: inline-block;
+    font-weight: bold;
+}
+
+/* File input */
+.file-upload input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* File upload icon */
+.file-upload-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    color: #007bff; /* Change to your desired icon color */
+    transition: color 0.3s ease;
+}
+
+/* File upload text */
+.file-upload-text {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 50px); /* Adjust as needed */
+}
+
+/* File upload hover state */
+.file-upload:hover .file-upload-icon {
+    color: #0056b3; /* Change to your desired hover color */
+}
+
         
         .form-input-content{
             display: flex;
@@ -124,37 +174,7 @@
         .file-upload-content input[type="file"]::after {
             content: "Choose a PDF File";
         }
-
-        /* select2 single */
-        .select2-container--default .select2-selection--single {
-            height: 35px;
-        }
-
-        /* Target the Select2 placeholder */
-        .select2-container .select2-selection--single .select2-selection__placeholder {
-            font-size: 15px;
-        }
-
-        .select2-container--default .select2-selection--multiple {
-            min-height: 35px;
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #E6E6FA; 
-            color: #000000; 
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
-            color: #000000;
-        }
-
-        .select2-container--default .select2-selection--multiple {
-            border: 1px solid #c7c5c5;
-            padding-top: 2px;
-            padding-bottom: 6px;
-            padding-left: 5px;
-        }
-
+        
         .swal2-popup {
             font-size: 17px !important;
             color: rgb(0, 0, 0) !important;
@@ -239,6 +259,17 @@
                 transform: scale(1.0); 
             } 
         }
+
+        .scrollable-wrapper {
+            width: 100%; /* Set a fixed width or a percentage width */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            white-space: nowrap; /* Prevent line breaks */
+        }
+
+        /* Optional: Adjust the max-width to fit the content */
+        .scrollable-wrapper select {
+            max-width: 100%; /* Adjust as needed */
+        }
     </style>
 @endpush
 @section('content')
@@ -281,74 +312,58 @@
                         @endif
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-resposive">
-                            <table class="table default-table-design">
-                                <tr>
-                                    {{-- <label for=""><span class="required">*</span> Campaign ID:</label> --}}
-                                    <td class="text-center table-label" ><span class="required">*</span> Campaign ID:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="text" name="campaign_id" placeholder="Enter Campaign ID" required>
-                                    </td>
-                                    <td class="text-center table-label"><span class="required">*</span> GC Description:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="text" name="gc_description" placeholder="Enter GC Description" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center table-label"><span class="required">*</span> GC Value:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="number" name="gc_value" placeholder="Enter GC Value" required>
-                                    </td>
-                                    <td class="text-center table-label"><span class="required">*</span> Number of GCs:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="number" name="batch_number" placeholder="Number of Gcs" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center table-label"><span class="required">*</span> Start Date:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="date" name="start_date" value="{{ $qr_creation->start_date }}" required>
-                                    </td>
-                                    <td class="text-center table-label"><span class="required">*</span> Expiry Date:</td>
-                                    <td style="width: 200px;">
-                                        <input class="input" type="date" name="expiry_date" value="{{ $qr_creation->expiry_date  }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center table-label"><span class="required">*</span> Store Logo:</td>
-                                    <td style="width: 200px;">
-                                        <select id="store_logo" name="store_logo" required>
-                                            <option value="" disabled required selected></option>
-                                            @foreach ($store_logo as $store)
-                                            <option value="{{ $store->id }}" {{ $qr_creation->store_logo == $store->id ? 'selected':'' }}>{{ $store->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td class="text-center table-label"><span class="required">*</span> Charge To:</td>
-                                    <td>
-                                        <select id="charge_to" name="charge_to" required>
-                                            <option value="" disabled required selected></option>
-                                            @foreach ($charge_to as $ct)
-                                            <option value="{{ $ct->id }}" {{ $qr_creation->charge_to == $ct->id ? 'selected':'' }}>{{ $ct->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                <table class="custom_normal_table">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><span class="required">*</span> Campaign ID:</p>
+                                <input class="u-input" type="text" name="campaign_id" placeholder="Enter Campaign ID" required>
+                            </td>
+                            <td>
+                                <p><span class="required">*</span> GC Description:</p>
+                                <input class="u-input" type="text" name="gc_description" placeholder="Enter GC Description" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p><span class="required">*</span> GC Value:</p>
+                                <input class="u-input" type="number" name="gc_value" placeholder="Enter GC Value" required>
+                            </td>
+                            <td>
+                                <p><span class="required">*</span> Number of GCs:</p>
+                                <input class="u-input" type="number" name="batch_number" placeholder="Number of Gcs" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p><span class="required">*</span> Store Logo:</p>
+                                <select class="u-input" id="store_logo" name="store_logo" required>
+                                    <option value="" disabled required selected></option>
+                                    @foreach ($store_logo as $store)
+                                    <option value="{{ $store->id }}" {{ $qr_creation->store_logo == $store->id ? 'selected':'' }}>{{ $store->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td>
+                                <p><span class="required">*</span> Charge To:</p>
+                                <select id="charge_to" name="charge_to" required>
+                                    <option value="" disabled required selected></option>
+                                    @foreach ($charge_to as $ct)
+                                    <option value="{{ $ct->id }}" {{ $qr_creation->charge_to == $ct->id ? 'selected':'' }}>{{ $ct->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        @if ((Request::segment(3) == 'getAddIhc' || $qr_creation->campaign_status == 1) && Request::segment(3) != 'detail')
-                        <table class="table default-table-design">
+                @if ((Request::segment(3) == 'getAddIhc' || $qr_creation->campaign_status == 1) && Request::segment(3) != 'detail')
+                <div style="overflow-x: auto;">
+                    <table class="custom_normal_table">
+                        <tbody>
                             <tr>
-                                <td class="text-center table-label">Excluded Concept:</td>
                                 <td>
+                                    <p>Excluded Concept:</p>
                                     <select class="excluded_concept" id="excluded_concept" name="store[]" multiple>
                                         @if (!$qr_creation->campaign_id)
                                         @foreach ($excluded_concept as $store)
@@ -359,12 +374,12 @@
                                             <option value="{{ $store->id }}" {{ in_array($store->id, explode(',', $qr_creation->store)) ? 'selected' : '' }}>{{ $store->name }}</option>
                                         @endforeach
                                         @endif
-                                    </select>                                
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-center table-label" >Excluded Stores:</td>
                                 <td>
+                                    <p>Excluded Stores:</p>
                                     <select class="store_concept" id="store_concept" name="stores[]" multiple>
                                         @if (!$qr_creation->campaign_id)
                                             @foreach ($stores as $store)
@@ -377,32 +392,37 @@
                                                 </option>
                                             @endforeach
                                         @endif
-                                    </select>                         
+                                    </select>  
                                 </td>
                             </tr>
-                        </table>
-                        @else
-                        <div>
-                            <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
-                            <div style="display: flex; flex-wrap: wrap;">
-                                @foreach ($stores1 as $store)
-                                    <span style="margin: 5px 5px 5px 0px; background-color: #605CA8; color: white; padding: 5px; ">{{ $store->name }}</span>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
+                        </tbody>
+                    </table>
+                </div>
+                @else
+                <br>
+                <div>
+                    <div style="font-weight: bold; font-size: 15px;">Excluded Stores:</div>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        @foreach ($stores1 as $store)
+                            <span style="margin: 5px 5px 5px 0px; background-color: #605CA8; color: white; padding: 5px; ">{{ $store->name }}</span>
+                        @endforeach
                     </div>
                 </div>
+                @endif
 
                 @if (Request::segment(3) == 'getAddIhc' )
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="file-upload-content">
-                            <label for=""><span class="required">*</span>Attach Memo</label>
-                            <input type="file" name="memo_attachment" accept=".pdf" multiple required>
-                        </div>
-                    </div>
-                </div>
+                <table class="custom_normal_table">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="input_container">
+                                    <label for="files" class="u-btn u-box-shadow-default">Attach Memo here</label>
+                                    <input id="files" name="memo_attachment" accept=".pdf" multiple required style="display:none;" type="file">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 <br>
                 @endif
 
@@ -444,6 +464,14 @@
         
     
     <script type="text/javascript">
+
+        if("{{ !$qr_creation->campaign_status }}"){
+            document.querySelector("#files").onchange = function() {
+                const fileName = this.files[0]?.name;
+                const label = document.querySelector("label[for=files]");
+                label.innerText = fileName ?? "Browse Files";
+            };
+        }
 
         // $('.store_concept').select2({
         //     placeholder: "Select a Store",
