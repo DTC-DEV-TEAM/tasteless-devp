@@ -388,7 +388,7 @@
         event.preventDefault();
 
         if(!id_number || !id_type || !claimed_by || !claimed_email ){
-            const Toast = Swal.mixin({
+          const Toast = Swal.mixin({
             toast: true,
             position: 'bottom-end',
             showConfirmButton: false,
@@ -405,7 +405,26 @@
             title: 'All required field must be filled'
           })
           return
+        }else{
+          if(!(isEmail(claimed_email))){
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'bottom-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              }
+            })
 
+            Toast.fire({
+              icon: 'warning',
+              title: 'Invalid Email'
+            })
+            return
+          }
         }
 
         $('.sk-chase-position').show();
@@ -570,6 +589,11 @@
       $temp.val($(element).text()).select();
       document.execCommand("copy");
       $temp.remove();
+    }
+
+    function isEmail(email) {
+      var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+      return regex.test(email);
     }
   </script>
 @endsection
