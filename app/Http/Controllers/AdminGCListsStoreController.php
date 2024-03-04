@@ -992,6 +992,8 @@ use Illuminate\Support\Facades\Mail;
 			->where('fdoctype',6000)
 			->exists();
 
+			dd($invoice_number_exists );
+
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
 					CRUDBooster::mainpath(),
