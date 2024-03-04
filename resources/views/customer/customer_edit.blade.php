@@ -9,6 +9,7 @@
     {{-- Css --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
     {{-- Swal --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -103,16 +104,16 @@
             <table class="custom_table">
                 <tbody>
                     <tr>
-                        <td>First Name:</td>
-                        <td><input class="form-control inputs" type="text" name="cus_first_name" value="{{ $customer->cus_first_name }}" readonly></td>
-                        <td>Last Name:</td>
-                        <td><input class="form-control inputs" type="text" name="cus_last_name" value="{{ $customer->cus_last_name }}" readonly></td>
+                        <td class="u-fw-b">First Name:</td>
+                        <td><input class="u-input inputs" type="text" name="cus_first_name" value="{{ $customer->cus_first_name }}" readonly></td>
+                        <td class="u-fw-b">Last Name:</td>
+                        <td><input class="u-input inputs" type="text" name="cus_last_name" value="{{ $customer->cus_last_name }}" readonly></td>
                     </tr>
                     <tr>
-                        <td>Email:</td>
-                        <td><input class="form-control inputs" type="text" name="cus_email" value="{{ $customer->cus_email }}" readonly></td>
-                        <td>Contact:</td>
-                        <td><input class="form-control inputs" type="text" name="cus_contact_number" value="{{ $customer->cus_phone }}" readonly></td>
+                        <td class="u-fw-b">Email:</td>
+                        <td><input class="u-input inputs" type="text" name="cus_email" value="{{ $customer->cus_email }}" readonly></td>
+                        <td class="u-fw-b">Contact:</td>
+                        <td><input class="u-input inputs" type="text" name="cus_contact_number" value="{{ $customer->cus_phone }}" readonly></td>
                     </tr>
                 </tbody>
             </table>
@@ -126,16 +127,16 @@
             <table class="custom_table">
                 <tbody>
                     <tr>
-                        <td>First Name:</td>
-                        <td><input class="form-control inputs" type="text" name="first_name" value="{{ $customer->first_name }}" readonly></td>
-                        <td>Last Name:</td>
-                        <td><input class="form-control inputs" type="text" name="last_name" value="{{ $customer->last_name }}" readonly></td>
+                        <td class="u-fw-b">First Name:</td>
+                        <td><input class="u-input inputs" type="text" name="first_name" value="{{ $customer->first_name }}" readonly></td>
+                        <td class="u-fw-b">Last Name:</td>
+                        <td><input class="u-input inputs" type="text" name="last_name" value="{{ $customer->last_name }}" readonly></td>
                     </tr>
                     <tr>
-                        <td>Email:</td>
-                        <td><input class="form-control inputs" type="email" name="email" value="{{ $customer->email }}" readonly></td>
-                        <td>Contact:</td>
-                        <td><input class="form-control inputs" type="text" name="contact_number" value="{{ $customer->phone }}" readonly></td>
+                        <td class="u-fw-b">Email:</td>
+                        <td><input class="u-input inputs" type="email" name="email" value="{{ $customer->email }}" readonly></td>
+                        <td class="u-fw-b">Contact:</td>
+                        <td><input class="u-input inputs" type="text" name="contact_number" value="{{ $customer->phone }}" readonly></td>
                     </tr>
                 </tbody>
             </table>
@@ -144,10 +145,10 @@
         <table class="custom_table">
             <tbody>
                 <tr>
-                    <td>Concept:</td>
-                    <td><input class="form-control inputs branch" type="text" value="{{ $customer->store_concept }}" readonly></td>
-                    <td>Branch</td>
-                    <td><input class="form-control inputs branch" type="text" value="{{ $customer->store_branch }}" readonly></td>
+                    <td class="u-fw-b">Concept:</td>
+                    <td><input class="u-input inputs branch" type="text" value="{{ $customer->store_concept }}" readonly></td>
+                    <td class="u-fw-b">Branch</td>
+                    <td><input class="u-input inputs branch" type="text" value="{{ $customer->store_branch }}" readonly></td>
                 </tr>
             </tbody>
         </table>
@@ -155,10 +156,10 @@
         <table class="custom_normal_table">
             <tbody>
                 <tr>
-                    <td>EGC Value:</td>
+                    <td class="u-fw-b">EGC Value:</td>
                     <td>
                         {{ $egcs->name }}
-                        {{-- <select class="form-control" name="egc_value" id="egc_value" required>
+                        {{-- <select class="u-input" name="egc_value" id="egc_value" required>
                             <option value="" selected disabled>Select an option</option>
                             @foreach ($egcs as $egc)
                             @if ($customer->egc_value_id == $egc->id)
@@ -171,8 +172,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Invoice Number:</td>
-                    <td><input class="form-control" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required readonly></td>
+                    <td class="u-fw-b">Invoice Number:</td>
+                    <td><input class="u-input" type="text" name="store_invoice_number" value="{{ $customer->store_invoice_number }}" required readonly></td>
                     <td></td>
                     <td></td>
                 </tr>

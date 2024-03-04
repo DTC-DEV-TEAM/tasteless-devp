@@ -209,7 +209,7 @@
                                 </td>
                                 <td>
                                     <p>Store Branch</p>
-                                    <select name="store_concepts_id" id="store_concepts_id" class="search-select" disabled required>
+                                    <select class="inputs" name="store_concepts_id" id="store_concepts_id" class="search-select" disabled required>
                                         <option value="" disabled selected>None selected...</option>
                                         @foreach ($store_branches as $store_branch)
                                             @if (str_replace('_',' ',Request::segment(3)) == $store_branch->name)
@@ -291,9 +291,9 @@
             }
 
 
-            $('#store_concepts_id').select2({
-                width: '100%'
-            });
+            // $('#store_concepts_id').select2({
+            //     width: '100%'
+            // });
 
             if ("{{ (session('success') && is_array(session('success'))) }}"){
                 $('.modal-success').css('visibility', 'visible');
