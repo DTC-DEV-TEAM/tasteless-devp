@@ -566,15 +566,17 @@ use Illuminate\Support\Facades\Log;
 			// $fcompanyid = $store_name->fcompanyid;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
+
+			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
-			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
-			->where('fdocument_no',$invoice_number)
-			->where('ftermid', (int) $store_name->ftermid) //need setup user management
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			// ->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
+			// ->where('fdocument_no',$invoice_number)
+			// ->where('ftermid', (int) $store_name->ftermid) //need setup user management
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 // 			$invoice_number_exists = DB::connection('mysql_tunnel')
 // 			->table('pos_sale')
