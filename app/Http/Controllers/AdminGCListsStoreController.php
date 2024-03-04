@@ -983,16 +983,16 @@ use Illuminate\Support\Facades\Mail;
 
 			$invoice_number_exists = true;
 			
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid)
-			->where('fofficeid',$store_name->branch_id)
-			->where('fdocument_no', $inv_num)
-			->where('ftermid', (int) $store_name->ftermid)
-			->where('fdoctype',6000)
-			->exists();
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid)
+			// ->where('fofficeid',$store_name->branch_id)
+			// ->where('fdocument_no', $inv_num)
+			// ->where('ftermid', (int) $store_name->ftermid)
+			// ->where('fdoctype',6000)
+			// ->exists();
 
-			dd($invoice_number_exists );
+			// dd($invoice_number_exists );
 
 			if(!$invoice_number_exists){
 				return CRUDBooster::redirect(
