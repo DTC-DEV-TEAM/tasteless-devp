@@ -982,6 +982,8 @@ use Illuminate\Support\Facades\Mail;
 			}
 
 			$invoice_number_exists = true;
+
+			dd($store_name->fcompanyid, $store_name->branch_id, $inv_num, (int) $store_name->ftermid);
 			
 			// $invoice_number_exists = DB::connection('mysql_tunnel')
 			// ->table('pos_sale')
