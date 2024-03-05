@@ -16,7 +16,7 @@
           <table id='table-detail' class='table table-striped'>
           <tr>
             <td class="label-bold" style="width: 25%;">Name</td>
-            <td>{{ $row->name }}</td>
+            <td>{{ $row->claimed_by ? $row->claimed_by : $row->name }}</td>
           </tr>
           <tr>
             <td class="label-bold">Phone</td>
@@ -24,7 +24,7 @@
           </tr>
           <tr>
             <td class="label-bold">Email</td>
-            <td><a href='mailto:hills.velda@schiller.com' target="_blank">{{ $row->email }}</a></td>
+            <td>{{ $row->claimed_email ? $row->claimed_email : $row->email }}</td>
           </tr>
           <tr>
             <td class="label-bold">Campaign ID</td>
@@ -48,11 +48,19 @@
           </tr>
           <tr>
             <td class="label-bold">GC Reference #</td>
-            <td>{{ $row->campaign_id.' - '.$row->qr_reference_number }}</td>
+            <td>{{ $row->campaign_id ? $row->campaign_id : 'In-store EGC' ." - ".$row->qr_reference_number }}</td>
           </tr>
           <tr>
             <td class="label-bold">Invoice #</td>
             <td>{{ $row->invoice_number }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">Store</td>
+            <td>{{ $row->store_concept_name }}</td>
+          </tr>
+          <tr>
+            <td class="label-bold">Date Reedemed</td>
+            <td>{{ $row->cashier_date_transact }}</td>
           </tr>
           <tr>
             <td class="label-bold">Redeemed</td>

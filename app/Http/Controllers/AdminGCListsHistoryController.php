@@ -416,18 +416,27 @@
 			$campaign_types_id = Request::all()['campaign_types_id'];
 			$uploaded_img = Request::all()['uploaded_img'];
 
+
 			if((int) $campaign_types_id == 3){
+
 				$data['row'] = DB::table('g_c_lists_devps')
 					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
+					->leftJoin('egc_value_types as egc', 'egc.id' ,'=', 'g_c_lists_devps.egc_value_id')
+					->leftJoin('store_concepts as sc', 'sc.id' ,'=', 'g_c_lists_devps.store_concepts_id')
 					->select('g_c_lists_devps.*',
-						'id_name.valid_ids')
+						'id_name.valid_ids',
+						'egc.value as gc_value',
+						'sc.name as store_concept_name'
+					)
 					->where('g_c_lists_devps.uploaded_img',$uploaded_img)
 					->first();
-				
 			}else{
+
 				$data['row'] = DB::table('g_c_lists')
-				->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
-				->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
+				->leftJoin('id_types as id_name', 'id_name.id' , 'g_c_lists.id_type')
+				->leftJoin('qr_creations as qr', 'qr.id', 'g_c_lists.campaign_id')
+				->leftJoin('cms_users', 'cms_users.id', 'g_c_lists.cashier_name')
+				->leftJoin('store_concepts as sc', 'sc.id', 'cms_users.id_store_concept')
 				->select('g_c_lists.*',
 					'qr.campaign_id',
 					'qr.gc_description',
@@ -435,7 +444,10 @@
 					'qr.number_of_gcs',
 					'qr.batch_group',
 					'qr.batch_number',
-					'id_name.valid_ids')
+					'id_name.valid_ids',
+					'sc.name as store_concept_name',
+					'cms_users.name as hey'
+				)
 				->where('g_c_lists.uploaded_img',$uploaded_img)
 				->first();
 			}
@@ -446,7 +458,8 @@
 			}
 
 			$data['valid_ids'] = IdType::get();
-	
+
+
 			// Generate QR Code
 			$qrCodeData = $data['row']->email.'|'.$data['row']->id;
 
