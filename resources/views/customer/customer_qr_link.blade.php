@@ -66,7 +66,7 @@
 <body>
     <div class="qrcode-container">
         <div class="qr-content">
-            <div class="text-center qr-title">{{ Request::segment(3) }}</div>
+            <div class="text-center qr-title">{{ str_replace('_', ' ', Request::segment(3)) }}</div>
             <div class="qr-code text-center">
                 {!! QrCode::size(400)->gradient(55, 0, 0, 0, 0, 125, 'vertical')->generate(url("customer_registration/".Request::segment(2)."/".Request::segment(3)."/".Request::segment(4))); !!}
             </div>

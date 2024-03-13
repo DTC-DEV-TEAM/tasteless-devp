@@ -20,7 +20,9 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\EmailTesting;
+use App\g_c_lists_devp;
 use App\Jobs\GCListFetchJob;
+use App\RedemptionSetting;
 use App\StoreConcept;
 use App\StoreLogo;
 use DateTime;
@@ -427,21 +429,26 @@ use Illuminate\Support\Facades\Log;
 						->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists.id_type')
 						->leftJoin('qr_creations as qr', 'qr.id', '=', 'g_c_lists.campaign_id')
 						->select('g_c_lists.*',
-						'qr.campaign_id',
-						'qr.gc_description',
-						'qr.gc_value',
-						'qr.number_of_gcs',
-						'qr.batch_group',
-						'qr.batch_number',
-						'qr.campaign_type_id',
-						'id_name.valid_ids')
+							'qr.campaign_id',
+							'qr.gc_description',
+							'qr.gc_value',
+							'qr.number_of_gcs',
+							'qr.batch_group',
+							'qr.batch_number',
+							'qr.campaign_type_id',
+							'id_name.valid_ids',
+						)
 						->where('g_c_lists.id',$id)
 						->first();
+
+						$data['sc'] = DB::table('cms_users')->where('cms_users.id', CRUDBooster::myId())
+							->leftJoin('store_concepts as sc', 'sc.id', 'cms_users.id_store_concept')
+							->select('sc.name as store_concept_name')
+							->first();
 						
 						$data['valid_ids'] = IdType::orderBy('valid_ids', 'asc')->get();
 						
 						return $this->view('redeem_qr.qr_redeem_section',$data);
-						
 					}else{
 		
 						CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("You don't have privilege to access this area or try again scanning."),"danger");
@@ -450,7 +457,8 @@ use Illuminate\Support\Facades\Log;
 				// 	CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("QR Code expired, I'm sorry."),"danger");
 				// }
 			}else{
-				if(!($gc_list_devp->store_status > 2 && $gc_list_devp->store_status !=7)){
+				
+				if(in_array($gc_list_devp->store_status, [2,6,7])){
 					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("E-Gift Card is not activated."), "danger");
 				}
 				
@@ -460,9 +468,11 @@ use Illuminate\Support\Facades\Log;
 					$data['row'] = DB::table('g_c_lists_devps')
 					->leftJoin('id_types as id_name', 'id_name.id' ,'=', 'g_c_lists_devps.id_type')
 					->leftJoin('egc_value_types as egc', 'egc.id' ,'=', 'g_c_lists_devps.egc_value_id')
+					->leftJoin('store_concepts as sc', 'sc.id' ,'=', 'g_c_lists_devps.store_concepts_id')
 					->select('g_c_lists_devps.*',
-					'id_name.valid_ids',
-					'egc.value as gc_value'
+						'id_name.valid_ids',
+						'egc.value as gc_value',
+						'sc.name as store_concept_name'
 					)
 					->where('g_c_lists_devps.id',$id)
 					->first();
@@ -476,6 +486,36 @@ use Illuminate\Support\Facades\Log;
 					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Invalid EGC or try again scanning."),"danger");
 				}
 			}
+		}
+
+		public function getBdo(IlluminateRequest $request)
+		{
+			$bdo_code = $request['bdo_code'];
+
+			$devp = g_c_lists_devp::where('qr_reference_number', $bdo_code)->first();
+
+			if (!$bdo_code || !$devp){
+				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Incorrect BDO Code."),"danger");
+			}
+
+			$url = "admin/g_c_lists/edit/$devp->id?value=$devp->qr_reference_number&campaign_id=3";
+
+			return redirect($url);
+		}
+
+		public function redemptionSetting(IlluminateRequest $request)
+		{
+			dd($request->all());
+			$redemption_type = $request['redemption_id'];
+
+			RedemptionSetting::first()
+				->update([
+					'redemption_type_id' => $redemption_type,
+					'updated_by' => CRUDBooster::myId(),
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
+
+			CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Redemption settings updated successfully."),"success");
 		}
 
 		public function redeemCode(IlluminateRequest $request) {

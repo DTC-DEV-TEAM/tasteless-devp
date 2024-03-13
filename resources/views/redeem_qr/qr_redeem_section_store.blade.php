@@ -277,10 +277,10 @@
           </div>
           <br>
           @endif
-
           <div class="text-center">
-              <img style="height: 130px; width: 130px;" src="{{ asset('img/scan-women.jpg') }}" alt="">
-              <p style="font-weight: bold; font-size: 15px;">Redeem code here and unlock exclusive benefits and rewards.</p>
+            <p style="font-weight: bold; font-size: 15px; color: rgb(72, 72, 72);">Store: {{ $row->store_concept_name }}</p>
+            <img style="height: 130px; width: 130px;" src="{{ asset('img/scan-women.jpg') }}" alt="">
+            <p style="font-weight: bold; font-size: 15px; color: rgb(100, 100, 100);">Redeem code here and unlock exclusive benefits and rewards.</p>
           </div>
           <div class="redeem-btn">
             <button type='submit' class='redeem-code' id="redeem-code"><i class='fa fa-credit-card-alt '></i> Step 1 - Redeem Code</button>

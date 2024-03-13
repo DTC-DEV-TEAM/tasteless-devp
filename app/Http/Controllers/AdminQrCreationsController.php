@@ -40,6 +40,12 @@ use Illuminate\Support\Arr;
 
 	class AdminQrCreationsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
+		// Campaign Status
+		public $forApprovalStatus = 1;
+		public $forAccountingApproval = 2;
+		public $approved = 3;
+		public $rejected = 4;
+
 		public function __construct() {
 
 			date_default_timezone_set("Asia/Manila");
@@ -124,13 +130,12 @@ use Illuminate\Support\Arr;
 			*/
 			$this->addaction = array();
 
-			if(CRUDBooster::myPrivilegeName() == 'Marketing'){
-				// $this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
-			}elseif(CRUDBooster::myPrivilegeName() == 'Marketing Head'){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 1"];
-			}elseif(CRUDBooster::myPrivilegeName() == 'Accounting Head'){
-				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == 2"];
+			if (CRUDBooster::myPrivilegeName() == 'Marketing'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == $this->forApprovalStatus"];
+			}elseif (CRUDBooster::myPrivilegeName() == 'Marketing Head'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == $this->forApprovalStatus"];
+			}elseif (CRUDBooster::myPrivilegeName() == 'Accounting Head'){
+				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', "showIf"=>"[campaign_status] == $this->forAccountingApproval"];
 			}else{
 				$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil'];
 			}
@@ -282,7 +287,8 @@ use Illuminate\Support\Arr;
 		| @button_name = the name of button
 		|
 		*/
-		public function actionButtonSelected($id_selected,$button_name) {
+		public function actionButtonSelected($id_selected,$button_name) 
+		{
 			//Your code here
 				
 		}
@@ -295,8 +301,8 @@ use Illuminate\Support\Arr;
 		| @query = current sql query 
 		|
 		*/
-		public function hook_query_index(&$query) {
-			//Your code here	
+		public function hook_query_index(&$query) 
+		{
 			$query->orderByRaw(
 				"CASE
 					WHEN campaign_status = 1 THEN 1
@@ -358,9 +364,8 @@ use Illuminate\Support\Arr;
 		| @id = last insert id
 		| 
 		*/
-		public function hook_after_add($id) {   
-			
-			//Your code here
+		public function hook_after_add($id) 
+		{   
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), sprintf("The Campaign ID has been added."),"success")->send();
 		}
 
@@ -372,8 +377,8 @@ use Illuminate\Support\Arr;
 		| @id       = current id 
 		| 
 		*/
-		public function hook_before_edit(&$postdata,$id) {        
-			
+		public function hook_before_edit(&$postdata,$id) 
+		{        
 			$postdata['updated_by'] = CRUDBooster::myId();
 			$postdata['updated_at'] = date('Y-m-d H:i:s');
 		}
@@ -385,9 +390,8 @@ use Illuminate\Support\Arr;
 		| @id       = current id 
 		| 
 		*/
-		public function hook_after_edit($id) {
-			//Your code here 
-
+		public function hook_after_edit($id) 
+		{
 		}
 
 		/* 
@@ -397,9 +401,8 @@ use Illuminate\Support\Arr;
 		| @id       = current id 
 		| 
 		*/
-		public function hook_before_delete($id) {
-			//Your code here
-
+		public function hook_before_delete($id) 
+		{
 		}
 
 		/* 
@@ -409,18 +412,17 @@ use Illuminate\Support\Arr;
 		| @id       = current id 
 		| 
 		*/
-		public function hook_after_delete($id) {
-			//Your code here
-
+		public function hook_after_delete($id) 
+		{
 		}
 
-		public function exportGCListTemplate(){
-
+		public function exportGCListTemplate()
+		{
 			return Excel::download(new GCListTemplateExport, 'gc_list_template.xlsx');
 		}
 
-		public function getAdd() {
-			
+		public function getAdd() 
+		{
 			//Create an Auth
 			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
@@ -436,7 +438,6 @@ use Illuminate\Support\Arr;
 			$data['stores'] = $store;
 			$data['store_logo'] = $store_logo;
 
-			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.add_campaign_tpc',$data);
 		}
 
@@ -508,8 +509,8 @@ use Illuminate\Support\Arr;
 			}
 		}
 
-		public function getAddIhc() {
-			
+		public function getAddIhc() 
+		{
 			//Create an Auth
 			if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {    
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
@@ -529,12 +530,11 @@ use Illuminate\Support\Arr;
 			$data['charge_to'] = $charge_to;
 			$data['excluded_concept'] = $excluded_concept;
 
-			//Please use view method instead view method from laravel
 			return $this->view('redeem_qr.add_campaign_ihc',$data);
 		}
 
-		public function addCampaign(IlluminateRequest $request){
-			
+		public function addCampaign(IlluminateRequest $request)
+		{
 			$campaign = $request->all();
 			$campaign['campaign_type_id'] = "1";
 			$excel_file = $campaign['po_attachment'];
@@ -578,8 +578,8 @@ use Illuminate\Support\Arr;
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
 		}
 
-		public function addCampaignIhc(IlluminateRequest $request){
-			
+		public function addCampaignIhc(IlluminateRequest $request)
+		{
 			$campaign = $request->all();
 			$campaign['campaign_type_id'] = "2";
 			
@@ -624,8 +624,8 @@ use Illuminate\Support\Arr;
 			return CRUDBooster::redirect(CRUDBooster::mainpath(), 'Campaign Creation added succesfully', 'success')->send();
 		}
 
-		public function saveCampaignIhc(IlluminateRequest $request){
-			
+		public function saveCampaignIhc(IlluminateRequest $request)
+		{
 			$campaign = $request->all();
 			$campaign['store'] = $campaign['store'] ? implode(',',$campaign['store']) : null;
 			$campaign['number_of_gcs'] = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
@@ -648,8 +648,8 @@ use Illuminate\Support\Arr;
 
 		}
 
-		public function campaignApproval(IlluminateRequest $request){
-
+		public function campaignApproval(IlluminateRequest $request)
+		{
 			$qr_creation = QrCreation::find($request->get('id'));
 			
 			$campaign = array(
@@ -718,8 +718,8 @@ use Illuminate\Support\Arr;
 
 		}
 
-		public function Stores(IlluminateRequest $request){
-
+		public function Stores(IlluminateRequest $request)
+		{
 			$return_inputs = $request->all();
 
 			$results = StoreConcept::
@@ -735,8 +735,8 @@ use Illuminate\Support\Arr;
 
 		}
 
-		public function manipulate_image($amount, $qr_api, $store_logo){
-
+		public function manipulate_image($amount, $qr_api, $store_logo, $qr_reference_number)
+		{
 			$dw_path = 'store_logo/img/digital_walker';
 			$btb_path = 'store_logo/img/beyond_the_box';
 			$dw_btb_path = 'store_logo/img/btb_and_dw';
@@ -819,15 +819,32 @@ use Illuminate\Support\Arr;
 				$color = '#1a1a1a';
 				$shadow = null;
 
-				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
+				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow, $qr_reference_number);
 			}
 
 			return $filename;
 		}
 
-		public function saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow){
-
+		public function saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow, $qr_reference_number)
+		{
 			$text_width = 0; // Initialize outside the closure
+
+			
+			$logo_path->text('GIFT CODE: '.$qr_reference_number, 0, -10, function($font) use (&$text_width, $value_width){
+				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
+				$font->size(19);
+
+				$textSize = $font->getBoxSize()['width'];
+				
+				$text_width = ($value_width - $textSize) / 2;
+			});
+
+			$logo_path->text('GIFT CODE: '.$qr_reference_number, $text_width, 215, function($font) use ($color, $shadow){
+				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
+				$font->size(19);
+				$font->color('#6C8692');
+			});
+			
 	
 			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width, $amount) {
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
@@ -835,12 +852,12 @@ use Illuminate\Support\Arr;
 				
 				$textSize = $font->getBoxSize()['width'];
 				
-				$calculate_position = ($value_width - $textSize) / 2;
-				if(strlen((string) $amount) == 4){
-					$text_width = $calculate_position - 80;
-				}else{
-					$text_width = $calculate_position - 85;
-				};
+				$text_width = ($value_width - $textSize) / 2;
+				// if(strlen((string) $amount) == 4){
+				// 	$text_width = $calculate_position - 80;
+				// }else{
+				// 	$text_width = $calculate_position - 85;
+				// };
 			});
 
 			if($shadow){
@@ -851,11 +868,13 @@ use Illuminate\Support\Arr;
 				});
 			}
 
-			$real_image = $logo_path->text('P'.$amount, $text_width, 187, function($font) use ($color, $shadow){
+			$real_image = $logo_path->text('P'.$amount, $text_width, 170, function($font) use ($color, $shadow){
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
 				$font->size(110);
 				$font->color($color);
 			});
+		
+			
 
 			// $rectangleImage = Image::canvas(130, 130, 'rgba(255, 255, 255, 1)');
 			// $rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
@@ -876,17 +895,18 @@ use Illuminate\Support\Arr;
 			// ];
 			// $content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
 
-			$qrCodeApiLink = $qr_api;
+			// $qrCodeApiLink = $qr_api;
 
-			$ch = curl_init($qrCodeApiLink);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$content = curl_exec($ch);
-			curl_close($ch);
+			// $ch = curl_init($qrCodeApiLink);
+			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			// $content = curl_exec($ch);
+			// curl_close($ch);
 
-			$qrCodeImage = Image::make($content);
+			// $qrCodeImage = Image::make($content);
 
 			// Overlay the QR code onto the main image as a watermark
-			$real_image->insert($qrCodeImage, 'bottom-right', $qr_x_position, $qr_y_position)
+			$real_image
+				// ->insert($qrCodeImage, 'bottom-right', $qr_x_position, $qr_y_position)
 				->save(public_path($filename));
 		}
 

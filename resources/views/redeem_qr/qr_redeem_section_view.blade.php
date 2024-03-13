@@ -2,7 +2,6 @@
 @extends('crudbooster::admin_template')
 
 @push('head')
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 @endpush
 
@@ -73,7 +72,9 @@
           <tr>
             <td class="label-bold">Uploaded Receipt</td>
             <td>
-              <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style=" margin: 15px 0; max-width:100%; max-height: 500px; object-fit: contain;">
+              <a href="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" data-lightbox="image-1" data-title="{{ $row->uploaded_img }}">
+                <img src="{{ asset('uploaded_item/img/'.$row->uploaded_img) }}" alt="" style=" margin: 15px 0; max-width:100%; max-height: 500px; object-fit: contain;">
+              </a>
             </td>
           </tr>
           </table>
@@ -83,3 +84,11 @@
     </div>
   </div>
 @endsection
+
+@push('bottom')
+<script>
+  lightbox.option({
+    disableScrolling: true
+  })
+</script>
+@endpush

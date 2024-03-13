@@ -24,7 +24,7 @@
     --gray-dark: #5b5c5e;
     --light: #ced4da;
     --lighter: #f4f4f4;
-    --primary: #3B71CA;
+    --primary: #02718a;
     --secondary: #f7fafc;
     --success: #2dce89;
     --info: #11cdef;
@@ -37,44 +37,6 @@
     --darker: #000;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-weight: 400;
-}
-
-h1 {
-    font-size: 2.25rem; /* 36px */
-    line-height: 1.2;
-}
-
-h2 {
-    font-size: 1.75rem; /* 28px */
-    line-height: 1.3;
-}
-
-h3 {
-    font-size: 1.5rem; /* 24px */
-    line-height: 1.4;
-}
-
-h4 {
-    font-size: 1.25rem; /* 20px */
-    line-height: 1.5;
-}
-
-h5 {
-    font-size: 1rem; /* 16px */
-    line-height: 1.6;
-}
-
-h6 {
-    font-size: 0.875rem; /* 14px */
-    line-height: 1.7;
-}
 
 .u-fw-b {
     font-weight: bold;
@@ -187,6 +149,11 @@ h6 {
     padding-top: 0.5rem;
 }
 
+.u-pt-16 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .u-p-10-15 {
     padding: 0.625rem 1.6rem;
 }
@@ -227,16 +194,8 @@ h6 {
     margin: 0.625rem;
 }
 
-.u-mb-10 {
-    margin-bottom: 0.625rem;
-}
-
 .u-mb-16 {
     margin-bottom: 1rem;
-}
-
-.u-mb-20 {
-    margin-bottom: 1.25rem;
 }
 
 .u-mb-5 {
@@ -352,7 +311,7 @@ h6 {
 }
 
 /* Modal */
-.modal-center {
+.u-modal-center {
     height: 100vh;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.75);
@@ -365,18 +324,18 @@ h6 {
     overflow-y: auto;
 }
 
-.modal-box {
+.u-modal-box {
     margin: auto;
     min-height: auto;
     width: 100%;
     max-width: 700px;
-    /* background-color: #fff; */
+    background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
+.u-modal-content {
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -463,6 +422,7 @@ h6 {
 
 .u-input {
     min-height: 40px;
+    height: 100%;
     width: 100%;
     border: 1px solid transparent;
     padding: 0 10px;
@@ -482,86 +442,23 @@ input::file-selector-button {
     border: 2px solid #16abbc;
 }
 
-/* Select2 Design */
-
-.select2-container--default .select2-selection--single {
-    height: 40px;
-}
-
-.select2-container .select2-selection--single .select2-selection__rendered{
-    display: contents !important; 
-    padding-left: 0 !important;
-}
-
-/* Target the Select2 placeholder */
-.select2-container .select2-selection--single .select2-selection__placeholder {
-    font-size: 15px;
-}
-
-.select2-container--default .select2-selection--multiple {
-    min-height: 40px;
-}
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background-color: #E6E6FA; 
-    color: #000000; 
-}
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
-    color: #000000;
-}
-
-.select2-container--default .select2-selection--multiple {
-    border: 1px solid #c7c5c5;
-    padding-top: 4px;
-    padding-bottom: 6px;
-    padding-left: 5px;
-}
-.select2-selection {
-    border-radius: 5px !important;
-    border: none !important;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
-    border: 1px solid #ddd !important;
-}
-
-.select2-selection__arrow {
-    display: flex !important;
-    align-items: center !important;
-    height: 100% !important;
-}
-
-.select2-selection__choice {
-    background-color: transparent !important;
-    color: #797979 !important;
-    border: 1px solid #16abbc !important;
-    border-radius: 3px !important;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
-    font-weight: bold !important;
-}
-
-/* Style for open state */
-.select2-container--open .select2-selection {
-    border: 2px solid #16abbc !important;
-}
-
-/* Style for focus state - multiple selection */
-.select2-container--focus .select2-selection--multiple {
-    border: 2px solid #16abbc !important;
-}
-
-
 .u-responsive-table {
     border-collapse: collapse;
     width: 100%;
     background-color: white;
     border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.u-responsive-table thead th, .u-responsive-table tfoot th{
+    background-color: transparent; /* Dark gray color */
+    padding: 1.2rem 1rem; 
 }
 
 .u-responsive-table th,
 .u-responsive-table td {
-    padding: 0.7rem;
-    text-align: left;
-    font-size: 1rem;
+    padding: 1.5rem 1rem; 
+    font-size: 1.3rem;
     border-bottom: 1px solid #eae9e9;
 }
 
@@ -583,7 +480,7 @@ input::file-selector-button {
 }
 
 /* Action Btns */
-.action-btn {
+.u-action-btn {
     height: 2rem;
     width: 2rem;
     border: 1px solid transparent;
@@ -591,24 +488,8 @@ input::file-selector-button {
     border-radius: 5px;
 }
 
-.action-btn:hover {
+.u-action-btn:hover {
     opacity: 0.7;
-}
-
-/* Statistic box */
-.s-box {
-    min-height: 5rem;
-    flex: 1 0 auto; /* Initially, allow items to grow but not shrink */
-    width: 15rem;
-    min-width: 15rem;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.s-box-sm {
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    background-color: #fff;
 }
 
 .user-profile-box {

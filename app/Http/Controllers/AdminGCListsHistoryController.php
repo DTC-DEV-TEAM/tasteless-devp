@@ -446,7 +446,6 @@
 					'qr.batch_number',
 					'id_name.valid_ids',
 					'sc.name as store_concept_name',
-					'cms_users.name as hey'
 				)
 				->where('g_c_lists.uploaded_img',$uploaded_img)
 				->first();

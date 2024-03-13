@@ -42,7 +42,7 @@ class SendEmailJob implements ShouldQueue
     {
         try{
 
-            $path = (new AdminQrCreationsController)->manipulate_image($this->details['gc_value'], $this->details['qrCodeApiUrl'], $this->details['store_logo']);
+            $path = (new AdminQrCreationsController)->manipulate_image($this->details['gc_value'], $this->details['qrCodeApiUrl'], $this->details['store_logo'], $this->details['qr_reference_number']);
 
             $this->details['qr_code_generated'] = $path;
             

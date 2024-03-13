@@ -26,6 +26,9 @@ Route::get('/', function () {
 
 // Scan QR
 Route::get('admin/g_c_lists/scan_qr', [AdminGCListsController::class, 'getScanQR'])->name('scan_qr');
+// Input BDO code
+Route::post('admin/g_c_lists/scan_qr/get_bdo', [AdminGCListsController::class, 'getBdo'])->name('get_bdo');
+
 // Upload File
 Route::get('admin/qr_creations/edit/{id}', [AdminQrCreationsController::class, 'getEdit'])->name('qr_creations_edit');
 Route::get('admin/qr_creations/upload_gc_list', [AdminQrCreationsController::class, 'uploadGCList'])->name('upload_file');

@@ -291,6 +291,7 @@
           @endif
 
           <div class="text-center">
+            <p style="font-weight: bold; font-size: 15px; color: rgb(72, 72, 72);">Store: {{ $sc->store_concept_name }}</p>
               <img style="height: 130px; width: 130px;" src="{{ asset('img/scan-women.jpg') }}" alt="">
               <p style="font-weight: bold; font-size: 15px;">Redeem code here and unlock exclusive benefits and rewards.</p>
           </div>

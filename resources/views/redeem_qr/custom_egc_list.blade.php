@@ -155,6 +155,10 @@
 <script>
     $(document).ready(function() {
 
+        lightbox.option({
+            disableScrolling: true
+        })
+
         $('#myTable').DataTable({
             responsive: true,
             processing: true,
@@ -191,7 +195,7 @@
                     render: function(data, type, full, meta) {
                         // You might need to adjust the path or structure based on your setup
                         var imageUrl = '{{ asset("uploaded_item/img/") }}' + '/' + data;
-                        return '<img src="' + imageUrl + '" style="max-height: 100px; max-width: 120px;">';
+                        return '<a href="' + imageUrl + '" data-lightbox="image-1" data-title="' + imageUrl + '"><img src="' + imageUrl + '" style="max-height: 100px; max-width: 120px;"></a>';
                     }
                 },                
                 { 

@@ -84,7 +84,7 @@ class CustomerRegistrationController extends Controller
         for ($i = 0; $i < 4; $i++) {
             $otp .= rand(0, 9);
         }
-
+        
         $gc_list_devp_customer->update([
             'first_name' => $customer['first_name'],
             'last_name' => $customer['last_name'],
@@ -188,8 +188,8 @@ class CustomerRegistrationController extends Controller
     public function sendEgc(Request $request){
 
         $customer = $request->all();
-
-        $gc_list_devp = g_c_lists_devp::where('qr_reference_number', $customer['qr_reference_number']);
+        
+        $gc_list_devp = g_c_lists_devp::where('customer_reference_number', $customer['customer_reference_number']);
         $gc_list_devp_customer = GCListsDevpsCustomer::where('id', $gc_list_devp->first()->g_c_lists_devps_customer_id);
         $store_history = StoreHistory::where('g_c_lists_devps_id',$gc_list_devp->first()->id);
         $same_email = false;
@@ -200,6 +200,7 @@ class CustomerRegistrationController extends Controller
             'name' => $customer['egc_first_name'].' '.$customer['egc_last_name'],
             'email' => $customer['egc_email'],
         ]);
+
 
         if($gc_list_devp->first()->email != $gc_list_devp_customer->first()->email){
             $send_egc = $this->sendGiftCardRecipient($gc_list_devp->first());
@@ -261,7 +262,7 @@ class CustomerRegistrationController extends Controller
             'qr_reference_number'=> $recipient->qr_reference_number,
         );
 
-        return new SendEmailJob($data);
+        SendEmailJob::dispatch($data);
     }
 
     public function sendGiftCardCustomer($customer, $recipient){

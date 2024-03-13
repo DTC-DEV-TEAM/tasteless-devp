@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     {{-- Utilities CSS --}}
     <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         body.swal2-height-auto {
