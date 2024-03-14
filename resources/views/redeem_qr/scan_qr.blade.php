@@ -65,8 +65,8 @@
         {{-- </div> --}}
         <div class="show_scanner_content u-mt-10 u-mb-16" style="display: grid; place-content: center;">
             <div style="display: flex">
-                <button class="show_qr_code_scanner close-scanner u-t-gray u-bg-default u-mr-10" style="display: none" type="button">Close</button>
-                <button class="show_qr_code_scanner open-scanner u-bg-primary" type="button" style="box-shadow: 0 4px 6px -1px rgba(7, 88, 201, 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.1);">Show QR Code Scanner</button>
+                {{-- <button class="show_qr_code_scanner close-scanner u-t-gray u-bg-default u-mr-10" style="display: none" type="button">Close</button> --}}
+                {{-- <button class="show_qr_code_scanner open-scanner u-bg-primary" type="button" style="box-shadow: 0 4px 6px -1px rgba(7, 88, 201, 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.1);">Show QR Code Scanner</button> --}}
             </div>
         </div>
         
@@ -107,6 +107,11 @@
                 $('.camera_card').show(function(){
                     qrScanner();
                 });
+            });
+
+            $('.close-scanner').show();
+            $('.camera_card').show(function(){
+                qrScanner();
             });
 
             $('.close-scanner').click(function() {

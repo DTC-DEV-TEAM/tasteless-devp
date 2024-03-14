@@ -98,7 +98,11 @@ Route::post('/admin/qr_creations/email_testing', [AdminQrCreationsController::cl
 // Yajra Table
 Route::get('gc_list_data', [AdminGCListsHistoryController::class, 'getGCList'])->name('get_gc_list');
 // GCList Export
-Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryController::class, 'export'])->name('store_gclist_export');
+Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryController::class, 'export'])->name('gclist_export');
+// Campaign GC Export
+Route::get('admin/redemption_history/campaign_export', [AdminGCListsHistoryController::class, 'exportCGc'])->name('campaign_gclist_export');
+// Store GC Export
+Route::get('admin/redemption_history/store_export', [AdminGCListsHistoryController::class, 'exportSGc'])->name('store_gclist_export');
 
 Route::get('1245', function(){
     return view('email_testing.otp-email');

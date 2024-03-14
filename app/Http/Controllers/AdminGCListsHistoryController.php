@@ -9,6 +9,8 @@
 	use CRUDBooster;
 	use Yajra\DataTables\Facades\DataTables;
 	use App\Exports\GcListExport;
+	use App\Exports\CampaignExport;
+	use App\Exports\StoreExport;
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Http\Controllers\Controller;
 
@@ -144,6 +146,8 @@
 			if(CRUDBooster::getCurrentMethod() == 'getIndex'){
 
 				$this->index_button[] = ['label'=>'Export','url'=>CRUDBooster::mainpath("gclist_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				$this->index_button[] = ['label'=>'Export Campaign e-GC','url'=>CRUDBooster::mainpath("campaign_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				$this->index_button[] = ['label'=>'Export Store e-GC','url'=>CRUDBooster::mainpath("store_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				// $this->index_button[] = ['label'=>'Upload GC List','url'=>CRUDBooster::mainpath("upload_gc_list"),"icon"=>"fa fa-plus", 'color'=>'primary'];
 			}
 
@@ -525,7 +529,15 @@
 		}
 
 		public function export() {
-			return Excel::download(new GcListExport, 'store_gclist.xlsx');
+			return Excel::download(new GcListExport, 'gclist.xlsx');
+		}
+
+		public function exportCGc() {
+			return Excel::download(new CampaignExport, 'campaign_gclist.xlsx');
+		}
+
+		public function exportSGc() {
+			return Excel::download(new StoreExport, 'store_gclist.xlsx');
 		}
 
 	}
