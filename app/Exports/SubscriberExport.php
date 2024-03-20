@@ -17,15 +17,15 @@ class SubscriberExport implements FromCollection, WithHeadings
             whereNotNull('is_subscribe')
             ->select(
                 'name',
-                'store_concept',
                 'email',
-                'phone'
+                'phone',
+                'store_concept'
             )->get();
     }
 
     public function headings(): array
     {
-        return ['NAME', 'STORE', 'EMAIL', 'PHONE'];
+        return ['NAME', 'EMAIL', 'PHONE', 'STORE'];
     
     }
 }

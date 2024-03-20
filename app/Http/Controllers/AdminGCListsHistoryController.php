@@ -149,7 +149,9 @@
 				$this->index_button[] = ['label'=>'Export','url'=>CRUDBooster::mainpath("gclist_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				$this->index_button[] = ['label'=>'Export Campaign e-GC','url'=>CRUDBooster::mainpath("campaign_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				$this->index_button[] = ['label'=>'Export Store e-GC','url'=>CRUDBooster::mainpath("store_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
-				$this->index_button[] = ['label'=>'Export Subscriber','url'=>CRUDBooster::mainpath("subscriber_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				if (in_array(CRUDBooster::myPrivilegeId(), [1, 4])){
+					$this->index_button[] = ['label'=>'Export Subscriber','url'=>CRUDBooster::mainpath("subscriber_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				}
 				// $this->index_button[] = ['label'=>'Upload GC List','url'=>CRUDBooster::mainpath("upload_gc_list"),"icon"=>"fa fa-plus", 'color'=>'primary'];
 			}
 
