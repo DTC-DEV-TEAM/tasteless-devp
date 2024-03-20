@@ -236,6 +236,10 @@
                         <tr>
                             <td>
                                 <div class="egc-checkbox-content">
+                                    <input type="checkbox" id="subscribe" name="subscribe" value="1" >
+                                    <label for="subscribe" style="font-weight: 400; font-size: 1rem;">I would like to subscribe to newsletter</label>
+                                </div>
+                                <div class="egc-checkbox-content">
                                     <input type="checkbox" name="terms_and_condition" id="terms-and-condition" required>
                                     <label for="terms-and-condition" style="font-weight: 400; font-size: 1rem;">I agree with terms and condition</label>
                                 </div>
@@ -277,6 +281,7 @@
 
             if(recipient.store_status >= 2){
                 $('#terms-and-condition').attr('checked', true);
+                $('#subscribe').attr('checked', true);
                 $('#terms-and-condition-body').show();
             }
 

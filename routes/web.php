@@ -103,6 +103,8 @@ Route::get('admin/redemption_history/gclist_export', [AdminGCListsHistoryControl
 Route::get('admin/redemption_history/campaign_export', [AdminGCListsHistoryController::class, 'exportCGc'])->name('campaign_gclist_export');
 // Store GC Export
 Route::get('admin/redemption_history/store_export', [AdminGCListsHistoryController::class, 'exportSGc'])->name('store_gclist_export');
+// Subscriber GC Export
+Route::get('admin/redemption_history/subscriber_export', [AdminGCListsHistoryController::class, 'exportSubscriber'])->name('subscriber_export');
 
 Route::get('1245', function(){
     return view('email_testing.otp-email');

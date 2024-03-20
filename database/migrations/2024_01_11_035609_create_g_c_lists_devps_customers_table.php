@@ -25,6 +25,7 @@ class CreateGCListsDevpsCustomersTable extends Migration
             $table->string('otp_code')->nullable();
             $table->integer('email_is_sent')->default('0')->nullable();
             $table->integer('otp_is_matched')->default('0')->nullable();
+            $table->integer('is_subscribe')->nullable();
             $table->integer('created_by')->unsigned()->length(10)->nullable();
             $table->integer('updated_by')->unsigned()->length(10)->nullable();
             $table->timestamps();

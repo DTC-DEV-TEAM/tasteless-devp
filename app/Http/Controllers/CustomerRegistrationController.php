@@ -93,6 +93,7 @@ class CustomerRegistrationController extends Controller
             'email' => $customer['email'],
             'confirmed_email' => $customer['confirm_email'],
             'otp_code' => $otp,
+            'is_subscribe' => $customer['subscribe']
         ]);
         $gc_list_devp->update([
             'qr_reference_number' => $generated_qr_code,

@@ -11,6 +11,7 @@
 	use App\Exports\GcListExport;
 	use App\Exports\CampaignExport;
 	use App\Exports\StoreExport;
+	use App\Exports\SubscriberExport;
 	use Maatwebsite\Excel\Facades\Excel;
 	use App\Http\Controllers\Controller;
 
@@ -148,6 +149,7 @@
 				$this->index_button[] = ['label'=>'Export','url'=>CRUDBooster::mainpath("gclist_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				$this->index_button[] = ['label'=>'Export Campaign e-GC','url'=>CRUDBooster::mainpath("campaign_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				$this->index_button[] = ['label'=>'Export Store e-GC','url'=>CRUDBooster::mainpath("store_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
+				$this->index_button[] = ['label'=>'Export Subscriber','url'=>CRUDBooster::mainpath("subscriber_export"),"icon"=>"fa fa-download", 'color'=>'primary'];
 				// $this->index_button[] = ['label'=>'Upload GC List','url'=>CRUDBooster::mainpath("upload_gc_list"),"icon"=>"fa fa-plus", 'color'=>'primary'];
 			}
 
@@ -538,6 +540,10 @@
 
 		public function exportSGc() {
 			return Excel::download(new StoreExport, 'store_gclist.xlsx');
+		}
+		
+		public function exportSubscriber(){
+			return Excel::download(new SubscriberExport, 'subscriber.xlsx');
 		}
 
 	}

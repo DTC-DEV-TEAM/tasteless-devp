@@ -15,16 +15,16 @@ class StoreExport implements FromCollection, WithHeadings
     public function collection()
     {
         return g_c_lists_devp::
-        leftJoin('egc_value_types', 'egc_value_types.id', 'g_c_lists_devps.egc_value_id')
-        ->select(
-            'claimed_by',
-            'claimed_email',
-            'egc_value_types.value',
-            'store_concept',
-            'invoice_number',
-            'pos_terminal',
-            'qr_reference_number',
-        )->get();
+            leftJoin('egc_value_types', 'egc_value_types.id', 'g_c_lists_devps.egc_value_id')
+            ->select(
+                'claimed_by',
+                'claimed_email',
+                'egc_value_types.value',
+                'store_concept',
+                'invoice_number',
+                'pos_terminal',
+                'qr_reference_number',
+            )->get();
     }
 
     public function headings(): array
