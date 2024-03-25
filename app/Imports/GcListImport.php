@@ -54,8 +54,8 @@ class GcListImport implements
     {
         
         do {
-            $generated_qr_code = Str::random(10);
-        } while (GCList::where('qr_reference_number', $generated_qr_code)->exists());
+            $generated_qr_code = Str::upper(Str::random(10));
+        } while (substr($generated_qr_code, 0, 1) === 'B' || GCList::where('qr_reference_number', $generated_qr_code)->exists());        
 
         $gcList = new GCList([
             'name' => $row['name'],

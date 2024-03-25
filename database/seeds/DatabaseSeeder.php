@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(StoreBrandTypeSeeder::class);
         $this->call(StoreStatusSeeder::class);
         $this->call(StoreLogosSeeder::class);
+        $this->call(QrTypeSeeder::class);
     }
 }

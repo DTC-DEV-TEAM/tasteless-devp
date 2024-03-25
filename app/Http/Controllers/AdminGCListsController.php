@@ -27,6 +27,7 @@ use App\StoreConcept;
 use App\StoreLogo;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -491,14 +492,24 @@ use Illuminate\Support\Facades\Log;
 		public function getBdo(IlluminateRequest $request)
 		{
 			$bdo_code = $request['bdo_code'];
+			// Check if the first three characters of $bdo_code are 'BDO'
+			if (substr($bdo_code, 0, 3) === 'BDO') {
+				$devp = GCList::where('qr_reference_number', $bdo_code)->first();
 
-			$devp = g_c_lists_devp::where('qr_reference_number', $bdo_code)->first();
+				if($devp->status == 'VOID'){
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Gift code is voided."),"danger");
+				}
 
+				$url = "admin/g_c_lists/edit/$devp->id?value=$devp->qr_reference_number&campaign_id=2";
+			}else{
+				$devp = g_c_lists_devp::where('qr_reference_number', $bdo_code)->first();
+				$url = "admin/g_c_lists/edit/$devp->id?value=$devp->qr_reference_number&campaign_id=3";
+			}
+			
 			if (!$bdo_code || !$devp){
 				CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Incorrect BDO Code."),"danger");
 			}
 
-			$url = "admin/g_c_lists/edit/$devp->id?value=$devp->qr_reference_number&campaign_id=3";
 
 			return redirect($url);
 		}
@@ -607,15 +618,15 @@ use Illuminate\Support\Facades\Log;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
 			
-			$invoice_number_exists = true;
-			// $invoice_number_exists = DB::connection('mysql_tunnel')
-			// ->table('pos_sale')
-			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
-			// ->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
-			// ->where('fdocument_no',$invoice_number)
-			// ->where('ftermid', (int) $store_name->ftermid) //need setup user management
-			// ->where('fdoctype',6000)
-			// ->exists();
+			// $invoice_number_exists = true;
+			$invoice_number_exists = DB::connection('mysql_tunnel')
+			->table('pos_sale')
+			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
+			->where('fdocument_no',$invoice_number)
+			->where('ftermid', (int) $store_name->ftermid) //need setup user management
+			->where('fdoctype',6000)
+			->exists();
 
 
 // 			$invoice_number_exists = DB::connection('mysql_tunnel')
@@ -706,11 +717,12 @@ use Illuminate\Support\Facades\Log;
 			$email = $data['row']->claimed_email;
 
 			try {
-
-				Mail::send(['html' => 'redeem_qr.redeemedemail'], $data, function($message) use ($email) {
-					$message->to($email)->subject('Qr Code Redemption!');
-					$message->from(config('send_email.username'), config('send_email.name'));
-				});
+				if($email){
+					Mail::send(['html' => 'redeem_qr.redeemedemail'], $data, function($message) use ($email) {
+						$message->to($email)->subject('Qr Code Redemption!');
+						$message->from(config('send_email.username'), config('send_email.name'));
+					});
+				}
 			} catch (\Exception $e) {
 
 				dd($e);

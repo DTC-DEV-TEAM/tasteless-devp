@@ -24,11 +24,12 @@ class StoreExport implements FromCollection, WithHeadings
                 'invoice_number',
                 'pos_terminal',
                 'qr_reference_number',
+                'redeem'
             )->get();
     }
 
     public function headings(): array
     {
-        return ['NAME', 'EMAIL', 'GC VALUE', 'STORE CONCEPT', 'INVOICE NUMBER', 'POS TERMINAL', 'REFERENCE CODE'];
+        return ['NAME', 'EMAIL', 'GC VALUE', 'STORE CONCEPT', 'INVOICE NUMBER', 'POS TERMINAL', 'REFERENCE CODE', 'IS REDEEMED'];
     }
 }

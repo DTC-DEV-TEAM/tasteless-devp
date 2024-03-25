@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\Models\EmailTemplateImg;
+use App\QrType;
 use App\StoreConcept;
 use App\StoreLogo;
 use App\Stores;
@@ -437,7 +438,7 @@ use Illuminate\Support\Arr;
 			$data['company_id'] = $company;
 			$data['stores'] = $store;
 			$data['store_logo'] = $store_logo;
-
+			
 			return $this->view('redeem_qr.add_campaign_tpc',$data);
 		}
 
@@ -452,21 +453,16 @@ use Illuminate\Support\Arr;
 				->get()
 				->first();
 
-			$company = CompanyId::get();
-			$store = StoreConcept::get();
-			$store_logo = StoreLogo::get();
-			$charge_to = ChargeTo::get();
-			$excluded_concept = Stores::get();
-			
 			$data = [];
 			$data['page_title'] = 'Edit Campaign Creation';
-			$data['company_id'] = $company;
-			$data['stores'] = $store;
+			$data['company_id'] = CompanyId::get();
+			$data['stores'] = StoreConcept::get();
 			$data['qr_creation'] = $qr_creation;
-			$data['store_logo'] = $store_logo;
+			$data['store_logo'] = StoreLogo::get();
 			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
-			$data['charge_to'] = $charge_to;
-			$data['excluded_concept'] = $excluded_concept;
+			$data['charge_to'] = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->where('name','!=','Store')->get();
+			$data['excluded_concept'] = Stores::get();
+			$data['qr_types'] = QrType::get();
 
 			if($qr_creation->campaign_type_id == 1){
 				return $this->view('redeem_qr.add_campaign_tpc',$data);
@@ -486,21 +482,16 @@ use Illuminate\Support\Arr;
 				->get()
 				->first();
 
-			$company = CompanyId::get();
-			$store = StoreConcept::get();
-			$store_logo = StoreLogo::get();
-			$charge_to = ChargeTo::whereNull('deleted_at')->get();
-			$excluded_concept = Stores::get();
-
 			$data = [];
 			$data['page_title'] = 'Detail Campaign Creation';
-			$data['company_id'] = $company;
-			$data['stores'] = $store;
+			$data['company_id'] = CompanyId::get();
+			$data['stores'] = StoreConcept::get();
 			$data['qr_creation'] = $qr_creation;
-			$data['store_logo'] = $store_logo;
+			$data['store_logo'] = StoreLogo::get();
 			$data['stores1'] = StoreConcept::whereNotIn('id',explode(',',$qr_creation->number_of_gcs))->get();
-			$data['charge_to'] = $charge_to;
-			$data['excluded_concept'] = $excluded_concept;
+			$data['charge_to'] = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->where('name','!=','Store')->get();
+			$data['excluded_concept'] = Stores::get();
+			$data['qr_types'] = QrType::get();
 
 			if($qr_creation->campaign_type_id == 1){
 				return $this->view('redeem_qr.add_campaign_tpc',$data);
@@ -516,19 +507,14 @@ use Illuminate\Support\Arr;
 				CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
 			}
 			
-			$company = CompanyId::get();
-			$store = StoreConcept::get();
-			$store_logo = StoreLogo::get();
-			$charge_to = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->get();
-			$excluded_concept = Stores::get();
-
 			$data = [];
 			$data['page_title'] = 'Add Data';
-			$data['company_id'] = $company;
-			$data['stores'] = $store;
-			$data['store_logo'] = $store_logo;
-			$data['charge_to'] = $charge_to;
-			$data['excluded_concept'] = $excluded_concept;
+			$data['company_id'] = CompanyId::get();
+			$data['stores'] = StoreConcept::get();
+			$data['store_logo'] = StoreLogo::get();
+			$data['charge_to'] = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->where('name','!=','Store')->get();
+			$data['excluded_concept'] = Stores::get();
+			$data['qr_types'] = QrType::get();
 
 			return $this->view('redeem_qr.add_campaign_ihc',$data);
 		}
@@ -538,6 +524,7 @@ use Illuminate\Support\Arr;
 			$campaign = $request->all();
 			$campaign['campaign_type_id'] = "1";
 			$excel_file = $campaign['po_attachment'];
+			return;
 			
 			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
 			
@@ -597,11 +584,11 @@ use Illuminate\Support\Arr;
 			$campaign['created_by'] = CRUDBooster::myId();
 			$campaign['created_at'] = date('Y-m-d H:i:s');
 			
-			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','po_attachment','memo_attachment','id','qr_creations_id']));
+			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','store','po_attachment','memo_attachment','id','qr_creations_id']));
 			$campaign_information->save();
 			$campaign_information->campaign_status = 1;
 			$campaign_information->save();
-
+			
 			if($memo_pdf){
 				$campaign_information->memo_attachment = $campaign_information->campaign_id.'.'.$memo_pdf->getClientOriginalExtension();
 				$campaign_information->save();
@@ -853,11 +840,6 @@ use Illuminate\Support\Arr;
 				$textSize = $font->getBoxSize()['width'];
 				
 				$text_width = ($value_width - $textSize) / 2;
-				// if(strlen((string) $amount) == 4){
-				// 	$text_width = $calculate_position - 80;
-				// }else{
-				// 	$text_width = $calculate_position - 85;
-				// };
 			});
 
 			if($shadow){

@@ -26,12 +26,13 @@ class CampaignExport implements FromCollection, WithHeadings
                 'invoice_number',
                 'pos_terminal',
                 'qr_reference_number',
+                'redeem'
             )
             ->get();
     }
 
     public function headings(): array
     {
-        return ['NAME', 'PHONE', 'EMAIL', 'CAMPAIGN ID', 'GC DESCRIPTION', 'GC VALUE', 'INVOICE NUMBER', 'POS TERMINAL', 'REFERENCE CODE'];
+        return ['NAME', 'PHONE', 'EMAIL', 'CAMPAIGN ID', 'GC DESCRIPTION', 'GC VALUE', 'INVOICE NUMBER', 'POS TERMINAL', 'REFERENCE CODE', 'IS REDEEMED'];
     }
 }

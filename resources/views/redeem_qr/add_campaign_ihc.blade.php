@@ -297,19 +297,29 @@
             <input type="text" class="hide" name="id" value="{{ $qr_creation->id }}">
             <div class='panel-body'>
                 <div class="for_approval">
-                    <div class="for_approval_content">
-                        @if($qr_creation->campaign_status)
-                        <label for="" class="label_status">Status:</label>
-                        @endif
-                        @if ($qr_creation->campaign_status == 1)            
-                        <span class="for_approval_head">{{ $qr_creation->campaign_status_name }}</span>
-                        @elseif($qr_creation->campaign_status == 2)
-                        <span class="approve_accounting">{{ $qr_creation->campaign_status_name }}</span>
-                        @elseif($qr_creation->campaign_status == 3)
-                        <span class="approve">{{ $qr_creation->campaign_status_name }}</span>
-                        @elseif($qr_creation->campaign_status == 4)
-                        <span class="rejected">{{ $qr_creation->campaign_status_name }}</span>
-                        @endif
+                    <div class="for_approval_content u-flex">
+                        <div class="u-mr-32">
+                            @if($qr_creation->campaign_status)
+                            <label for="" class="label_status">Status:</label>
+                            @endif
+                            @if ($qr_creation->campaign_status == 1)            
+                            <span class="for_approval_head">{{ $qr_creation->campaign_status_name }}</span>
+                            @elseif($qr_creation->campaign_status == 2)
+                            <span class="approve_accounting">{{ $qr_creation->campaign_status_name }}</span>
+                            @elseif($qr_creation->campaign_status == 3)
+                            <span class="approve">{{ $qr_creation->campaign_status_name }}</span>
+                            @elseif($qr_creation->campaign_status == 4)
+                            <span class="rejected">{{ $qr_creation->campaign_status_name }}</span>
+                            @endif
+                        </div>
+                        <div class="{{ !$qr_creation->qr_type ? 'hide' : '' }}">
+                            <p class="u-fw-b">QR Type:</p>
+                            @if($qr_creation->qr_type == 1)
+                                <span class="approve">GIFT CODE</span>
+                                @else
+                                <span class="approve">QR CODE</span>
+                            @endif 
+                        </div>
                     </div>
                 </div>
                 <table class="custom_normal_table">
@@ -376,7 +386,20 @@
                                         @endif
                                     </select>
                                 </td>
+                                <td>
+                                    <p>GC Type</p>
+                                    <select class="u-input" name="qr_type" id="" {{ $qr_creation->campaign_status ? 'disabled' : ''  }} required>
+                                        <option value="" selected disabled>Select GC Type</option>
+                                        @foreach ($qr_types as $qr_type)
+                                            <option value="{{ $qr_type->id }}" {{ $qr_creation->qr_type == $qr_type->id ? 'selected' : ''  }}>{{ $qr_type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
                             </tr>
+                        </tbody>
+                    </table>
+                    <table class="custom_normal_table">
+                        <tbody>
                             <tr>
                                 <td>
                                     <p>Excluded Stores:</p>
