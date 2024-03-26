@@ -511,7 +511,7 @@ use Illuminate\Support\Arr;
 			$data['page_title'] = 'Add Data';
 			$data['company_id'] = CompanyId::get();
 			$data['stores'] = StoreConcept::get();
-			$data['store_logo'] = StoreLogo::get();
+			$data['store_logo'] = StoreLogo::where('name', '!=', 'Store')->get();
 			$data['charge_to'] = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->where('name','!=','Store')->get();
 			$data['excluded_concept'] = Stores::get();
 			$data['qr_types'] = QrType::get();

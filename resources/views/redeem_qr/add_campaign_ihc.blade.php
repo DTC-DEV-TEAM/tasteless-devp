@@ -438,14 +438,16 @@
                     <tbody>
                         <tr>
                             <td>
-                                <div class="input_container">
-                                    <label for="files" class="u-btn u-box-shadow-default">Attach Memo here</label>
-                                    <input id="files" name="memo_attachment" accept=".pdf" multiple required style="display:none;" type="file">
+                                <div class="input_container" style="display: relative;">
+                                    <label for="files" class="u-btn u-box-shadow-default" style="position: absolute;">Attach Memo here</label>
+                                    <input id="files" name="memo_attachment" accept=".pdf" multiple required style="position: absolute; z-index: -1" type="file">
                                 </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <br>
+                <br>
                 <br>
                 @endif
 
