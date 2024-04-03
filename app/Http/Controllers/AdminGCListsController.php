@@ -422,6 +422,9 @@ use Illuminate\Support\Facades\Http;
 			}
 
 			if(($campaign_id->campaign_type_id == 2)){
+				if($user->status == 'VOID'){
+					CRUDBooster::redirect(CRUDBooster::mainpath('scan_qr'), sprintf("Gift code is voided."),"danger");
+				}
 				// if((new \DateTime())->format('Y m d') >= (new \DateTime($campaign_id->start_date))->format('Y m d') && ((new \DateTime())->format('Y m d') <= (new \DateTime($campaign_id->expiry_date))->format('Y m d'))){
 					if ($user->qr_reference_number == $slug && $slug && $validate_user_store || CRUDbooster::myPrivilegeName() == 'Super Administrator'){
 						$data = [];
