@@ -47,7 +47,7 @@ class RunJobs extends Command
 
             Artisan::call('queue:retry', ['id' => $failedJob->id]);
         }
-        Artisan::call('queue:work');
+        Artisan::call('queue:work --timeout=600');
         
         return 0;
         
