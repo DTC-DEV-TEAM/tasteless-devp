@@ -37,8 +37,17 @@ class ApiFetchCampaignDataJob implements ShouldQueue
             
             $secretKey = env('EGC_SECRET_KEY');
     
-            $data = json_decode(file_get_contents("$url/$secretKey"));
-            
+            $ch = curl_init();
+
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_URL, "$url/$secretKey");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+            // Execute cURL request
+            $data = json_decode(curl_exec($ch));
+    
+            curl_close($ch);
+
             if((bool) ($data)){
                 foreach ($data as $item) {
                     $item = (array) $item;

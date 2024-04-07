@@ -14,7 +14,16 @@ class ApiController extends Controller
         $url1 = 'http://127.0.0.1:8000/api/egc_campaign';
         $secretKey = env('EGC_SECRET_KEY');
 
-        $data = json_decode(file_get_contents("$url1/$secretKey"));
+        $ch = curl_init();
+
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, "$url1/$secretKey");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Execute cURL request
+        $data = json_decode(curl_exec($ch));
+
+        curl_close($ch);
         
         if((bool) ($data)){
             foreach ($data as $item) {
