@@ -38,39 +38,39 @@ class GCListFetchJob implements ShouldQueue
 
         try {
             
-            sleep(1);
+            // sleep(1);
 
-            // Localhost Fetch Gclist
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post('https://egc.digits.com.ph/api/get-token', [
-                'secret' => '84aad301b67368285f7b6f17eed0a064',
-            ]);
+            // // Localhost Fetch Gclist
+            // $response = Http::withHeaders([
+            //     'Content-Type' => 'application/json',
+            // ])->post('http://127.0.0.1:8000/api/get-token', [
+            //     'secret' => '84aad301b67368285f7b6f17eed0a064',
+            // ]);
 
-            $get_token = $response->json('data.access_token');
+            // $get_token = $response->json('data.access_token');
 
-            $redemption_list = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get('https://egc.digits.com.ph/api/redemption_code');
+            // $redemption_list = Http::withHeaders([
+            //     'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
+            // ])->get('http://127.0.0.1:8000/api/redemption_code');
 
-            $gc_list_fetch = $redemption_list->json();
+            // $gc_list_fetch = $redemption_list->json();
 
-            if($gc_list_fetch['data']){
+            // if($gc_list_fetch['data']){
 
-                foreach ($gc_list_fetch['data'] as $item) {
+            //     foreach ($gc_list_fetch['data'] as $item) {
 
-                    $item['is_fetch'] = 1;
+            //         $item['is_fetch'] = 1;
 
-                    GCList::firstOrCreate(
-                        ['id' => $item['id']],
-                        $item
-                    );
-                }
-            }else{
-                return;
-            }
+            //         GCList::firstOrCreate(
+            //             ['id' => $item['id']],
+            //             $item
+            //         );
+            //     }
+            // }else{
+            //     return;
+            // }
 
-            sleep(1);
+            // sleep(1);
 
             // Localhost fetch campaign
             $response = Http::withHeaders([

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ApiFetchCampaignDataJob;
 use Illuminate\Console\Command;
 use App\Jobs\GCListFetchJob;
 
@@ -39,7 +40,8 @@ class RunFetchGcListApi extends Command
     public function handle()
     {
 
-        GCListFetchJob::dispatch();
+        ApiFetchCampaignDataJob::dispatch();
+        // GCListFetchJob::dispatch();
 
         return 0;
     }

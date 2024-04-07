@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('egc_campaign/{secretKey}', [ApiController::class, 'insert']);
+Route::get('egc_campaign_fetch/{secretKey}', [ApiController::class, 'fetch']);

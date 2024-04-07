@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('command:fetchgclistapi')->dailyAt('00:00');
+        // $schedule->command('command:fetchgclistapi')->dailyAt('00:00');
+        $schedule->command('command:fetchgclistapi')->everyMinute();
         $schedule->command('command:runjobs')->everyMinute();
     }
 
