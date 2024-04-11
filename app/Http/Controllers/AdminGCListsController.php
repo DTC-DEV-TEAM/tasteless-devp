@@ -21,6 +21,7 @@ use Intervention\Image\Facades\Image;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use App\EmailTesting;
 use App\g_c_lists_devp;
+use App\Jobs\ApiFetchCampaignDataJob;
 use App\Jobs\GCListFetchJob;
 use App\RedemptionSetting;
 use App\StoreConcept;
@@ -33,7 +34,7 @@ use Illuminate\Support\Facades\Http;
 	class AdminGCListsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 		function __construct(){
-			
+			ApiFetchCampaignDataJob::dispatch();
 			GCListFetchJob::dispatch();
 			date_default_timezone_set("Asia/Manila");
 			date_default_timezone_get();	
