@@ -498,10 +498,11 @@
 
         event.preventDefault();
 
-        if(posInvoiceNumber == ''){
-          alert('POS INVOICE NUMBER REQUIRED');
-        }
         
+        if(!(!!posInvoiceNumber)){
+          alert('POS INVOICE NUMBER REQUIRED');
+          return;
+        }
         else{
           $('.sk-chase-position').show();
           $.ajax({

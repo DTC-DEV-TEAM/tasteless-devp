@@ -21,37 +21,6 @@
 
 </style>
 
-    <!-- Your html goes here -->
-    {{-- <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Redeem QR Home</a></p> --}}
-    {{-- <div class='panel panel-default'> --}}
-        {{-- <div class='panel-heading'>Redemption Code</div> --}}
-        {{-- <div class='panel-body panel_body_section'> --}}
-            {{-- <div class="camera">
-                <div class="camera_card">
-                    <div id="output"></div>
-                    <video id="video" autoplay></video>
-                    <canvas id="canvas" style="display: none;"></canvas>
-                </div>
-            </div>
-            <div class="qr_code">
-                <div class="qr_code_content">
-                    <div class="qr_code_box">
-                        <p>Once you have scanned the QR code</p>
-                        <p>Please wait for the code link to load</p>
-                        <p>{{ $scannedData }}</p>
-                        <span></span>
-                    </div>
-                    <div class="show_scanner_content">
-                        <button class="show_qr_code_scanner" type="button">Show QR Code Scanner</button>
-                    </div>
-                </div>
-                <div class="qr_code_img">
-                    <img class="scan_qr_img" src="{{ asset('img/scan_qr.jpg') }}" alt="">
-                </div>
-            </div> --}}
-        {{-- </div> --}}
-    {{-- </div> --}}
-
     <div class="modal-box modal-box-bg u-bg-white" style="box-shadow: none; display: grid; place-content: center; box-shadow: 0 4px 6px -1px rgba(149, 160, 176, 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.1);">
         <div class="u-t-center">
             <h1>Redemption Code</h1>

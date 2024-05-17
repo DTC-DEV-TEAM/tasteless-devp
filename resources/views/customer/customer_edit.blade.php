@@ -95,11 +95,11 @@
                 <div class="cb-header">
                     Customer Information
                 </div>
-                @if ($customer->store_status > 2)
+                {{-- @if ($customer->store_status > 2)
                 <button class="btn btn-primary" type="button" id="show-history">
                     Show History
                 </button>
-                @endif
+                @endif --}}
             </div>
             <table class="custom_table">
                 <tbody>
@@ -246,7 +246,7 @@
                   </div>
                 </div>
                 
-                @for ($i=0; $i < count($customer_information); $i++)
+                {{-- @for ($i=0; $i < count($customer_information); $i++)
                 <div class="container1 right">
                     <div class="content1">
                         <p style="font-weight: bold;">Updated at {{ \Carbon\Carbon::parse($history[$i]['created_at'])->format('Y-m-d H:i') }}</p>
@@ -260,7 +260,7 @@
                         <p>Updated By: {{ $history[$i]['created_by'] }}</p>
                     </div>
                 </div>
-                @endfor
+                @endfor --}}
             </div>
             <button class="btn btn-default" id="btn-cancel">Close</button>
         </div>
@@ -277,7 +277,7 @@
         setTimeout("preventBack()",0);
 
         storeBrandEmail();
-        historyModal();
+        // historyModal();
 
         function storeBrandEmail(){
 
@@ -310,20 +310,20 @@
             });
         }
 
-        function historyModal(){
+        // function historyModal(){
 
-            $('#show-history').on('click', function(){
-                $('body').css('overflow', 'hidden');
-                $('.store-modal-bg-dark').show();
-                $('.store-modal').show();
-            })
+        //     $('#show-history').on('click', function(){
+        //         $('body').css('overflow', 'hidden');
+        //         $('.store-modal-bg-dark').show();
+        //         $('.store-modal').show();
+        //     })
 
-            $('#btn-cancel').on('click', function(){
-                $('.store-modal-bg-dark').hide();
-                $('.store-modal').hide();
-                $('body').css('overflow', 'auto');
-            })
-        }
+        //     $('#btn-cancel').on('click', function(){
+        //         $('.store-modal-bg-dark').hide();
+        //         $('.store-modal').hide();
+        //         $('body').css('overflow', 'auto');
+        //     })
+        // }
 
         $(document).ready(function() {
 

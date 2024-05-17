@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>EGC Purchase Form</title>
+    <title>DEVP Purchase Form</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('css/customer_registration.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link rel="shortcut icon" href="{{ asset('img/tasteless-icon.png') }}">
     {{-- Utilities CSS --}}
     <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -22,7 +23,6 @@
         .m-input{
             border: 1px solid #359D9D;
             background-color: #fff !important;
-            /* padding: 0 */
         }
 
         .modal-content{
@@ -71,7 +71,7 @@
         .btn-color {
             background-color: #3498db !important;
             border: none !important;
-            outline: none; /* Remove the outline on focus */
+            outline: none;
         }
 
 
@@ -118,14 +118,6 @@
                         <hr>
                         <table class="custom_normal_table" >
                             <tbody>
-                                {{-- <tr>
-                                    <td>
-                                        <div class="egc-checkbox-content">
-                                            <input type="checkbox" name="egc_checkbox" value="checked" id="egc-checkbox">
-                                            <label for="egc-checkbox">Same as customer information</label>
-                                        </div>
-                                    </td>
-                                </tr> --}}
                                 <tr>
                                     <td>
                                         <p>First name</p>
@@ -161,15 +153,7 @@
             <form action="" method="POST" autocomplete="off" id="registration-form">
                 <input style="display: none" name="customer_reference_number" value="{{ Request::segment(4) }}" type="text">
                 <div class="customer-box-logos">
-                    @if (Request::segment(2) == 'digital_walker')
-                        {{-- <img src="{{ asset('img/digital_walker1.png') }}" alt=""> --}}
-                        <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
-                    @elseif (Request::segment(2) == 'beyond_the_box')
-                        {{-- <img src="{{ asset('img/btb1.png') }}" alt=""> --}}
-                        <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
-                    @elseif (Request::segment(2) == 'dw_and_btb' || Request::segment(2) == 'open_source')
-                        <img src="{{ asset('img/btb_dw_os.png') }}" alt="">
-                    @endif
+                    <img src="{{ asset('img/tasteless-logo.png') }}" alt="">
                 </div>
                 <div class="customer-box-content">
                     <div class="customer-box-header-container">                    
@@ -295,11 +279,6 @@
             }else if(recipient.store_status == 3){
                 $('.egc-mail').show();
             }
-
-
-            // $('#store_concepts_id').select2({
-            //     width: '100%'
-            // });
 
             if ("{{ (session('success') && is_array(session('success'))) }}"){
                 $('.modal-success').css('visibility', 'visible');
@@ -596,7 +575,6 @@
 
 
         function convertToTitleCase(str) {
-
             // Split the string into an array of words
             let words = str.split('_');
             // Capitalize the first letter of each word
@@ -608,42 +586,21 @@
         }
 
         function customerUrl(url) {
-
-            let concept = ''
-            let bgColor = '';
-
-            if (url == 'beyond_the_box'){
-                concept = convertToTitleCase(url);
-                bgColor = '#D0D2D4';
-            }else if (url == 'digital_walker'){
-                // bgColor = '#FED440';
-                bgColor = '#D0D2D4';
-                concept = convertToTitleCase(url)
-            }else if (url == 'dw_and_btb'){
-                concept = 'Digital Walker and Beyond the Box';
-                // bgColor = '#359D9D';
-                bgColor = '#D0D2D4';
-            }else if (url == 'open_source'){
-                concept = convertToTitleCase(url);
-                // bgColor = '#359D9D';
-                bgColor = '#D0D2D4';
-            }
+            let concept = 'Tasteless'
+            let bgColor = '#ECE8CF';
             
             $('.customer-box-logos').css('background', bgColor);
             $('#concept').val(concept);
         }
 
         function formatResult(result) {
-
             return result.text;
         }
         function formatSelection(selection) {
-
             return selection.text.length > 20 ? selection.text.substring(0, 20) + '...' : selection.text;
         }
 
         function getInfo(selectedValue){
-            
             $.ajax({
                 url:"{{ route('viewCustomerInfo')}}",
                 type:'POST',
@@ -663,7 +620,6 @@
         }
 
         function populateCustomerInfo (res){
-
             const customerInformation = res.customer_information;
             console.log(customerInformation);
             $('#first_name').val(customerInformation.first_name || '');
@@ -674,7 +630,6 @@
         }
 
         function egcCheckBox(){
-            
             const firstName = $('#first_name').val();
             const lastName = $('#last_name').val();
             const email = $('#email').val();
@@ -692,8 +647,8 @@
         }
 
         function getOptValue(){
-
             let optValue = '';
+
             $('.otp-box').each(function(){
                 optValue += $(this).val();
             })

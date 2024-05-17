@@ -35,47 +35,15 @@ class GCListFetchJob implements ShouldQueue
      */
     public function handle()
     {  
+        // ip
+        $localhost = 'http://127.0.0.1:1000';
+        $ip_address = 'http://192.168.4.93:8000';
 
         try {
-            
-            // sleep(1);
-
-            // // Localhost Fetch Gclist
-            // $response = Http::withHeaders([
-            //     'Content-Type' => 'application/json',
-            // ])->post('http://127.0.0.1:8000/api/get-token', [
-            //     'secret' => '84aad301b67368285f7b6f17eed0a064',
-            // ]);
-
-            // $get_token = $response->json('data.access_token');
-
-            // $redemption_list = Http::withHeaders([
-            //     'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            // ])->get('http://127.0.0.1:8000/api/redemption_code');
-
-            // $gc_list_fetch = $redemption_list->json();
-
-            // if($gc_list_fetch['data']){
-
-            //     foreach ($gc_list_fetch['data'] as $item) {
-
-            //         $item['is_fetch'] = 1;
-
-            //         GCList::firstOrCreate(
-            //             ['id' => $item['id']],
-            //             $item
-            //         );
-            //     }
-            // }else{
-            //     return;
-            // }
-
-            // sleep(1);
-
             // Localhost fetch campaign
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post('https://egc.digits.com.ph/api/get-token', [
+            ])->post("$ip_address/api/get-token", [
                 'secret' => '84aad301b67368285f7b6f17eed0a064',
             ]);
 
@@ -83,7 +51,7 @@ class GCListFetchJob implements ShouldQueue
 
             $redemption_list = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get('https://egc.digits.com.ph/api/qr_creation');
+            ])->get("$ip_address/api/qr_creation");
 
             $gc_list_fetch = $redemption_list->json();
             

@@ -52,7 +52,6 @@
     </div>
 </div>
 
-
 <script>
 
     egcValue();
@@ -115,10 +114,7 @@
 
     }
 
-
-
     $('#gc-form').submit(function(event){
-
         event.preventDefault();
         const btnSubmit = $('#btn-submit').text();
 

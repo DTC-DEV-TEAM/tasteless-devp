@@ -110,10 +110,9 @@ class CustomerRegistrationController extends Controller
 
         $egc_data = $this->sendGiftCardCustomer($gc_list_devp_customer->first(), $gc_list_devp->first());
 
-        GCListFetchJob::withChain([
-            new SendEmailJob($egc_data),
+        SendEmailJob::withChain([
             new SendEmailOtp($data)
-        ])->dispatch();
+        ])->dispatch($egc_data);
 
         return response()->json(['is_otp_sent' => 1]);
     }
@@ -226,14 +225,12 @@ class CustomerRegistrationController extends Controller
 		$egc_value = EgcValueType::where('id',(int) $recipient->egc_value_id)->first()->value;
 
         $url = "/g_c_lists/edit/$recipient->id?value=$recipient->qr_reference_number&campaign_id=3";
-        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' . urlencode($url);
+        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($url);
         $qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
         
-        $store_logos_id = 5;
-
-        $emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
-        ->where('status','ACTIVE')
-        ->first();
+        $emailTesting = $email_testings
+            ->where('status','ACTIVE')
+            ->first();
         $emailTestingImg = EmailTemplateImg::where('header_id', $emailTesting->id)
             ->get();
 
@@ -259,7 +256,7 @@ class CustomerRegistrationController extends Controller
             'qrCodeApiUrl' => $qrCodeApiUrl,
             'qr_code' => $qr_code,
             'gc_value' => $egc_value,
-            'store_logo' => $store_logos_id,
+            'store_logo' => $emailTesting->store_logos_id,
             'qr_reference_number'=> $recipient->qr_reference_number,
         );
 
@@ -272,14 +269,12 @@ class CustomerRegistrationController extends Controller
 		$egc_value = EgcValueType::where('id',(int) $recipient->egc_value_id)->first()->value;
 
         $url = "/g_c_lists/edit/$recipient->id?value=$recipient->qr_reference_number&campaign_id=3";
-        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=' . urlencode($url);
+        $qrCodeApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($url);
         $qr_code = "<div id='qr-code-download'><div id='download_qr'><a href='$qrCodeApiUrl' download='qr_code.png'> <img src='$qrCodeApiUrl' alt='QR Code'> </a></div></div>";
         
-        $store_logos_id = 5;
-
-        $emailTesting = $email_testings->where('store_logos_id', $store_logos_id)
-        ->where('status','ACTIVE')
-        ->first();
+        $emailTesting = $email_testings
+            ->where('status','ACTIVE')
+            ->first();
         $emailTestingImg = EmailTemplateImg::where('header_id', $emailTesting->id)
             ->get();
 
@@ -305,7 +300,7 @@ class CustomerRegistrationController extends Controller
             'qrCodeApiUrl' => $qrCodeApiUrl,
             'qr_code' => $qr_code,
             'gc_value' => $egc_value,
-            'store_logo' => $store_logos_id,
+            'store_logo' => $emailTesting->store_logos_id,
             'qr_reference_number'=> $recipient->qr_reference_number,
             'link' => str_replace('qr_link','customer_registration',$recipient->qr_link)
         );

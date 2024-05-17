@@ -341,6 +341,9 @@ use App\StoreLogo;
 					$header_images->save();
 				}
 			}
+
+			// Set as Inactive Email Template
+			EmailTesting::where('id', '!=', $id)->update(['status' => 'INACTIVE']);
 	    }
 
 	    /* 
@@ -356,21 +359,8 @@ use App\StoreLogo;
 			$email = Input::all();
 
 			if($email['btn_selected'] == 'Set as Email Template'){
-				
-				$email_testing = new EmailTesting();
-				$email_testing_data = $email_testing->where('id', $id)->first();
-	
-				$list_email_template = $email_testing->where('store_logos_id', $email_testing_data->store_logos_id)
-					->where('id', '!=', $id)
-					->get();
-	
-				foreach($list_email_template as $email_template){
-					$email_testing->where('id', $email_template->id)
-						->update([
-							'status' => 'INACTIVE'
-						]);
-				}
-
+				// Set as Inactive Email Template
+				EmailTesting::where('id', '!=', $id)->update(['status' => 'INACTIVE']);
 				$postdata['status'] = 'ACTIVE';
 			}
 
@@ -445,7 +435,7 @@ use App\StoreLogo;
 			
 			$data = [];
 			$data['page_title'] = 'Create Email Template';
-			$data['store_logos'] = DB::table('store_logos')->where('id', 5)->where('status','ACTIVE')->get();
+			$data['store_logos'] = DB::table('store_logos')->where('concept', 'Tasteless')->where('status','ACTIVE')->get();
 			
 			//Please use view method instead view method from laravel
 			return $this->view('email_testing.add_email',$data);

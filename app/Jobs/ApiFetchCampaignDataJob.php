@@ -33,7 +33,10 @@ class ApiFetchCampaignDataJob implements ShouldQueue
     public function handle()
     {
         try{
-            $url = 'https://egc.digits.com.ph/api/egc_campaign';
+            $localhost = 'http://127.0.0.1:1000';
+            $ip_address = 'http://192.168.4.93:8000';
+
+            $url = "$ip_address/api/egc_campaign";
             
             $secretKey = env('EGC_SECRET_KEY');
     
@@ -53,7 +56,7 @@ class ApiFetchCampaignDataJob implements ShouldQueue
                     $item = (array) $item;
                     $item['is_fetch'] = 1;
                     $item['created_at'] = date('Y-m-d H:i:s');
-                    GCList::updateOrInsert(['id' => $item['id']], $item);
+                    GCList::firstOrCreate(['id' => $item['id']], $item);
                 }
                 
                 return true;

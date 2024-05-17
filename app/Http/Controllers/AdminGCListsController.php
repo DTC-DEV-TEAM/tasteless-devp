@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Http;
 
 		function __construct(){
 			ApiFetchCampaignDataJob::dispatch();
-			GCListFetchJob::dispatch();
+			// GCListFetchJob::dispatch();
 			date_default_timezone_set("Asia/Manila");
 			date_default_timezone_get();	
 		}
@@ -543,7 +543,7 @@ use Illuminate\Support\Facades\Http;
 			$campaign_type_id = $return_inputs['campaign_type_id'];
 			$claimed_by = $return_inputs['claimed_by'];
 			$claimed_email = $return_inputs['claimed_email'];
-
+			
 			if($campaign_type_id){
 
 				GCList::where('id', $id)->update([
@@ -622,15 +622,15 @@ use Illuminate\Support\Facades\Http;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
 			
-			// $invoice_number_exists = true;
-			$invoice_number_exists = DB::connection('mysql_tunnel')
-			->table('pos_sale')
-			->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
-			->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
-			->where('fdocument_no',$invoice_number)
-			->where('ftermid', (int) $store_name->ftermid) //need setup user management
-			->where('fdoctype',6000)
-			->exists();
+			$invoice_number_exists = true;
+			// $invoice_number_exists = DB::connection('mysql_tunnel')
+			// ->table('pos_sale')
+			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
+			// ->where('fofficeid',$store_name->branch_id) //need setup user management (TAG USER TO STORE BRANCH)
+			// ->where('fdocument_no',$invoice_number)
+			// ->where('ftermid', (int) $store_name->ftermid) //need setup user management
+			// ->where('fdoctype',6000)
+			// ->exists();
 
 
 // 			$invoice_number_exists = DB::connection('mysql_tunnel')

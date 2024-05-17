@@ -80,6 +80,7 @@ use Illuminate\Support\Arr;
 			$this->col = [];
 			// $this->col[] = ["label"=>"ID","name"=>"id"];
 			$this->col[] = ["label"=>"Campaign Type","name"=>"campaign_type_id"];
+			$this->col[] = ["label"=>"QR Type","name"=>"qr_type","join"=>"qr_types,name"];
 			$this->col[] = ["label"=>"Campaign Id","name"=>"campaign_id"];
 			$this->col[] = ["label"=>"Gc Description","name"=>"gc_description"];
 			$this->col[] = ["label"=>"Gc Value","name"=>"gc_value"];
@@ -324,7 +325,7 @@ use Illuminate\Support\Arr;
 		*/    
 		public function hook_row_index($column_index,&$column_value) {	        
 			//Your code here
-			if($column_index == '9'){
+			if($column_index == '10'){
 				if($column_value == '1'){
 					$column_value = '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">FOR APPROVAL</span>';
 				}else if($column_value == '2'){
@@ -583,8 +584,7 @@ use Illuminate\Support\Arr;
 			$campaign['number_of_gcs'] = $campaign_stores;
 			$campaign['created_by'] = CRUDBooster::myId();
 			$campaign['created_at'] = date('Y-m-d H:i:s');
-			
-			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','store','po_attachment','memo_attachment','id','qr_creations_id']));
+			$campaign_information = new QrCreation(Arr::except($campaign , ['_token','stores','po_attachment','memo_attachment','id','qr_creations_id','btnVal']));
 			$campaign_information->save();
 			$campaign_information->campaign_status = 1;
 			$campaign_information->save();
@@ -645,9 +645,9 @@ use Illuminate\Support\Arr;
 				'gc_description' => $qr_creation->gc_description,
 				'gc_value' => $qr_creation->gc_value
 			);
-
+			
 			if($qr_creation->campaign_status == 1){
-				if($request->get('approve')){
+				if($request->get('btnVal') == 'Approve'){
 					if($qr_creation->campaign_status == 1){
 						$qr_creation->update([
 							'manager_approval' => CRUDBooster::myId(),
@@ -661,12 +661,6 @@ use Illuminate\Support\Arr;
 							'accounting_approval_date' => date('Y-m-d H:i:s')
 						]);
 					}
-					// $email = 'ptice.0318@gmail.com';
-			
-					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
-					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
-					// 	$message->from(config('send_email.username'), config('send_email.name'));
-					// });
 				}else{
 
 					$qr_creation->update([
@@ -676,7 +670,7 @@ use Illuminate\Support\Arr;
 					]);
 				}
 			}elseif($qr_creation->campaign_status == 2){
-				if($request->get('approve')){
+				if($request->get('btnVal') == 'Approve'){
 
 					$qr_creation->update([
 						'accounting_approval' => CRUDBooster::myId(),
@@ -684,13 +678,6 @@ use Illuminate\Support\Arr;
 						'billing_number' => $request->get('billing_number'),
 						'accounting_approval_date' => date('Y-m-d H:i:s')
 					]);
-
-					// $email = 'ptice.0318@gmail.com';
-			
-					// Mail::send(['html' => 'email_testing.campaign_email'], $campaign, function($message) use ($email, $campaign) {
-					// 	$message->to('ptice.0318@gmail.com')->subject('DEVP System Update on'." ".$campaign['campaign_id']);
-					// 	$message->from(config('send_email.username'), config('send_email.name'));
-					// });
 				}else{
 
 					$qr_creation->update([
@@ -722,31 +709,23 @@ use Illuminate\Support\Arr;
 
 		}
 
-		public function manipulate_image($amount, $qr_api, $store_logo, $qr_reference_number)
-		{
-			$dw_path = 'store_logo/img/digital_walker';
-			$btb_path = 'store_logo/img/beyond_the_box';
-			$dw_btb_path = 'store_logo/img/btb_and_dw';
-			$os_path = 'store_logo/img/os';
-			$store_path = 'store_logo/img/store';
-			$dyanamic_img_path = 'email_template_img/img/';
+		public function manipulate_image($amount, $qr_api, $store_logo){
+			$tasteless_pink_path = 'store_logo/img/pink-gift-code.png';
+			$tasteless_blue_path = 'store_logo/img/blue-gift-code.png';
 			
-			$dw_image = Image::make(public_path($dw_path.'.jpg'));
-			$btb_image = Image::make(public_path($btb_path.'.jpg'));
-			$dw_btb_image = Image::make(public_path($dw_btb_path.'.png'));
-			$os_image = Image::make(public_path($os_path.'.jpg'));
-			$store_image = Image::make(public_path($store_path.'.jpg'));
-			// $dynamic_image = Image::make(public_path($dyanamic_img_path.$qr_img));
+			$tasteless_pink = Image::make(public_path($tasteless_pink_path));
+			$tasteless_blue = Image::make(public_path($tasteless_blue_path));
+
 			$save_path = 'e_gift_card/img/';
 
 			if($store_logo == 1){
 
-				$logo_path = $dw_image;
+				$logo_path = $tasteless_pink;
 				$filename = $save_path.Str::random(10).'.jpg';
-				$value_width = 510;
-				$qr_x_position = 85;
-				$qr_y_position = 35;
-				$color = '#d85a5f';
+				$value_width = 200;
+				$qr_x_position = -140;
+				$qr_y_position = 0;
+				$color = '#eeead1';
 				$shadow = '#000000';
 
 				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
@@ -754,141 +733,55 @@ use Illuminate\Support\Arr;
 
 			elseif($store_logo == 2){
 
-				$logo_path = $btb_image;
+				$logo_path = $tasteless_blue;
 				$filename = $save_path.Str::random(10).'.jpg';
-				$value_width = 510;
-				$qr_x_position = 89;
-				$qr_y_position = 35;
-				$color = '#1a1a1a';
+				$value_width = 200;
+				$qr_x_position = -140;
+				$qr_y_position = 0;
+				$color = '#eeead1';
 				$shadow = null;
 
 				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
-			}
-
-			elseif($store_logo == 3){
-
-				$logo_path = $dw_btb_image;
-				$filename = $save_path.Str::random(10).'.png';
-				$value_width = 510;
-				$qr_x_position = 89;
-				$qr_y_position = 35;
-				$color = '#1a1a1a';
-				$shadow = null;
-
-				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
-			}
-
-			if($store_logo == 4){
-
-				$logo_path = $os_image;
-				$filename = $save_path.Str::random(10).'.jpg';
-				$value_width = 510;
-				$qr_x_position = 89;
-				$qr_y_position = 35;
-				$color = '#1a1a1a';
-				$shadow = null;
-
-				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow);
-			}
-
-			if($store_logo == 5){
-
-				if(strlen((string) $amount) == 4){
-					$qr_x_position = 155;
-				}else{
-					$qr_x_position = 190;
-				};
-
-				$logo_path = $store_image;
-				$filename = $save_path.Str::random(10).'.jpg';
-				$value_width = 800;
-				$qr_y_position = 90;
-				$color = '#1a1a1a';
-				$shadow = null;
-
-				self::saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow, $qr_reference_number);
 			}
 
 			return $filename;
 		}
 
-		public function saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow, $qr_reference_number)
-		{
+		public function saveImage($amount, $qr_api, $logo_path, $value_width, $filename, $qr_x_position, $qr_y_position, $color, $shadow){
+
 			$text_width = 0; // Initialize outside the closure
-
-			
-			$logo_path->text('GIFT CODE: '.$qr_reference_number, 0, -10, function($font) use (&$text_width, $value_width){
-				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(19);
-
-				$textSize = $font->getBoxSize()['width'];
-				
-				$text_width = ($value_width - $textSize) / 2;
-			});
-
-			$logo_path->text('GIFT CODE: '.$qr_reference_number, $text_width, 215, function($font) use ($color, $shadow){
-				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(19);
-				$font->color('#6C8692');
-			});
-			
 	
-			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width, $amount) {
+			$logo_path->text('P'.$amount, 0, -10, function($font) use (&$text_width, $value_width) {
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(110);
+				$font->size(65);
+				$font->angle(90);
 				
 				$textSize = $font->getBoxSize()['width'];
 				
-				$text_width = ($value_width - $textSize) / 2;
+				$calculate_position = ($value_width - $textSize) / 2;
+				$text_width = $calculate_position; // Modify the value inside the closure
 			});
 
-			if($shadow){
-				$real_image = $logo_path->text('P'.$amount, $text_width, 190, function($font) use ($color, $shadow){
-					$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-					$font->size(110);
-					$font->color($shadow);
-				});
-			}
-
-			$real_image = $logo_path->text('P'.$amount, $text_width, 170, function($font) use ($color, $shadow){
+			$real_image = $logo_path->text('P'.$amount, $text_width, 265, function($font) use ($color, $shadow){
 				$font->file(public_path('font/OpenSans-ExtraBold.ttf'));
-				$font->size(110);
+				$font->size(65);
+				$font->angle(90);
 				$font->color($color);
 			});
-		
-			
 
-			// $rectangleImage = Image::canvas(130, 130, 'rgba(255, 255, 255, 1)');
-			// $rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
-			// 	$draw->border(1, '#000');
-			// });
+			$rectangleImage = Image::canvas(210, 210, 'rgba(255, 255, 255, 1)');
+			$rectangleImage->rectangle(0, 0, 209, 209, function ($draw) {
+				$draw->border(1, '#000');
+			});
 
-			// $real_image->insert($rectangleImage, 'bottom-right', $qr_x_position-5, $qr_y_position-5);
+			// $real_image->insert($rectangleImage, 'center', $qr_x_position-5, $qr_y_position-5);
 
-			// $qrCodeApiLink = $qr_api;
-			// $content = file_get_contents($qrCodeApiLink);
-			// $qrCodeApiLink = $qr_api;
-
-			// $arrContextOptions = [
-			// 	"ssl" => [
-			// 		"verify_peer" => false,
-			// 		"verify_peer_name" => false,
-			// 	],
-			// ];
-			// $content = file_get_contents($qrCodeApiLink, false, stream_context_create($arrContextOptions));
-
-			// $qrCodeApiLink = $qr_api;
-
-			// $ch = curl_init($qrCodeApiLink);
-			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			// $content = curl_exec($ch);
-			// curl_close($ch);
-
-			// $qrCodeImage = Image::make($content);
+			$qrCodeApiLink = $qr_api;
+			$content = file_get_contents($qrCodeApiLink);
+			$qrCodeImage = Image::make($content);
 
 			// Overlay the QR code onto the main image as a watermark
-			$real_image
-				// ->insert($qrCodeImage, 'bottom-right', $qr_x_position, $qr_y_position)
+			$real_image->insert($qrCodeImage, 'center', $qr_x_position, $qr_y_position)
 				->save(public_path($filename));
 		}
 

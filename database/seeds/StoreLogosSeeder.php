@@ -12,51 +12,21 @@ class StoreLogosSeeder extends Seeder
     public function run()
     {
         DB::table('store_logos')->updateOrInsert([
-            'name' => 'Digital Walker',
+            'name' => 'Tasteless (Pink)',
             ],
             [
-                'name' => 'Digital Walker',
-                'concept' => 'DW',
+                'name' => 'Tasteless (Pink)',
+                'concept' => 'Tasteless',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
         DB::table('store_logos')->updateOrInsert([
-            'name' => 'Beyond the Box',
+            'name' => 'Tasteless (Blue)',
             ],
             [
-                'name' => 'Beyond the Box',
-                'concept' => 'BTB',
-                'status' => 'ACTIVE',
-                'created_by' => 7,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        DB::table('store_logos')->updateOrInsert([
-            'name' => 'Digital Walker and Beyond the Box',
-            ],
-            [
-                'name' => 'Digital Walker and Beyond the Box',
-                'concept' => 'DWxBTB',
-                'status' => 'ACTIVE',
-                'created_by' => 7,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        DB::table('store_logos')->updateOrInsert([
-            'name' => 'Open Source',
-            ],
-            [
-                'name' => 'Open Source',
-                'concept' => 'OS',
-                'status' => 'ACTIVE',
-                'created_by' => 7,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        DB::table('store_logos')->updateOrInsert([
-            'name' => 'Store',
-            ],
-            [
-                'name' => 'Store',
-                'concept' => 'ST',
+                'name' => 'Tasteless (Blue)',
+                'concept' => 'Tasteless',
                 'status' => 'ACTIVE',
                 'created_by' => 7,
                 'created_at' => date('Y-m-d H:i:s')

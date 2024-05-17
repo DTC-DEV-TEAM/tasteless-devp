@@ -4,7 +4,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/utilities.css') }}">
 
@@ -59,218 +59,218 @@
 }
 
         
-        .form-input-content{
-            display: flex;
-            flex-wrap: wrap;
-        }
+    .form-input-content{
+        display: flex;
+        flex-wrap: wrap;
+    }
 
-        .form-inputs{
-            margin: 3px 20px;
-            width: 600px;
-            flex-grow: 1;
-        }
+    .form-inputs{
+        margin: 3px 20px;
+        width: 600px;
+        flex-grow: 1;
+    }
 
-        .form-inputs-file-type{
-            margin: 3px 20px;
-            width: 600px;
-            flex-grow: 1;
-        }
+    .form-inputs-file-type{
+        margin: 3px 20px;
+        width: 600px;
+        flex-grow: 1;
+    }
 
-        .form-inputs label{
-            font-size: 15px;
-            width: 130px;
-            display:block;
-        }
+    .form-inputs label{
+        font-size: 15px;
+        width: 130px;
+        display:block;
+    }
 
-        .input{
-            width: 100%;
-            height: 35px;
-            border: 1px solid #c7c5c5;
-            border-radius: 5px;
-            outline: none;
-            padding: 0 10px;
-        }
+    .input{
+        width: 100%;
+        height: 35px;
+        border: 1px solid #c7c5c5;
+        border-radius: 5px;
+        outline: none;
+        padding: 0 10px;
+    }
 
-        .input::placeholder{
-            font-size: 15px;
-        }
+    .input::placeholder{
+        font-size: 15px;
+    }
 
-        .input:focus {
-            border: 2px solid #605CA8;
-        }
+    .input:focus {
+        border: 2px solid #605CA8;
+    }
 
-        .form-inputs select{
-            width: 100%;
-            height: 35px;
-            border-radius: 5px;
-            outline: none;
-            padding: 0 10px;  
-            border: 1px solid #c7c5c5;
-        }
+    .form-inputs select{
+        width: 100%;
+        height: 35px;
+        border-radius: 5px;
+        outline: none;
+        padding: 0 10px;  
+        border: 1px solid #c7c5c5;
+    }
 
-        /* select:invalid {
-            color: #999;
-        } */
+    /* select:invalid {
+        color: #999;
+    } */
 
-        .for_approval_head{
-            padding: 5px 10px;
-            border-radius: 5px;
-            background-color: rgb(31,114,183);
-            color: white;
-        }
+    .for_approval_head{
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: rgb(31,114,183);
+        color: white;
+    }
 
-        .approve{
-            padding: 5px 10px;
-            border-radius: 5px;
-            background-color: rgb(74 222 128);
-            color: white;
-        }
+    .approve{
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: rgb(74 222 128);
+        color: white;
+    }
 
-        .approve_accounting{
-            padding: 5px 10px;
-            border-radius: 5px;
-            background-color: rgb(251 146 60);
-            color: white;
-        }
+    .approve_accounting{
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: rgb(251 146 60);
+        color: white;
+    }
 
-        .rejected{
-            padding: 5px 10px;
-            border-radius: 5px;
-            background-color: rgb(239 68 68);
-            color: white;
-        }
+    .rejected{
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: rgb(239 68 68);
+        color: white;
+    }
 
-        .for_approval{
-            display: flex;
-            margin: 3px 0px;
-            flex-wrap: wrap;
+    .for_approval{
+        display: flex;
+        margin: 3px 0px;
+        flex-wrap: wrap;
 
-        }
+    }
 
-        .for_approval_content{
-            margin-right: 20px;
-            margin-bottom: 20px;
-        }
+    .for_approval_content{
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
 
-        .for_approval_content .label_status{
-            display: block;
-            margin-bottom: 9px;
-        }
+    .for_approval_content .label_status{
+        display: block;
+        margin-bottom: 9px;
+    }
 
-        input[name="billing_number"]{
-            height: 35px;
-            border: 1px solid #c7c5c5;
-            width: 100%;
-            max-width: 185px;
-            padding: 0 5px;
-            outline: none;
-            text-align: center;
-        }
+    input[name="billing_number"]{
+        height: 35px;
+        border: 1px solid #c7c5c5;
+        width: 100%;
+        max-width: 185px;
+        padding: 0 5px;
+        outline: none;
+        text-align: center;
+    }
 
-        input[name="billing_number"]:focus{
-            border: 2px solid #605CA8;
-        }
+    input[name="billing_number"]:focus{
+        border: 2px solid #605CA8;
+    }
 
-        .file-upload-content input[type="file"]::after {
-            content: "Choose a PDF File";
-        }
-        
-        .swal2-popup {
-            font-size: 17px !important;
-            color: rgb(0, 0, 0) !important;
-        }
+    .file-upload-content input[type="file"]::after {
+        content: "Choose a PDF File";
+    }
+    
+    .swal2-popup {
+        font-size: 17px !important;
+        color: rgb(0, 0, 0) !important;
+    }
 
-        /* Loading Animation */
-        .sk-chase-position{
-            position: absolute;
-            top: 47%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 100%;
-            width: 100%;
-            display: grid;
-            place-items: center;
-            z-index: 9999;
-            background-color: #21212172;
-        }
+    /* Loading Animation */
+    .sk-chase-position{
+        position: absolute;
+        top: 47%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 100%;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        z-index: 9999;
+        background-color: #21212172;
+    }
 
-        .sk-chase {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            animation: sk-chase 2.5s infinite linear both;
-        }
+    .sk-chase {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        animation: sk-chase 2.5s infinite linear both;
+    }
 
-        .sk-chase-text{
-            position: absolute;
-            top: 60%;
-            color: white;
-        }
+    .sk-chase-text{
+        position: absolute;
+        top: 60%;
+        color: white;
+    }
 
-        .sk-chase-text{
-            font-weight: bold;
-            font-size: 15px;
-        }
+    .sk-chase-text{
+        font-weight: bold;
+        font-size: 15px;
+    }
 
-        .sk-chase-dot {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0; 
-            animation: sk-chase-dot 2.0s infinite ease-in-out both; 
-        }
+    .sk-chase-dot {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0; 
+        animation: sk-chase-dot 2.0s infinite ease-in-out both; 
+    }
 
-        .sk-chase-dot:before {
-            content: '';
-            display: block;
-            width: 25%;
-            height: 25%;
-            background-color: #fff;
-            border-radius: 100%;
-            animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
-        }
+    .sk-chase-dot:before {
+        content: '';
+        display: block;
+        width: 25%;
+        height: 25%;
+        background-color: #fff;
+        border-radius: 100%;
+        animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
+    }
 
-        .sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
-        .sk-chase-dot:nth-child(2) { animation-delay: -1.0s; }
-        .sk-chase-dot:nth-child(3) { animation-delay: -0.9s; }
-        .sk-chase-dot:nth-child(4) { animation-delay: -0.8s; }
-        .sk-chase-dot:nth-child(5) { animation-delay: -0.7s; }
-        .sk-chase-dot:nth-child(6) { animation-delay: -0.6s; }
-        .sk-chase-dot:nth-child(1):before { animation-delay: -1.1s; }
-        .sk-chase-dot:nth-child(2):before { animation-delay: -1.0s; }
-        .sk-chase-dot:nth-child(3):before { animation-delay: -0.9s; }
-        .sk-chase-dot:nth-child(4):before { animation-delay: -0.8s; }
-        .sk-chase-dot:nth-child(5):before { animation-delay: -0.7s; }
-        .sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
+    .sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
+    .sk-chase-dot:nth-child(2) { animation-delay: -1.0s; }
+    .sk-chase-dot:nth-child(3) { animation-delay: -0.9s; }
+    .sk-chase-dot:nth-child(4) { animation-delay: -0.8s; }
+    .sk-chase-dot:nth-child(5) { animation-delay: -0.7s; }
+    .sk-chase-dot:nth-child(6) { animation-delay: -0.6s; }
+    .sk-chase-dot:nth-child(1):before { animation-delay: -1.1s; }
+    .sk-chase-dot:nth-child(2):before { animation-delay: -1.0s; }
+    .sk-chase-dot:nth-child(3):before { animation-delay: -0.9s; }
+    .sk-chase-dot:nth-child(4):before { animation-delay: -0.8s; }
+    .sk-chase-dot:nth-child(5):before { animation-delay: -0.7s; }
+    .sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
 
-        @keyframes sk-chase {
-            100% { transform: rotate(360deg); } 
-        }
+    @keyframes sk-chase {
+        100% { transform: rotate(360deg); } 
+    }
 
-        @keyframes sk-chase-dot {
-            80%, 100% { transform: rotate(360deg); } 
-        }
+    @keyframes sk-chase-dot {
+        80%, 100% { transform: rotate(360deg); } 
+    }
 
-        @keyframes sk-chase-dot-before {
-            50% {
-                transform: scale(0.4); 
-            } 100%, 0% {
-                transform: scale(1.0); 
-            } 
-        }
+    @keyframes sk-chase-dot-before {
+        50% {
+            transform: scale(0.4); 
+        } 100%, 0% {
+            transform: scale(1.0); 
+        } 
+    }
 
-        .scrollable-wrapper {
-            width: 100%; /* Set a fixed width or a percentage width */
-            overflow-x: auto; /* Enable horizontal scrolling */
-            white-space: nowrap; /* Prevent line breaks */
-        }
+    .scrollable-wrapper {
+        width: 100%; /* Set a fixed width or a percentage width */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent line breaks */
+    }
 
-        /* Optional: Adjust the max-width to fit the content */
-        .scrollable-wrapper select {
-            max-width: 100%; /* Adjust as needed */
-        }
-    </style>
+    /* Optional: Adjust the max-width to fit the content */
+    .scrollable-wrapper select {
+        max-width: 100%; /* Adjust as needed */
+    }
+</style>
 @endpush
 @section('content')
     <!-- Your html goes here -->
@@ -291,7 +291,7 @@
     <p><a title='Return' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>&nbsp; Back To Campaign Creation Home</a></p>
     <div class='panel panel-default'>
         <div class='panel-heading'>Add Form</div>
-        <form method='post' action='{{ route('add_campaign_ihc') }}' autocomplete="off" enctype="multipart/form-data">
+        <form id="form-sbmt" method='post' action='{{ route('add_campaign_ihc') }}' autocomplete="off" enctype="multipart/form-data">
             @csrf
             <input type="text" class="hide" name="qr_creations_id" value="{{ $qr_creation->qr_creations_id }}">
             <input type="text" class="hide" name="id" value="{{ $qr_creation->id }}">
@@ -349,8 +349,8 @@
                                 <p><span class="required">*</span> Store Logo:</p>
                                 <select class="u-input" id="store_logo" name="store_logo" required>
                                     <option value="" disabled required selected></option>
-                                    @foreach ($store_logo as $store)
-                                    <option value="{{ $store->id }}" {{ $qr_creation->store_logo == $store->id ? 'selected':'' }}>{{ $store->name }}</option>
+                                    @foreach ($company_id as $store)
+                                    <option value="{{ $store->id }}" {{ $qr_creation->store_logo == $store->id ? 'selected':'' }}>{{ $store->company_name }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -374,7 +374,7 @@
                             <tr>
                                 <td>
                                     <p>Excluded Concept:</p>
-                                    <select class="excluded_concept" id="excluded_concept" name="store[]" multiple>
+                                    <select class="excluded_concept" id="excluded_concept" name="store[]" multiple required>
                                         @if (!$qr_creation->campaign_id)
                                         @foreach ($excluded_concept as $store)
                                             <option value="{{ $store->id }}">{{ $store->name }}</option>
@@ -387,8 +387,8 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <p>GC Type</p>
-                                    <select class="u-input" name="qr_type" id="" {{ $qr_creation->campaign_status ? 'disabled' : ''  }} required>
+                                    <p>GC Type:</p>
+                                    <select class="u-input" name="qr_type" id="" required>
                                         <option value="" selected disabled>Select GC Type</option>
                                         @foreach ($qr_types as $qr_type)
                                             <option value="{{ $qr_type->id }}" {{ $qr_creation->qr_type == $qr_type->id ? 'selected' : ''  }}>{{ $qr_type->name }}</option>
@@ -403,7 +403,7 @@
                             <tr>
                                 <td>
                                     <p>Excluded Stores:</p>
-                                    <select class="store_concept" id="store_concept" name="stores[]" multiple>
+                                    <select class="store_concept" id="store_concept" name="stores[]" multiple required>
                                         @if (!$qr_creation->campaign_id)
                                             @foreach ($stores as $store)
                                                 <option value="{{ $store->id }}" charge_to="{{ $store->concept }}">{{ $store->beach_name }}</option>
@@ -468,19 +468,17 @@
             </div>
             <div class='panel-footer'>
                 <a href="{{ CRUDBooster::mainpath() }}" class="btn btn-default" style="border: 1px solid #ddd;">Cancel</a>
-                <input type='submit' class='btn btn-primary hide' id="submit_form" value='Save changes'/>
-                <input type='submit' class='btn btn-primary hide' id="reject_form" name="reject" value='Reject'/>
-                <input type='submit' class='btn btn-primary hide' id="approve_form" name="approve" value='Approve'/>
+                <input type='hidden' class='btn btn-primary' name="btnVal" id="btn-val" value=''/>
                 @if (!$qr_creation->campaign_status)
-                <button type="button" class='btn btn-primary' id="submit_btn">Submit</button>
+                <button type="submit" class='btn btn-primary' id="submit_btn">Submit</button>
                 @endif
                 @if (($qr_creation->campaign_status == 1 && Request::segment(3) == 'edit') && (CRUDBooster::myPrivilegeId() == 2 || CRUDBooster::myPrivilegeId() == 1))
-                    <button type="button" class='btn btn-primary' id="save_btn">Save</button>
+                    <button type="submit" class='btn btn-primary' id="save_btn">Save</button>
                 @endif
                 @if ((Request::segment(3) != 'detail' && Request::segment(3) != 'getAddIhc') && ($qr_creation->campaign_status != 3 && $qr_creation->campaign_status != 4)) 
                     @if(CRUDBooster::myPrivilegeId() != 2)         
-                    <button type="button" class='btn btn-success' style="float: right; margin-left: 5px;" id="approve_btn">Approve</button>
-                    <button type="button" class='btn btn-danger' style="float: right;" id="reject_btn">Reject</button>
+                    <button type="submit" class='btn btn-success' style="float: right; margin-left: 5px;" id="approve_btn">Approve</button>
+                    <button type="submit" class='btn btn-danger' style="float: right;" id="reject_btn">Reject</button>
                     @endif
                 @endif
             </div>
@@ -490,6 +488,12 @@
     
     <script type="text/javascript">
 
+        $('input, select').on('keypress', function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+            }
+        })
+
         if("{{ !$qr_creation->campaign_status }}"){
             document.querySelector("#files").onchange = function() {
                 const fileName = this.files[0]?.name;
@@ -497,51 +501,6 @@
                 label.innerText = fileName ?? "Browse Files";
             };
         }
-
-        // $('.store_concept').select2({
-        //     placeholder: "Select a Store",
-        //     dropdownAutoWidth: true,
-        //     width: '100%',
-        //     ajax: {
-        //         url: '{{ route('getStores') }}',
-        //         dataType: 'json',
-        //         delay: 250,
-        //         type: 'POST',
-        //         data: function (params) {
-        //             console.log(params.term)
-        //             return {
-        //                 term: params.term,
-        //                 _token: '{!! csrf_token() !!}'
-        //             };
-        //         },
-                
-        //         processResults: function (data) {
-        //             console.log(data)
-
-        //             return {
-        //                 results: $.map(data, function (item) {
-                            
-        //                     return {
-        //                         text: item.name,
-        //                         id: item.id
-        //                     }
-        //                 })
-        //             };
-        //         },
-        //         cache: true
-        //     },
-        //     id: 'id'
-        // })
-
-        // $(document).ready(function(){
-            
-        //     const stores_excluded = {!! json_encode($qr_creation->number_of_gcs) !!}
-
-        //     stores_excluded.split(',').forEach(function(item){
-        //         $(`#store_concept option[charge_to="${item}"]`).prop('selected', true);
-        //     })
-
-        // })
 
         $('.store_concept').select2({
             width: '100%',
@@ -580,7 +539,6 @@
             $('#store_concept').trigger('change');
         });
 
-
         function campaignCreationDetails(){
             
             $('input[name="campaign_id"]').val('{{ $qr_creation->campaign_id }}');
@@ -603,88 +561,120 @@
 
         campaignCreationDetails()
 
+        // Create Campaign
         $('#submit_btn').click(function(){
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, submit it!',
-                returnFocus: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#submit_form').click();
-                }
-            })
-        });
-
-        $('#reject_btn').click(function(){
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, submit it!',
-                returnFocus: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('form').attr("action", "{{ route('campaign_approval') }}");
-                    $('#reject_form').click();
-                }
-            })
-        });
-
-        $('#approve_btn').click(function(){
-            // console.log($("input[name='billing_number']").val() == '');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, submit it!',
-                returnFocus: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('form').attr("action", "{{ route('campaign_approval') }}");
-                    if($("input[name='billing_number']").val() != ''){
-                        $('.sk-chase-position').show();
-                    }
-                    $('#approve_form').click();
-                }
-            })
-        });
-
-        $('#save_btn').click(function(){
-            // console.log($("input[name='billing_number']").val() == '');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, save it!',
-                returnFocus: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('form').attr("action", "{{ route('save_campaign_ihc') }}");
-                    $('#approve_form').click();
-                }
-            })
-        });
-
-        $('input, select').on('keypress', function(event) {
-            if (event.keyCode == 13) {
+            $('#btn-val').val($(this).text());
+            $('#form-sbmt').on('submit', function(event){
                 event.preventDefault();
-            }
-        })
+                let form = $(this);
 
+                swal({
+                    title: 'Are you sure?',
+                    type: 'info',
+                    showCancelButton: true,
+                    allowOutsideClick: true,
+                    confirmButtonColor: '#3c8dbc',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel',
+                    closeOnConfirm: false
+                },
+                function(isConfirmed) {
+                    if (isConfirmed) {
+                        form.off('submit').submit();
+                    }
+                });
+            })
+        });
+
+        // Reject Campaign
+        $('#reject_btn').click(function(){
+            const btnTextName = $(this).text();
+            $('#btn-val').val(btnTextName);
+
+            $('#form-sbmt').on('submit', function(event){
+                event.preventDefault();
+                let form = $(this);
+
+                swal({
+                    title: `Are you sure you want to <span class="u-t-danger">${btnTextName.toLowerCase()}</span>?`,
+                    type: 'info',
+                    showCancelButton: true,
+                    allowOutsideClick: true,
+                    confirmButtonColor: '#3c8dbc',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel',
+                    closeOnConfirm: false,
+                    html: true,
+                },
+                function(isConfirmed) {
+                    if (isConfirmed) {
+                        form.attr("action", "{{ route('campaign_approval') }}");
+                        form.off('submit').submit();
+                    }
+                });
+            })
+        });
+
+        // Approve Campaign
+        $('#approve_btn').click(function(){
+            const btnTextName = $(this).text();
+            $('#btn-val').val(btnTextName);
+
+            $('#form-sbmt').on('submit', function(event){
+                event.preventDefault();
+                let form = $(this);
+
+                swal({
+                    title: `Are you sure you want to <span class="u-t-success">${btnTextName.toLowerCase()}</span>?`,
+                    type: 'info',
+                    showCancelButton: true,
+                    allowOutsideClick: true,
+                    confirmButtonColor: '#3c8dbc',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel',
+                    closeOnConfirm: false,
+                    html: true,
+                },
+                function(isConfirmed) {
+                    if (isConfirmed) {
+                        form.attr("action", "{{ route('campaign_approval') }}");
+                        if($("input[name='billing_number']").val() != ''){
+                            $('.sk-chase-position').show();
+                        }
+                        form.off('submit').submit();
+                    }
+                });
+            })
+        });
+
+        // Save BTN
+        $('#save_btn').click(function(){
+            const btnTextName = $(this).text();
+            $('#btn-val').val(btnTextName);
+
+            $('#form-sbmt').on('submit', function(event){
+                event.preventDefault();
+                let form = $(this);
+
+                swal({
+                    title: `Are you sure you want to <span class="u-t-success">${btnTextName.toLowerCase()}</span>?`,
+                    type: 'info',
+                    showCancelButton: true,
+                    allowOutsideClick: true,
+                    confirmButtonColor: '#3c8dbc',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel',
+                    closeOnConfirm: false,
+                    html: true,
+                },
+                function(isConfirmed) {
+                    if (isConfirmed) {
+                        form.attr("action", "{{ route('save_campaign_ihc') }}");
+                        form.off('submit').submit();
+                    }
+                });
+            })
+        });
     </script>
 @endsection
 

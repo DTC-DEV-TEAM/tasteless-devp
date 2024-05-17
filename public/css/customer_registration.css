@@ -68,23 +68,30 @@ body, html{
     max-width: 1200px;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
     background: #f5f5f5; /* Light gray background */
-    border-radius: 10px;
     margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .customer-box-logos{
+    position: relative;
     /* height: 75px; */
     width: 100%;
     /* background-color: #359D9D; */
     /* display: flex; */
     /* justify-content: center; */
     text-align: center;
+    height: 100px;
     border-bottom: 1px solid black;
+    overflow: hidden;
+    padding: 10px;
 }
 
 .customer-box-logos img{
+    position: relative;
+    top: -25px;
     object-fit: contain;
-    height: 100px;
+    height: 140px;
     width: 100%;
 }
 
