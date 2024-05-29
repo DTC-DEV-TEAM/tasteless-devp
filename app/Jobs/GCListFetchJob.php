@@ -36,14 +36,15 @@ class GCListFetchJob implements ShouldQueue
     public function handle()
     {  
         // ip
-        $localhost = 'http://127.0.0.1:1000';
-        $ip_address = 'http://192.168.4.93:8000';
+        $localhost = 'http://127.0.0.1:8000';
+        $ip_address = 'http://192.168.4.101:8000';
+        $prod = 'https://egc.tasteless.com.ph';
 
         try {
             // Localhost fetch campaign
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("$ip_address/api/get-token", [
+            ])->post("$prod/api/get-token", [
                 'secret' => '84aad301b67368285f7b6f17eed0a064',
             ]);
 
@@ -51,7 +52,7 @@ class GCListFetchJob implements ShouldQueue
 
             $redemption_list = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get("$ip_address/api/qr_creation");
+            ])->get("$prod/api/qr_creation");
 
             $gc_list_fetch = $redemption_list->json();
             

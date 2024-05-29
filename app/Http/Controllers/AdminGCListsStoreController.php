@@ -954,13 +954,13 @@ class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controller
 
 		$cms_user = DB::table('cms_users')->where('id', CRUDBooster::myId())->first();
 		$store_concept = DB::table('store_concepts')->where('id', $cms_user->id_store_concept)->first();
-		$store_logos = DB::table('store_logos')->where('concept', $store_concept->concept)->first();
+		$store_logos = DB::table('company_ids')->where('company_name', $store_concept->concept)->first();
 		$store_name = StoreConcept::find($cms_user->id_store_concept);
 		
 		if($store_logos->name == 'Digital Walker and Beyond the Box'){
 			$user_store_logo = 'dw_and_btb';
 		}else{
-			$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->name));
+			$user_store_logo = strtolower(str_replace(' ', '_', $store_logos->company_name));
 		}
 		$inv_num = (int) $egc['invoice_number'];
 		if($inv_num === 0){
@@ -996,13 +996,13 @@ class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controller
 
 		$gclist_devp_customer = new GCListsDevpsCustomer([
 			'created_by' => CRUDBooster::myId(),
-			'store_concept' => $store_logos->name
+			'store_concept' => $store_logos->company_name
 		]);
 		$gclist_devp_customer->save();
 
 		$gclist_devp = new g_c_lists_devp([
 			'store_status' => 1,
-			'store_concept' => $store_logos->name,
+			'store_concept' => $store_logos->company_name,
 			'store_concepts_id' => $store_concept->id,
 			'reference_number' => sprintf("CUS-%06d", $gclist_devp_customer->id),
 			'g_c_lists_devps_customer_id' => $gclist_devp_customer->id,
