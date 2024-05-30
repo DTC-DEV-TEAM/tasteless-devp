@@ -12,7 +12,7 @@
 	use App\EmailTesting;
 	use App\EmailTemplateImg;
 	use App\QrCreation;
-use App\StoreLogo;
+	use App\StoreLogo;
 
 	class AdminEmailTestingsController extends \crocodicstudio\crudbooster\controllers\CBController {
 

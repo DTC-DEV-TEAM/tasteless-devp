@@ -544,6 +544,7 @@ use Illuminate\Support\Facades\Http;
 			$claimed_by = $return_inputs['claimed_by'];
 			$claimed_email = $return_inputs['claimed_email'];
 			
+			// Qr Code or BDO
 			if($campaign_type_id){
 
 				GCList::where('id', $id)->update([
@@ -570,6 +571,7 @@ use Illuminate\Support\Facades\Http;
 				->where('g_c_lists.id',$id)
 				->first();
 			}
+			// Store
 			else{
 
 				DB::table('g_c_lists_devps')->where('id', $id)->update([
@@ -622,7 +624,12 @@ use Illuminate\Support\Facades\Http;
 			// $ftermid = $store_information->ftermid;
 			// $fofficeid = $store_information->fofficeid;
 			
+			// Pos
+
+			// Use only for local
 			$invoice_number_exists = true;
+
+			// Uncomment this or production
 			// $invoice_number_exists = DB::connection('mysql_tunnel')
 			// ->table('pos_sale')
 			// ->where('fcompanyid',$store_name->fcompanyid) //need setup store - DONE
@@ -631,18 +638,6 @@ use Illuminate\Support\Facades\Http;
 			// ->where('ftermid', (int) $store_name->ftermid) //need setup user management
 			// ->where('fdoctype',6000)
 			// ->exists();
-
-
-// 			$invoice_number_exists = DB::connection('mysql_tunnel')
-// 			->table('pos_sale')
-// 			->where('fcompanyid','BC-17020882') //need setup store - DONE
-// 			->where('fofficeid','SAMPLE') //need setup user management (TAG USER TO STORE BRANCH)
-// 			->where('fdocument_no',$invoice_number)
-// 			->where('ftermid', '0011') //need setup user management
-// 			->where('fdoctype',6000)
-// 			->exists();
-
-			// SELECT fdocument_no,fsale_date FROM bc_webpos.pos_sale where fdocument_no='12' and ftermid='0011' and fcompanyid='BC-17020882' and fofficeid='SAMPLE' and fdoctype=6000;
 
 			if($invoice_number_exists){
 

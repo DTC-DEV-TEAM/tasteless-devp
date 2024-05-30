@@ -185,6 +185,7 @@ class CustomerRegistrationController extends Controller
         }
     }
 
+    // Send to Receipient
     public function sendEgc(Request $request){
 
         $customer = $request->all();
@@ -201,7 +202,7 @@ class CustomerRegistrationController extends Controller
             'email' => $customer['egc_email'],
         ]);
 
-
+        // if same email no qr_code will be send
         if($gc_list_devp->first()->email != $gc_list_devp_customer->first()->email){
             $send_egc = $this->sendGiftCardRecipient($gc_list_devp->first());
 

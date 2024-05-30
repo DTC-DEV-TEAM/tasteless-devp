@@ -645,7 +645,8 @@ use Illuminate\Support\Arr;
 				'gc_description' => $qr_creation->gc_description,
 				'gc_value' => $qr_creation->gc_value
 			);
-			
+
+			// For Approval
 			if($qr_creation->campaign_status == 1){
 				if($request->get('btnVal') == 'Approve'){
 					if($qr_creation->campaign_status == 1){
@@ -669,7 +670,9 @@ use Illuminate\Support\Arr;
 						'accounting_approval_date' => date('Y-m-d H:i:s')
 					]);
 				}
-			}elseif($qr_creation->campaign_status == 2){
+			}
+			// For Accounting Approval
+			elseif($qr_creation->campaign_status == 2){
 				if($request->get('btnVal') == 'Approve'){
 
 					$qr_creation->update([
