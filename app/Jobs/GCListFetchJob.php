@@ -36,23 +36,21 @@ class GCListFetchJob implements ShouldQueue
     public function handle()
     {  
         // ip
-        $localhost = 'http://127.0.0.1:8000';
-        $ip_address = 'http://192.168.4.101:8000';
-        $prod = 'https://egc.tasteless.com.ph';
+        $prod = config('jobs-url.api.tevp_campaign_URL');
 
         try {
             // Localhost fetch campaign
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("$prod/api/get-token", [
-                'secret' => '84aad301b67368285f7b6f17eed0a064',
+            ])->post("$prod/get-token", [
+                'secret' => config('jobs-url.api.tevp_token_key')
             ]);
 
             $get_token = $response->json('data.access_token');
 
             $redemption_list = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $get_token['data']['access_token'],
-            ])->get("$prod/api/qr_creation");
+            ])->get("$prod/qr_creation");
 
             $gc_list_fetch = $redemption_list->json();
             
