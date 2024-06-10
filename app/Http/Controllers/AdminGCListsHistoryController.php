@@ -529,7 +529,24 @@
 		}
 
 		public function getGCList(){
-			return DataTables::of(GcListSummaryView::query()->where('uploaded_img', '!=', null))->make(true);
+			return DataTables::of(GcListSummaryView::query()
+			->select('uploaded_img', 
+				'name', 
+				'phone', 
+				'email', 
+				'campaign_id', 
+				'gc_description', 
+				'gc_value', 
+				'gclists', 
+				'invoice_number', 
+				'pos_terminal', 
+				DB::raw('CASE WHEN accounting_is_audit = 1 THEN "CLOSED" ELSE "CLAIMED" END AS accounting_is_audit'))
+			->where('uploaded_img', '!=', null)
+		)
+		->filterColumn('accounting_is_audit', function($query, $keyword) {
+			$query->whereRaw("CASE WHEN accounting_is_audit = 1 THEN 'CLOSED' ELSE 'CLAIMED' END like ?", ["%{$keyword}%"]);
+		})
+		->make(true);
 		}
 
 		public function export() {

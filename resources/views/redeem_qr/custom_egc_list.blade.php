@@ -88,6 +88,13 @@
             text-align: left;
         }
 
+        #statusFilter {
+            padding: 5px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
     </style>
 @endpush
 @section('content')
@@ -96,6 +103,7 @@
     {{-- <div class='panel-heading'>EGC List</div> --}}
     <div class='panel-body'>
         <div class="responsive-table">
+        
             <table id="myTable" class="">
                 <thead>
                     <tr>
@@ -159,7 +167,7 @@
             disableScrolling: true
         })
 
-        $('#myTable').DataTable({
+        let table = $('#myTable').DataTable({
             responsive: true,
             processing: true,
             serverSide: true,
@@ -220,7 +228,7 @@
                     data: 'accounting_is_audit',
                     name: 'accounting_is_audit',
                     render: function(data, type, full, meta) {
-                        if (data == 1) {
+                        if (data == 'CLOSED') {
                             return '<span class="label" style="background-color: rgb(31,114,183); color: white; font-size: 12px;">CLOSED</span>';
                         } else {
                             return '<span class="label" style="background-color: rgb(74,222,128); color: white; font-size: 12px;">CLAIMED</span>';
@@ -229,7 +237,30 @@
                 }
             ],
         });
-    });
+
+        $(document).on('change', '#statusFilter', function() {
+        let  status = $(this).val();
+            if (status === 'CLOSED') {
+                table.column(11).search('CLOSED').draw();
+            } else if (status === 'CLAIMED') {
+                table.column(11).search('CLAIMED').draw();
+            } else {
+                table.column(11).search('').draw();
+            }
+        });
+        
+        let status = `
+            <label for="statusFilter">Status:</label>
+            <select  id="statusFilter">
+                <option value="">All</option>
+                <option value="CLAIMED">Claimed</option>
+                <option value="CLOSED">Closed</option>
+            </select>`
+        
+        $('#myTable_filter').prepend(status);
+        });
+
+    $()
 
 </script>
 
