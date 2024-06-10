@@ -112,7 +112,7 @@ class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controller
 		| 
 		*/
 		$this->addaction = array();
-		$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1]) && [customer_reference_number]','target'=>'_blank'];
+		$this->addaction[] = ['title'=>'Edit','url'=>'[qr_link]','icon'=>'fa fa-qrcode', 'showIf' => 'in_array([store_status], [1,2]) && [customer_reference_number]','target'=>'_blank'];
 		if(CRUDBooster::isSuperAdmin()){
 			$this->addaction[] = ['title'=>'Edit','url'=>CRUDBooster::mainpath('edit/[id]'),'icon'=>'fa fa-pencil', 'showIf' => 'in_array([store_status], [2, 3 ,4 ,5 ,6, 7])'];
 		}
@@ -1026,6 +1026,7 @@ class AdminGCListsStoreController extends \crocodicstudio\crudbooster\controller
 	public function egcValue(){
 		$data = [];
 		$data['egc_value'] = EgcValueType::orderBy('value', 'asc')->get();
+		$data['email_testings'] = count(EmailTesting::get());
 
 		return $data;
 	}
