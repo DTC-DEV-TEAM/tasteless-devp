@@ -16,5 +16,3 @@ yarn-error.log
 /public/email_template_img/img
 /public/uploaded_item/send_test_images
 /public/e_gift_card
-/app/Jobs/ApiFetchCampaignDataJob.php
-/app/Jobs/GCListFetchJob.php
