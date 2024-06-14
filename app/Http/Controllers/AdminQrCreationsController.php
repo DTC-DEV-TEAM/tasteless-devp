@@ -573,8 +573,7 @@ use Illuminate\Support\Arr;
 			
 			$memo_pdf = $campaign['memo_attachment'];
 			$campaign['store'] = $campaign['store'] ? implode(',',$campaign['store']) : null;
-			$campaign_stores = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereNotIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
-			
+			$campaign_stores = $campaign['stores'] == null ? $campaign['stores'] = implode(",",StoreConcept::get()->pluck('id')->toArray()) : implode(',',StoreConcept::whereIn('id', $campaign['stores'])->get()->pluck('id')->toArray());
 			$cms_users = DB::table('cms_users')->where('id_cms_privileges', 4)->get()->first();
 			
 			$request->validate([

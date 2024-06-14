@@ -373,7 +373,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <p>Excluded Concept:</p>
+                                    <p>Included Concept:</p>
                                     <select class="excluded_concept" id="excluded_concept" name="store[]" multiple required>
                                         @if (!$qr_creation->campaign_id)
                                         @foreach ($excluded_concept as $store)
@@ -402,7 +402,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <p>Excluded Stores:</p>
+                                    <p>Included Stores:</p>
                                     <select class="store_concept" id="store_concept" name="stores[]" multiple required>
                                         @if (!$qr_creation->campaign_id)
                                             @foreach ($stores as $store)
@@ -525,6 +525,7 @@
         $('#excluded_concept').on('change', function (e) {
             
             const options = $(this).find('option').get();
+
             options.forEach(option => {
                 const value = $(option).text();
                 
