@@ -48,6 +48,8 @@
                     <button class="btn btn-primary pull-right" id="btn-submit" type="submit">Submit</button>
                 </div>
             </div>
+            <div class="text-center u-t-danger" style="font-weight: bold;" id="modal-warning">
+            </div>
         </form>
     </div>
 </div>
@@ -59,12 +61,17 @@
     async function egcValue(){
         const response = await fetch("{{ route('egc_value') }}");
         const data = await response.json();
-
+        
         $('#egc-value').append(`<option value="" selected disabled>Please select EGC Value</option>`)
 
         data.egc_value.forEach((value, index) => {
             $('#egc-value').append(`<option value="${value.id}">${value.name}</option>`)
         });
+
+        if(data.email_testings === 0){
+            $('#modal-warning').text('Please create email template first.');
+            $('#btn-submit').attr('disabled', true);
+        }
     }
 
     
