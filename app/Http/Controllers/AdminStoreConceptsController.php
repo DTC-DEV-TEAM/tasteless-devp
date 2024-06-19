@@ -295,10 +295,14 @@
 		| @id       = current id 
 		| 
 		*/
-		public function hook_before_edit(&$postdata,$id) {       
+		public function hook_before_edit(&$postdata,$id) {   
 			 
-			$concept = DB::table('stores')->where('id', $postdata['concept'])->pluck('name')->first();
-			$postdata['concept'] = $concept;
+			$postdata['name'] = $postdata['name'];
+			$postdata['beach_name'] = $postdata['beach_name'];
+			$postdata['concept'] = $postdata['concept'];
+			$postdata['fcompanyid'] = $postdata['fcompanyid'];
+			$postdata['branch_id'] = $postdata['branch_id'];
+			$postdata['status'] = $postdata['status'];
 			$postdata['updated_by'] = CRUDBooster::myId();
 			$postdata['updated_at'] = date('Y-m-d H:i:s');
 		}
@@ -312,7 +316,6 @@
 		*/
 		public function hook_after_edit($id) {
 			//Your code here 
-
 		}
 
 		/* 
@@ -338,6 +341,21 @@
 			//Your code here
 
 		}
+
+		public function getEdit($id) {
+			//Create an Auth
+			if(!CRUDBooster::isUpdate() && $this->global_privilege==FALSE || $this->button_edit==FALSE) {    
+			  CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+			}
+			
+			$data = [];
+			$data['page_title'] = 'Edit Data';
+			$data['row'] = DB::table('store_concepts')->where('id',$id)->first();
+			$data['stores'] = DB::table('stores')->get();
+			$data['status'] = ['ACTIVE','INACTIVE'];
+			
+			return $this->view('store-concept-edit',$data);
+		  }
 
 
 
