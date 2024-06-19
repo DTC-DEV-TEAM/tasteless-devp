@@ -302,6 +302,7 @@
 			$postdata['concept'] = $postdata['concept'];
 			$postdata['fcompanyid'] = $postdata['fcompanyid'];
 			$postdata['branch_id'] = $postdata['branch_id'];
+			$postdata['ftermid'] = $postdata['ftermid'];
 			$postdata['status'] = $postdata['status'];
 			$postdata['updated_by'] = CRUDBooster::myId();
 			$postdata['updated_at'] = date('Y-m-d H:i:s');

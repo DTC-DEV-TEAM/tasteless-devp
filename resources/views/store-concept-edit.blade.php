@@ -28,12 +28,16 @@
                 
             </div>
             <div>
-                <label>Branch ID<span class="text-danger">*</span></label>
+                <label>Company ID<span class="text-danger">*</span></label>
                 <input type='text' name='fcompanyid' required class='form-control' value='{{$row->fcompanyid}}'/>
             </div>
             <div>
-                <label>Terminal ID *<span class="text-danger">*</span></label>
+                <label>Branch ID<span class="text-danger">*</span></label>
                 <input type='text' name='branch_id' required class='form-control' value='{{$row->branch_id}}'/>
+            </div>
+            <div>
+                <label>Terminal ID<span class="text-danger">*</span></label>
+                <input type='text' name='ftermid' required class='form-control' value='{{$row->ftermid}}'/>
             </div>
             <div>
                 <label>Status <span class="text-danger">*</span></label>
