@@ -49,7 +49,7 @@
 			$this->form = [];
 			$this->form[] = ['label'=>'Store Name','name'=>'name','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5'];
 			$this->form[] = ['label'=>'Beach Name','name'=>'beach_name','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Concept','name'=>'concept','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5'];
+			$this->form[] = ['label'=>'Concept','name'=>'concept','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-5', 'datatable'=>'stores,name'];
 			$this->form[] = ['label'=>'Company ID','name'=>'fcompanyid','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5','readonly'=>true,'value'=>'BC-17020882'];
 			$this->form[] = ['label'=>'Branch ID','name'=>'branch_id','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5'];
 			$this->form[] = ['label'=>'Terminal ID','name'=>'ftermid','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-5'];
