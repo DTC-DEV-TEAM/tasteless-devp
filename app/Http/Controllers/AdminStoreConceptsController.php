@@ -269,6 +269,8 @@
 		*/
 		public function hook_before_add(&$postdata) {        
 			
+			$concept = DB::table('stores')->where('id', $postdata['concept'])->pluck('name')->first();
+			$postdata['concept'] = $concept;
 			$postdata['created_by'] = CRUDBooster::myId();
 			$postdata['updated_at'] = date('Y-m-d H:i:s');
 		}
@@ -293,8 +295,10 @@
 		| @id       = current id 
 		| 
 		*/
-		public function hook_before_edit(&$postdata,$id) {        
-			
+		public function hook_before_edit(&$postdata,$id) {       
+			 
+			$concept = DB::table('stores')->where('id', $postdata['concept'])->pluck('name')->first();
+			$postdata['concept'] = $concept;
 			$postdata['updated_by'] = CRUDBooster::myId();
 			$postdata['updated_at'] = date('Y-m-d H:i:s');
 		}
