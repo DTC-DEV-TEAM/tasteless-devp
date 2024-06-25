@@ -515,7 +515,7 @@ use Illuminate\Support\Arr;
 			$data['store_logo'] = StoreLogo::where('name', '!=', 'Store')->get();
 			$data['charge_to'] = ChargeTo::where('status','ACTIVE')->whereNull('deleted_at')->where('name','!=','Store')->get();
 			$data['excluded_concept'] = Stores::get();
-			$data['qr_types'] = QrType::get();
+			$data['qr_types'] = QrType::where('status','ACTIVE')->get();
 
 			return $this->view('redeem_qr.add_campaign_ihc',$data);
 		}
